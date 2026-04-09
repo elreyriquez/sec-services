@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graphic, Motion &amp; Video — SEC</title>
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="logo-mark" aria-label="SEC — Home">
+        <img class="logo-mark__img" src="assets/logo/SECLogo.png" alt="" decoding="async" />
+      </a>
+      <nav class="nav-main" aria-label="Main">
+        <a href="production.html" aria-current="page">Graphic, Motion &amp; Video</a>
+        <a href="web-services.html">Web Services</a>
+        <a href="retainers.html">Retainers &amp; bundles</a>
+        <a href="software.html">Software</a>
+        <a href="marketing.html">Marketing &amp; Promotion</a>
+        <a href="strategy.html">Strategy consultations</a>
+      </nav>
+      <div class="site-header__actions">
+        <div class="currency-toggle no-print" role="group" aria-label="Quote currency">
+          <button type="button" class="currency-toggle__btn" data-currency="jmd">JMD</button>
+          <button type="button" class="currency-toggle__btn" data-currency="usd">USD</button>
+        </div>
+        <a href="cart.html" class="cart-link">Cart <span id="cart-badge" hidden></span></a>
+      </div>
+    </div>
+  </header>
+  <main>
+    <h1 class="page-title">Graphic, motion &amp; video</h1>
+    <p class="lead">All amounts are <strong>Jamaican dollars (JMD)</strong>, shown with a <strong>$</strong> prefix.</p>
+
+    <section class="section-block">
+      <h2>Graphics &amp; motion</h2>
+      <div class="service-panel">
+        <div class="pick-list">
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Static graphic design</span>
+              <span class="pick-row__meta">Per deliverable (e.g. post, cover).</span>
+            </div>
+            <span class="pick-row__price">10,000</span>
+            <button type="button" class="pick-add" data-add-product="gfx-static">Add</button>
+          </div>
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Motion graphic — 15s</span>
+            </div>
+            <span class="pick-row__price">15,000</span>
+            <button type="button" class="pick-add" data-add-product="gfx-motion-15">Add</button>
+          </div>
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Motion graphic — 30s</span>
+            </div>
+            <span class="pick-row__price">20,000</span>
+            <button type="button" class="pick-add" data-add-product="gfx-motion-30">Add</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <h2>Video editing — social (max 3:00)</h2>
+      <div class="service-panel">
+        <div class="pick-list">
+          <div class="pick-row pick-row--vid-edit">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Social video edit</span>
+              <span class="pick-row__meta">Choose finished length; two revision rounds included (per rate card).</span>
+            </div>
+            <select
+              id="vid-edit-select"
+              class="pick-select"
+              aria-label="Finished video length (social edit, max 3 minutes)"
+              title="Finished length"
+            >
+              <option value="vid-30">0:30</option>
+              <option value="vid-60">1:00</option>
+              <option value="vid-90">1:30</option>
+              <option value="vid-120">2:00</option>
+              <option value="vid-150">2:30</option>
+              <option value="vid-180">3:00</option>
+            </select>
+            <span class="pick-row__price" id="vid-edit-price">18,000</span>
+            <button type="button" class="pick-add" id="vid-edit-add" data-add-product="vid-30">Add</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <h2>Videography — on location</h2>
+      <div class="service-panel">
+        <div class="pick-list">
+          <div class="pick-row pick-row--shoot">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Shoot — per hour</span>
+              <span class="pick-row__meta">Max 4 hrs / session ($60,000 cap). Outside Kingston &amp; St Andrew, Portmore, Spanish Town: +30% on shoot fees only.</span>
+            </div>
+            <span class="pick-row__price" data-price-suffix=" / hr">15,000</span>
+            <div class="pick-row__actions">
+              <div class="qty-inline">
+                <label for="shoot-qty">Hrs</label>
+                <input id="shoot-qty" type="number" min="1" max="4" value="1" data-qty-for />
+              </div>
+              <button type="button" class="pick-add" data-add-product="vid-shoot-hr">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="callout production-footnotes" style="margin-top: 2rem">
+      <p>Two revision rounds included on graphics / motion / edits.</p>
+      <p>
+        Additional rounds: <strong data-jmd-amount="2000">$2,000</strong> per iteration (static graphics);
+        <strong data-jmd-amount="3000">$3,000</strong> per iteration (motion graphics and video edits).
+      </p>
+      <p>A Rush fee of 10% may be applied if there is an expected turnaround time of less than 36 hours.</p>
+    </div>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/currency.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    (function () {
+      var sel = document.getElementById("vid-edit-select");
+      var priceEl = document.getElementById("vid-edit-price");
+      var btn = document.getElementById("vid-edit-add");
+      if (!sel || !priceEl || !btn) return;
+      function sync() {
+        var id = sel.value;
+        var p = window.SEC_findProduct(id);
+        if (!p) return;
+        btn.setAttribute("data-add-product", id);
+        if (window.SEC_Currency && window.SEC_Currency.applyVidEditPrice) {
+          window.SEC_Currency.applyVidEditPrice();
+        } else if (p.inquire) {
+          priceEl.textContent = "Inquire";
+          priceEl.classList.add("inquire");
+        } else {
+          priceEl.textContent = p.price.toLocaleString();
+          priceEl.classList.remove("inquire");
+        }
+      }
+      sel.addEventListener("change", sync);
+      sync();
+    })();
+  </script>
+</body>
+</html>

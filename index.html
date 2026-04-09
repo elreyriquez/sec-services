@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEC — Service configurator</title>
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="logo-mark" aria-current="page" aria-label="SEC — Home">
+        <img class="logo-mark__img" src="assets/logo/SECLogo.png" alt="" decoding="async" />
+      </a>
+      <nav class="nav-main" aria-label="Main">
+        <a href="production.html">Graphic, Motion &amp; Video</a>
+        <a href="web-services.html">Web Services</a>
+        <a href="retainers.html">Retainers &amp; bundles</a>
+        <a href="software.html">Software</a>
+        <a href="marketing.html">Marketing &amp; Promotion</a>
+        <a href="strategy.html">Strategy consultations</a>
+      </nav>
+      <div class="site-header__actions">
+        <div class="currency-toggle no-print" role="group" aria-label="Quote currency">
+          <button type="button" class="currency-toggle__btn" data-currency="jmd">JMD</button>
+          <button type="button" class="currency-toggle__btn" data-currency="usd">USD</button>
+        </div>
+        <a href="cart.html" class="cart-link">Cart <span id="cart-badge" hidden></span></a>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div class="hero">
+      <h1>Build your request. Get a clear quote.</h1>
+      <p>
+        Browse services by category, add items to your cart, then download or send your order. Final quotes are always confirmed by SEC after review.
+      </p>
+    </div>
+    <div class="category-grid">
+      <a class="category-card" href="production.html">
+        <h2>Graphic, Motion &amp; Video production</h2>
+        <p>Static graphics, motion pieces, social video edits, and on-location videography.</p>
+      </a>
+      <a class="category-card" href="web-services.html">
+        <h2>Web Services</h2>
+        <p>New websites (Wix or Custom SEC built) and ongoing website care &amp; tickets.</p>
+      </a>
+      <a class="category-card" href="retainers.html">
+        <h2>Retainers &amp; bundles</h2>
+        <p>Website care (tickets), graphic / motion / video counts, and full-digital bundles that combine both.</p>
+      </a>
+      <a class="category-card" href="software.html">
+        <h2>Software</h2>
+        <p>Tools for common business problems — starting with invoice &amp; billing tracking (coming soon).</p>
+      </a>
+      <a class="category-card" href="marketing.html">
+        <h2>Marketing &amp; Promotion executions</h2>
+        <p>Field execution, print coordination, and scoped ad pilots.</p>
+      </a>
+      <a class="category-card" href="strategy.html">
+        <h2>Digital marketing strategy consultations</h2>
+        <p>Planning sessions to align creative and channels.</p>
+      </a>
+    </div>
+    <p class="callout" style="margin-top:2rem">
+      Submit a cart as a <strong>job request</strong> and it is emailed via <strong>Formspree</strong>. You can also <strong>download a PDF</strong> or <strong>print</strong> the quotation from the cart.
+    </p>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/currency.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

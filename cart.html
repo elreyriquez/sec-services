@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cart &amp; checkout — SEC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="logo-mark" aria-label="SEC — Home">
+        <img class="logo-mark__img" src="assets/logo/SECLogo.png" alt="" decoding="async" />
+      </a>
+      <nav class="nav-main" aria-label="Main">
+        <a href="production.html">Graphic, Motion &amp; Video</a>
+        <a href="web-services.html">Web Services</a>
+        <a href="retainers.html">Retainers &amp; bundles</a>
+        <a href="software.html">Software</a>
+        <a href="marketing.html">Marketing &amp; Promotion</a>
+        <a href="strategy.html">Strategy consultations</a>
+      </nav>
+      <div class="site-header__actions">
+        <div class="currency-toggle no-print" role="group" aria-label="Quote currency">
+          <button type="button" class="currency-toggle__btn" data-currency="jmd">JMD</button>
+          <button type="button" class="currency-toggle__btn" data-currency="usd">USD</button>
+        </div>
+        <a href="cart.html" class="cart-link" aria-current="page">Cart <span id="cart-badge" hidden></span></a>
+      </div>
+    </div>
+  </header>
+  <main>
+    <h1 class="page-title cart-print-hide">Cart &amp; quote</h1>
+    <p class="lead cart-print-hide">Review your line items. This is an <strong>order request</strong>, not a binding contract until SEC confirms.</p>
+
+    <p id="form-status" class="meta cart-print-hide" style="margin:0 0 1rem" aria-live="polite"></p>
+
+    <div id="cart-empty" class="callout" hidden>
+      Your cart is empty. <a href="index.html">Browse services</a>.
+    </div>
+
+    <div id="cart-filled" hidden>
+      <div class="cart-print-hide">
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Line</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="cart-body"></tbody>
+      </table>
+      <p><strong>Subtotal (priced lines):</strong> <span id="cart-subtotal">$0</span></p>
+      <p class="meta" id="cart-currency-note">All $ amounts are <strong>Jamaican dollars (JMD)</strong>.</p>
+
+      <h2 class="page-title" style="font-size:1.25rem;margin-top:2rem">Terms of business</h2>
+      <div class="terms-box">
+        <p><strong>Payment.</strong> A deposit (typically 40–50%) may be required before work starts on builds or large jobs. Balance on delivery / go-live or by milestones. Retainers are billed monthly in advance.</p>
+        <p><strong>Rights.</strong> After full payment, you receive a license to use deliverables for the purposes stated on the final quote. SEC retains portfolio credit unless otherwise agreed.</p>
+        <p><strong>Wix.</strong> If your project uses Wix, platform subscription and domain are paid by you to Wix — not included in SEC build fees.</p>
+        <p><strong>Revisions.</strong> Included rounds and rush rules follow the rate card shared with your quote.</p>
+      </div>
+
+      <label class="check-row">
+        <input type="checkbox" id="accept-terms" required />
+        <span>I have read and accept the terms above. I understand this cart is a request and final pricing may be confirmed by SEC.</span>
+      </label>
+
+      <h2 class="page-title" style="font-size:1.25rem;margin-top:2rem">Your details</h2>
+      <form id="order-form" class="form-grid no-print" novalidate>
+        <div>
+          <label for="cust-name">Full name *</label>
+          <input id="cust-name" name="name" type="text" required autocomplete="name" />
+        </div>
+        <div>
+          <label for="cust-email">Email *</label>
+          <input id="cust-email" name="email" type="email" required autocomplete="email" />
+        </div>
+        <div>
+          <label for="cust-phone">Phone / WhatsApp *</label>
+          <input id="cust-phone" name="phone" type="tel" required autocomplete="tel" />
+        </div>
+        <div>
+          <label for="cust-co">Company (optional)</label>
+          <input id="cust-co" name="company" type="text" autocomplete="organization" />
+        </div>
+        <input type="hidden" name="order_json" id="f-order-json" value="" />
+        <input type="hidden" name="invoice_text" id="f-invoice-text" value="" />
+        <input type="hidden" name="_subject" value="SEC job request" />
+      </form>
+
+      <div class="actions-row no-print">
+        <button type="button" class="btn btn-primary" id="btn-submit">Submit job request</button>
+        <button type="button" class="btn btn-ghost" id="btn-pdf">Download PDF</button>
+        <button type="button" class="btn btn-ghost" id="btn-print">Print</button>
+      </div>
+      </div>
+
+      <h2 class="page-title cart-quotation-heading" style="font-size:1.25rem;margin-top:2rem">Quotation preview</h2>
+      <div class="sec-quotation" id="quotation-preview" aria-label="Quotation preview">
+        <div class="sec-quotation__frame">
+          <div class="sec-quotation__margin-art sec-quotation__margin-art--left" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="sec-quotation__margin-art sec-quotation__margin-art--tr" aria-hidden="true">
+            <span class="sec-quotation__sq"></span>
+            <span class="sec-quotation__bar-h"></span>
+          </div>
+          <div class="sec-quotation__margin-art sec-quotation__margin-art--br" aria-hidden="true">
+            <span></span><span></span>
+          </div>
+          <div class="sec-quotation__inner">
+            <header class="sec-quotation__head">
+              <div class="sec-quotation__logo-wrap">
+                <img
+                  class="sec-quotation__logo-img"
+                  src="assets/logo/SECLogo.png"
+                  alt="SEC"
+                  decoding="async"
+                />
+              </div>
+              <p class="sec-quotation__tagline">Freelance Services</p>
+              <p class="sec-quotation__contact">
+                Cell/Whatsapp: <span id="q-phone"></span>
+              </p>
+              <p class="sec-quotation__contact">Email: <span id="q-email"></span></p>
+            </header>
+            <h3 class="sec-quotation__title">QUOTATION</h3>
+            <div class="sec-quotation__date-row">
+              <span class="sec-quotation__date">DATE <span id="q-date"></span></span>
+            </div>
+            <div class="sec-quotation__split">
+              <div class="sec-quotation__col">
+                <h4 class="sec-quotation__col-title">Quoted to:</h4>
+                <div class="sec-quotation__col-body" id="q-quoted-to"></div>
+              </div>
+              <div class="sec-quotation__col">
+                <h4 class="sec-quotation__col-title">Payment info:</h4>
+                <div class="sec-quotation__col-body" id="q-payment"></div>
+              </div>
+            </div>
+            <div class="sec-quotation__table-block">
+            <table class="sec-quotation__table">
+              <thead>
+                <tr>
+                  <th scope="col">ITEM DESCRIPTION</th>
+                  <th scope="col">PRICE</th>
+                </tr>
+              </thead>
+              <tbody id="q-items-body"></tbody>
+            </table>
+            </div>
+            <div class="sec-quotation__subtotal-row">
+              <span class="sec-quotation__subtotal-label">SUBTOTAL</span>
+              <span class="sec-quotation__subtotal-value" id="q-subtotal"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/currency.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/checkout.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    (function () {
+      const tbody = document.getElementById("cart-body");
+      const emptyEl = document.getElementById("cart-empty");
+      const filledEl = document.getElementById("cart-filled");
+      const subEl = document.getElementById("cart-subtotal");
+      const form = document.getElementById("order-form");
+      const statusEl = document.getElementById("form-status");
+      const btnSubmit = document.getElementById("btn-submit");
+
+      if (!form || !statusEl || !btnSubmit) {
+        console.error("SEC cart: missing #order-form, #form-status, or #btn-submit");
+        return;
+      }
+
+      /* Block default form POST (e.g. Enter in a field) — submit is handled in JS only. */
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+      });
+
+      function customer() {
+        return {
+          name: document.getElementById("cust-name").value.trim(),
+          email: document.getElementById("cust-email").value.trim(),
+          phone: document.getElementById("cust-phone").value.trim(),
+          company: document.getElementById("cust-co").value.trim(),
+        };
+      }
+
+      /** Name, email, and phone must be filled before PDF, print, or submit. */
+      function ensureContactForQuotation() {
+        statusEl.textContent = "";
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          statusEl.textContent =
+            "Add your full name, email, and phone number before you print, download a PDF, or submit.";
+          return false;
+        }
+        return true;
+      }
+
+      function fmtLine(jmd, inquire) {
+        if (inquire) return "TBD";
+        if (window.SEC_Currency && window.SEC_Currency.formatFromJmd) {
+          return window.SEC_Currency.formatFromJmd((jmd || 0) * 1);
+        }
+        return "$" + Number(jmd || 0).toLocaleString();
+      }
+
+      function syncCurrencyNote() {
+        const el = document.getElementById("cart-currency-note");
+        if (!el || !window.SEC_Currency || !window.SEC_Currency.get) return;
+        const cur = window.SEC_Currency.get();
+        if (cur === "usd") {
+          el.innerHTML =
+            "<strong>USD</strong> is approximate (converted from JMD). Final totals are confirmed in <strong>JMD</strong> unless otherwise agreed.";
+        } else {
+          el.innerHTML = "All $ amounts are <strong>Jamaican dollars (JMD)</strong>.";
+        }
+      }
+
+      function render() {
+        const items = SECCart.load();
+        syncCurrencyNote();
+        if (!items.length) {
+          emptyEl.hidden = false;
+          filledEl.hidden = true;
+          return;
+        }
+        statusEl.textContent = "";
+        emptyEl.hidden = true;
+        filledEl.hidden = false;
+        tbody.innerHTML = "";
+        items.forEach((i) => {
+          const tr = document.createElement("tr");
+          const lineTotal = (i.price || 0) * (i.qty || 1);
+          const line = i.inquire ? "TBD" : fmtLine(lineTotal, false);
+          tr.innerHTML =
+            "<td>" +
+            escapeHtml(i.name) +
+            (i.notes ? "<br><small style='color:var(--text-muted)'>" + escapeHtml(i.notes) + "</small>" : "") +
+            "</td><td>" +
+            (i.qty || 1) +
+            "</td><td>" +
+            line +
+            "</td><td><button type='button' class='btn btn-ghost btn-sm' data-remove='" +
+            escapeHtml(i.lineId) +
+            "'>Remove</button></td>";
+          tbody.appendChild(tr);
+        });
+        tbody.querySelectorAll("[data-remove]").forEach((b) => {
+          b.addEventListener("click", () => SECCart.remove(b.getAttribute("data-remove")));
+        });
+        subEl.textContent = fmtLine(SECCart.subtotal(), false);
+        syncPreview();
+      }
+
+      window.SECCart_refreshDisplay = render;
+
+      function escapeHtml(s) {
+        if (!s) return "";
+        const d = document.createElement("div");
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
+      function formatQuotDate(d) {
+        const dd = String(d.getDate()).padStart(2, "0");
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const yyyy = d.getFullYear();
+        return dd + "." + mm + "." + yyyy;
+      }
+
+      function syncPreview() {
+        const items = SECCart.load();
+        const c = customer();
+        const cfg = window.SEC_CONFIG || {};
+        const text = SECCheckout.buildInvoiceText(items, c);
+        document.getElementById("f-order-json").value = JSON.stringify(items);
+        document.getElementById("f-invoice-text").value = text;
+
+        const qPhone = document.getElementById("q-phone");
+        const qEmail = document.getElementById("q-email");
+        if (qPhone) qPhone.textContent = cfg.CONTACT_PHONE_DISPLAY || "—";
+        if (qEmail) qEmail.textContent = cfg.CONTACT_EMAIL || "—";
+
+        const qDate = document.getElementById("q-date");
+        if (qDate) qDate.textContent = formatQuotDate(new Date());
+
+        const quotedTo = document.getElementById("q-quoted-to");
+        const qBits = [];
+        if (c.name) qBits.push("<strong>" + escapeHtml(c.name) + "</strong>");
+        if (c.company) qBits.push(escapeHtml(c.company));
+        if (c.email) qBits.push(escapeHtml(c.email));
+        if (c.phone) qBits.push(escapeHtml(c.phone));
+        if (quotedTo) {
+          quotedTo.innerHTML =
+            qBits.length > 0 ? qBits.join("<br>") : '<span class="sec-quotation__placeholder">—</span>';
+        }
+
+        const pay = document.getElementById("q-payment");
+        const bankBits = [];
+        if (cfg.BANK_NAME) bankBits.push("Bank: " + escapeHtml(cfg.BANK_NAME));
+        if (cfg.BANK_ACCOUNT_NUMBER != null && cfg.BANK_ACCOUNT_NUMBER !== "") {
+          bankBits.push("Account Number: " + escapeHtml(String(cfg.BANK_ACCOUNT_NUMBER)));
+        }
+        if (cfg.BANK_ACCOUNT_NAME) bankBits.push("A/C Name: " + escapeHtml(cfg.BANK_ACCOUNT_NAME));
+        if (cfg.BANK_BRANCH) bankBits.push("Branch: " + escapeHtml(cfg.BANK_BRANCH));
+        if (pay) {
+          pay.innerHTML =
+            bankBits.length > 0 ? bankBits.join("<br>") : '<span class="sec-quotation__placeholder">—</span>';
+        }
+
+        const qBody = document.getElementById("q-items-body");
+        if (qBody) {
+          qBody.innerHTML = "";
+          items.forEach((i) => {
+            const tr = document.createElement("tr");
+            const qty = i.qty || 1;
+            let desc = escapeHtml(i.name || "");
+            if (qty > 1) desc += " × " + qty;
+            if (i.notes) {
+              desc +=
+                '<br><span class="sec-quotation__item-note">' + escapeHtml(i.notes) + "</span>";
+            }
+            const lineTotal = (i.price || 0) * qty;
+            const priceCell = i.inquire ? "TBD" : fmtLine(lineTotal, false);
+            tr.innerHTML =
+              "<td>" +
+              desc +
+              '</td><td class="sec-quotation__price">' +
+              escapeHtml(priceCell) +
+              "</td>";
+            qBody.appendChild(tr);
+          });
+        }
+
+        const qSub = document.getElementById("q-subtotal");
+        if (qSub) qSub.textContent = fmtLine(SECCart.subtotal(), false);
+      }
+
+      window.addEventListener("sec-cart-updated", render);
+      form.addEventListener("input", syncPreview);
+
+      document.getElementById("btn-print").addEventListener("click", () => {
+        const items = SECCart.load();
+        if (!items.length) return;
+        if (!ensureContactForQuotation()) return;
+        syncPreview();
+        window.print();
+      });
+
+      document.getElementById("btn-pdf").addEventListener("click", async function () {
+        const items = SECCart.load();
+        if (!items.length) return;
+        if (!ensureContactForQuotation()) return;
+        syncPreview();
+        const frame = document.querySelector("#quotation-preview .sec-quotation__frame");
+        const btn = document.getElementById("btn-pdf");
+        if (!frame || typeof html2canvas !== "function" || !window.jspdf) {
+          statusEl.textContent =
+            "PDF export is unavailable. Use Print and choose “Save as PDF” instead.";
+          return;
+        }
+        const prev = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = "Generating…";
+        statusEl.textContent = "";
+        try {
+          if (document.fonts && document.fonts.ready) {
+            await document.fonts.ready;
+          }
+          const canvas = await html2canvas(frame, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: "#ffffff",
+            logging: false,
+          });
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
+          const pageW = pdf.internal.pageSize.getWidth();
+          const pageH = pdf.internal.pageSize.getHeight();
+          const margin = 12;
+          const maxW = pageW - margin * 2;
+          const maxH = pageH - margin * 2;
+          const imgWpx = canvas.width;
+          const imgHpx = canvas.height;
+          let drawW = maxW;
+          let drawH = (imgHpx * drawW) / imgWpx;
+          if (drawH > maxH) {
+            drawH = maxH;
+            drawW = (imgWpx * drawH) / imgHpx;
+          }
+          const x = margin + (maxW - drawW) / 2;
+          const y = margin + (maxH - drawH) / 2;
+          const imgData = canvas.toDataURL("image/png");
+          pdf.addImage(imgData, "PNG", x, y, drawW, drawH);
+          pdf.save("sec-quotation-" + Date.now() + ".pdf");
+        } catch (e) {
+          statusEl.textContent =
+            "Could not build the PDF. Use Print and choose “Save as PDF”.";
+        } finally {
+          btn.disabled = false;
+          btn.textContent = prev;
+        }
+      });
+
+      btnSubmit.addEventListener("click", async function () {
+        statusEl.textContent = "";
+        const items = SECCart.load();
+        if (!items.length) {
+          statusEl.textContent = "Cart is empty.";
+          return;
+        }
+        if (!document.getElementById("accept-terms").checked) {
+          statusEl.textContent = "Please accept the terms of business.";
+          return;
+        }
+        if (!ensureContactForQuotation()) return;
+        const action = (window.SEC_CONFIG && window.SEC_CONFIG.FORMSPREE_ACTION) || "";
+        if (!action || action.indexOf("YOUR_FORM_ID") !== -1) {
+          statusEl.textContent =
+            "Set your Formspree URL in js/config.js (replace YOUR_FORM_ID) to enable email. You can still download a PDF or print.";
+          return;
+        }
+
+        let syncErr = null;
+        try {
+          syncPreview();
+        } catch (err) {
+          syncErr = err;
+          console.error("SEC cart syncPreview:", err);
+        }
+        if (syncErr) {
+          statusEl.textContent =
+            "Something went wrong preparing your request. Refresh the page and try again, or email SEC directly.";
+          return;
+        }
+
+        const fd = new FormData(form);
+        btnSubmit.disabled = true;
+        const prevLabel = btnSubmit.textContent;
+        btnSubmit.textContent = "Sending…";
+        statusEl.textContent = "Sending…";
+
+        try {
+          const res = await fetch(action, {
+            method: "POST",
+            body: fd,
+            headers: { Accept: "application/json" },
+          });
+          const data = await res.json().catch(() => ({}));
+          const formspreeOk = res.ok && data.ok !== false && !data.error;
+          if (formspreeOk) {
+            statusEl.textContent = "Request sent. SEC will follow up shortly.";
+            SECCart.clear();
+            render();
+          } else {
+            statusEl.textContent =
+              (typeof data.error === "string" && data.error) ||
+              (data.errors && JSON.stringify(data.errors)) ||
+              "Send failed (" +
+                res.status +
+                "). Try again or email SEC with your cart details.";
+          }
+        } catch (e) {
+          console.error("SEC cart Formspree fetch:", e);
+          statusEl.textContent = "Network error. Check your connection and try again.";
+        } finally {
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = prevLabel;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
