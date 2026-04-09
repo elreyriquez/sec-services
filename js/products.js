@@ -1,5 +1,5 @@
 /**
- * SEC Service Configurator — catalog (keep in sync with shaquille-freelance-rate-card.md; web care = weighted units)
+ * SEC services catalog (keep in sync with shaquille-freelance-rate-card.md; web care = weighted units)
  */
 window.SEC_CATALOG = {
   production: [
