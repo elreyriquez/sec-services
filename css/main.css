@@ -248,6 +248,186 @@ a:hover {
   display: none !important;
 }
 
+/* —— Mobile nav (hamburger) — desktop unchanged from here until media query —— */
+.nav-toggle {
+  display: none;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  line-height: 0;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+.nav-toggle:hover {
+  border-color: var(--accent);
+  background: var(--surface-muted);
+}
+.nav-toggle:focus-visible {
+  outline: 2px solid var(--accent-hover);
+  outline-offset: 2px;
+}
+.nav-toggle__icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 1.15rem;
+}
+.nav-toggle__bar {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--text);
+  border-radius: 1px;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+  transform-origin: center;
+}
+.site-header.is-menu-open .nav-toggle__bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.site-header.is-menu-open .nav-toggle__bar:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.site-header.is-menu-open .nav-toggle__bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.nav-overlay {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: var(--site-header-h, 4.25rem);
+  bottom: 0;
+  z-index: 55;
+  background: rgba(26, 26, 26, 0.4);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.22s ease,
+    visibility 0.22s ease;
+}
+.nav-overlay.nav-overlay--open {
+  opacity: 1;
+  visibility: visible;
+}
+
+body.nav-drawer-open {
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .site-header__inner {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 100%;
+    padding: 0.5rem 1rem;
+  }
+  .logo-mark {
+    justify-self: auto;
+    min-width: 0;
+  }
+  .logo-mark__img {
+    height: clamp(44px, 12vw, 56px);
+    width: auto;
+  }
+  .site-header__actions {
+    justify-self: auto;
+    margin-left: auto;
+    flex-shrink: 0;
+    gap: 0.35rem;
+  }
+  .currency-toggle__btn {
+    padding: 0.28rem 0.4rem;
+    font-size: 0.54rem;
+  }
+  .cart-link {
+    padding: 0.26rem 0.45rem;
+    font-size: 0.58rem;
+  }
+  .nav-toggle {
+    display: inline-flex;
+  }
+  .nav-main {
+    position: fixed;
+    left: 0;
+    top: var(--site-header-h, 4.25rem);
+    bottom: 0;
+    width: min(19.5rem, 88vw);
+    margin: 0;
+    padding: 1rem 1rem 1.5rem;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0.4rem;
+    background: var(--surface);
+    border-right: 1px solid var(--border-strong);
+    box-shadow: 6px 0 28px rgba(0, 0, 0, 0.12);
+    z-index: 60;
+    transform: translateX(-105%);
+    transition: transform 0.24s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    justify-self: auto;
+    max-width: none;
+    scrollbar-width: thin;
+  }
+  .site-header.is-menu-open .nav-main {
+    transform: translateX(0);
+  }
+  .site-header:not(.is-menu-open) .nav-main {
+    pointer-events: none;
+  }
+  .nav-main a {
+    white-space: normal;
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 0.62rem 0.85rem;
+    font-size: 0.68rem;
+    line-height: 1.35;
+  }
+  .nav-overlay {
+    display: block;
+  }
+}
+
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+  .nav-main {
+    transition: none;
+  }
+  .nav-overlay {
+    transition: none;
+  }
+  .nav-toggle__bar {
+    transition: none;
+  }
+}
+
+@media (min-width: 901px) {
+  .nav-overlay {
+    display: none !important;
+  }
+}
+
 /* —— Main —— */
 main {
   max-width: 720px;
@@ -358,6 +538,101 @@ main {
   text-transform: uppercase;
   margin: 0 0 0.5rem;
   color: var(--text-muted);
+}
+
+/* Collapsible retainer sections — same label style as h2 + obvious expand control */
+details.section-block--collapsible {
+  padding-bottom: 1.35rem;
+  margin-bottom: 1.35rem;
+  border-bottom: 1px solid var(--border-strong);
+}
+details.section-block--collapsible:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0.75rem;
+}
+
+.section-block__h2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  list-style: none;
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+  padding: 0.4rem 0.35rem 0.4rem 0;
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  user-select: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.section-block__h2:hover {
+  background: var(--surface-muted);
+  color: var(--text);
+}
+.section-block__h2::-webkit-details-marker {
+  display: none;
+}
+.section-block__h2::after {
+  content: "▾";
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  line-height: 1;
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.section-block__h2:hover::after {
+  border-color: rgba(0, 0, 0, 0.35);
+  background: var(--surface-muted);
+}
+details.section-block--collapsible[open] > .section-block__h2::after {
+  transform: rotate(-180deg);
+}
+
+/* Web Services → Website care: stacked collapsibles under tab h2 */
+#care > .web-care-collapsible:first-of-type {
+  margin-top: 0.5rem;
+}
+
+/* Graphic, motion & video page */
+#production-main > .production-collapsible:first-of-type {
+  margin-top: 0.35rem;
+}
+
+.retainers-divider {
+  border: none;
+  border-top: 1px solid var(--border-strong);
+  margin: 0.25rem 0 1.5rem;
+}
+.retainers-divider--nested {
+  margin: 1.35rem 0 1rem;
+}
+
+.ticket-tier-guide--nested {
+  margin-bottom: 0.15rem;
+}
+.ticket-tier-guide__nested-title {
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: 1.2rem;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.5rem;
+  color: var(--text);
+  line-height: 1.2;
 }
 .section-block > h3 {
   font-family: var(--font-head);
@@ -477,6 +752,10 @@ main {
 }
 .pick-row:hover {
   background: var(--surface-muted);
+}
+
+.pick-row__main {
+  min-width: 0;
 }
 
 .pick-row--vid-edit {
@@ -789,6 +1068,17 @@ main {
   text-align: center;
   padding: 0.55rem 1rem;
 }
+/* Solid black CTA — distinct from default primary (theme) and ghost controls */
+.care-estimator-reveal.btn-primary {
+  background: #0d0d0d;
+  color: #fff;
+  border-color: #0d0d0d;
+}
+.care-estimator-reveal.btn-primary:hover {
+  background: #2a2a2a;
+  border-color: #2a2a2a;
+  color: #fff;
+}
 
 .care-panel {
   background: var(--surface-muted);
@@ -888,6 +1178,35 @@ select.field {
   font-size: 0.62rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+}
+
+.cart-discount {
+  margin: 1rem 0;
+  max-width: 28rem;
+}
+.cart-discount__label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+  font-family: var(--font-head);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cart-discount__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cart-discount__input {
+  flex: 1;
+  min-width: 10rem;
+  max-width: 16rem;
+}
+
+.sec-quotation__subtotal-row--discount .sec-quotation__subtotal-value {
+  color: var(--accent-hover);
 }
 
 .terms-box {
@@ -1060,6 +1379,21 @@ select.field {
   line-height: 1;
   color: #0d0d0d;
 }
+.sec-quotation__binding-note {
+  margin: 0 0 0.65rem;
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #444;
+  line-height: 1.35;
+}
+.cart-quote-disclaimer {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
 .sec-quotation__date-row {
   text-align: right;
   padding-bottom: 0.35rem;
@@ -1204,6 +1538,7 @@ select.field {
 
 @media print {
   .site-header,
+  .nav-overlay,
   .actions-row,
   .no-print {
     display: none !important;
@@ -1226,6 +1561,9 @@ select.field {
   }
   /* Care: always print estimator card even if it was collapsed */
   #care-estimator-panel {
+    display: block !important;
+  }
+  details.section-block--collapsible > *:not(summary) {
     display: block !important;
   }
   .sec-quotation {

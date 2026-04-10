@@ -12,7 +12,7 @@
       <a href="index.html" class="logo-mark" aria-label="SEC — Home">
         <img class="logo-mark__img" src="assets/logo/SECLogo.png" alt="" decoding="async" />
       </a>
-      <nav class="nav-main" aria-label="Main">
+      <nav class="nav-main" id="site-main-nav" aria-label="Main">
         <a href="production.html">Graphic, Motion &amp; Video</a>
         <a href="web-services.html">Web Services</a>
         <a href="retainers.html">Retainers &amp; bundles</a>
@@ -27,6 +27,20 @@
         </div>
         <a href="cart.html" class="cart-link">Cart <span id="cart-badge" hidden></span></a>
       </div>
+      <button
+        type="button"
+        class="nav-toggle no-print"
+        id="nav-toggle"
+        aria-expanded="false"
+        aria-controls="site-main-nav"
+        aria-label="Open menu"
+      >
+        <span class="nav-toggle__icon" aria-hidden="true">
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+        </span>
+      </button>
     </div>
   </header>
   <main>

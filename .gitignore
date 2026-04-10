@@ -2,3 +2,8 @@
 *.log
 .env
 .env.*
+.venv/
+
+# Discount secrets and private reference (never push to GitHub)
+js/discount-codes.secret.js
+docs/discount-codes-reference.pdf

@@ -1,4 +1,14 @@
 (function () {
+  /** Match cart.js: priced lines only, finite numbers, inquire → 0 */
+  function lineJmdTotal(i) {
+    if (!i || i.inquire) return 0;
+    const p = Number(i.price);
+    const q = Number(i.qty);
+    const qty = Number.isFinite(q) && q > 0 ? q : 1;
+    if (!Number.isFinite(p)) return 0;
+    return p * qty;
+  }
+
   function buildInvoiceText(items, customer) {
     const cfg = window.SEC_CONFIG || {};
     const cur = window.SEC_Currency && window.SEC_Currency.get ? window.SEC_Currency.get() : "jmd";
@@ -10,6 +20,8 @@
     lines.push(cfg.BUSINESS_NAME || "SEC Services");
     lines.push("QUOTATION REQUEST");
     lines.push("=".repeat(44));
+    lines.push("NOTE: Figures below are indicative only. A binding quote is issued after SEC reviews your request.");
+    lines.push("-".repeat(44));
     if (customer) {
       lines.push(`Name: ${customer.name || "—"}`);
       lines.push(`Email: ${customer.email || "—"}`);
@@ -19,15 +31,23 @@
     }
     let sub = 0;
     items.forEach((i, n) => {
-      const lineTotal = (i.inquire ? 0 : (i.price || 0) * (i.qty || 1));
+      const lineTotal = lineJmdTotal(i);
       sub += lineTotal;
       lines.push(`${n + 1}. ${i.name} × ${i.qty || 1}`);
       if (i.inquire) lines.push(`   [Inquire — price TBD]`);
-      else lines.push(`   ${fmt((i.price || 0) * (i.qty || 1))}`);
+      else lines.push(`   ${fmt(lineTotal)}`);
       if (i.notes) lines.push(`   Note: ${i.notes}`);
     });
     lines.push("-".repeat(44));
     lines.push(`Subtotal (priced items): ${fmt(sub)}`);
+    const disc =
+      window.SECCart && typeof SECCart.getDiscount === "function" ? SECCart.getDiscount() : null;
+    if (disc && sub > 0) {
+      const off = Math.round((sub * disc.percent) / 100);
+      const tot = Math.max(0, sub - off);
+      lines.push(`Discount (${disc.code} · ${disc.percent}%): -${fmt(off)}`);
+      lines.push(`Total after discount: ${fmt(tot)}`);
+    }
     if (cur === "usd" && window.SEC_Currency && window.SEC_Currency.jmdPerUsd) {
       lines.push(
         `(USD figures use ~${window.SEC_Currency.jmdPerUsd()} JMD = 1 USD — confirm on final quote.)`

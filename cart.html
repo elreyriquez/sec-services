@@ -15,7 +15,7 @@
       <a href="index.html" class="logo-mark" aria-label="SEC — Home">
         <img class="logo-mark__img" src="assets/logo/SECLogo.png" alt="" decoding="async" />
       </a>
-      <nav class="nav-main" aria-label="Main">
+      <nav class="nav-main" id="site-main-nav" aria-label="Main">
         <a href="production.html">Graphic, Motion &amp; Video</a>
         <a href="web-services.html">Web Services</a>
         <a href="retainers.html">Retainers &amp; bundles</a>
@@ -30,11 +30,29 @@
         </div>
         <a href="cart.html" class="cart-link" aria-current="page">Cart <span id="cart-badge" hidden></span></a>
       </div>
+      <button
+        type="button"
+        class="nav-toggle no-print"
+        id="nav-toggle"
+        aria-expanded="false"
+        aria-controls="site-main-nav"
+        aria-label="Open menu"
+      >
+        <span class="nav-toggle__icon" aria-hidden="true">
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+        </span>
+      </button>
     </div>
   </header>
   <main>
     <h1 class="page-title cart-print-hide">Cart &amp; quote</h1>
-    <p class="lead cart-print-hide">Review your line items. This is an <strong>order request</strong>, not a binding contract until SEC confirms.</p>
+    <p class="lead cart-print-hide">
+      Review your line items. This is an <strong>order request</strong> only: totals and line prices are
+      <strong>indicative</strong> until SEC reviews your brief and issues a written quote. Nothing here is a binding
+      contract or final fee.
+    </p>
 
     <p id="form-status" class="meta cart-print-hide" style="margin:0 0 1rem" aria-live="polite"></p>
 
@@ -56,6 +74,33 @@
         <tbody id="cart-body"></tbody>
       </table>
       <p><strong>Subtotal (priced lines):</strong> <span id="cart-subtotal">$0</span></p>
+
+      <div class="cart-discount cart-print-hide">
+        <label class="cart-discount__label" for="discount-code">Discount code</label>
+        <div class="cart-discount__row">
+          <input
+            id="discount-code"
+            class="field cart-discount__input"
+            type="text"
+            name="discount_code_input"
+            autocomplete="off"
+            placeholder="Enter code"
+          />
+          <button type="button" class="btn btn-ghost" id="btn-discount-apply">Apply</button>
+          <button type="button" class="btn btn-ghost" id="btn-discount-clear" hidden>Remove</button>
+        </div>
+        <p class="meta" id="discount-msg" style="margin: 0.35rem 0 0"></p>
+      </div>
+
+      <p id="cart-discount-summary" hidden>
+        <strong>Discount:</strong> <span id="cart-discount-desc">—</span>
+        (<span id="cart-discount-amount">$0</span>)
+      </p>
+      <p><strong>Total:</strong> <span id="cart-total">$0</span></p>
+      <p class="callout cart-quote-disclaimer cart-print-hide" role="note">
+        <strong>Not a final quote.</strong> SEC will confirm scope, pricing, and timeline after reviewing your request.
+        Cart totals are a guide for discussion, not an invoice or binding offer.
+      </p>
       <p class="meta" id="cart-currency-note">All $ amounts are <strong>Jamaican dollars (JMD)</strong>.</p>
 
       <h2 class="page-title" style="font-size:1.25rem;margin-top:2rem">Terms of business</h2>
@@ -91,6 +136,10 @@
         </div>
         <input type="hidden" name="order_json" id="f-order-json" value="" />
         <input type="hidden" name="invoice_text" id="f-invoice-text" value="" />
+        <input type="hidden" name="discount_code" id="f-discount-code" value="" />
+        <input type="hidden" name="discount_percent" id="f-discount-pct" value="" />
+        <input type="hidden" name="cart_subtotal_jmd" id="f-subtotal-jmd" value="" />
+        <input type="hidden" name="cart_total_jmd" id="f-total-jmd" value="" />
         <input type="hidden" name="_subject" value="SEC job request" />
       </form>
 
@@ -131,6 +180,9 @@
               <p class="sec-quotation__contact">Email: <span id="q-email"></span></p>
             </header>
             <h3 class="sec-quotation__title">QUOTATION</h3>
+            <p class="sec-quotation__binding-note">
+              Indicative request only — binding quote after SEC review.
+            </p>
             <div class="sec-quotation__date-row">
               <span class="sec-quotation__date">DATE <span id="q-date"></span></span>
             </div>
@@ -155,9 +207,17 @@
               <tbody id="q-items-body"></tbody>
             </table>
             </div>
-            <div class="sec-quotation__subtotal-row">
-              <span class="sec-quotation__subtotal-label">SUBTOTAL</span>
+            <div class="sec-quotation__subtotal-row" id="q-row-lines-sub">
+              <span class="sec-quotation__subtotal-label" id="q-label-lines-sub">SUBTOTAL</span>
               <span class="sec-quotation__subtotal-value" id="q-subtotal"></span>
+            </div>
+            <div class="sec-quotation__subtotal-row sec-quotation__subtotal-row--discount" id="q-row-discount" hidden>
+              <span class="sec-quotation__subtotal-label" id="q-discount-label">DISCOUNT</span>
+              <span class="sec-quotation__subtotal-value" id="q-discount-value"></span>
+            </div>
+            <div class="sec-quotation__subtotal-row" id="q-row-grand" hidden>
+              <span class="sec-quotation__subtotal-label">TOTAL</span>
+              <span class="sec-quotation__subtotal-value" id="q-grand-total"></span>
             </div>
           </div>
         </div>
@@ -165,327 +225,414 @@
     </div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
   <script src="js/config.js"></script>
   <script src="js/products.js"></script>
+  <script src="js/discount-codes.secret.js"></script>
+  <script src="js/discount-codes.js"></script>
   <script src="js/currency.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/checkout.js"></script>
   <script src="js/app.js"></script>
   <script>
     (function () {
-      const tbody = document.getElementById("cart-body");
-      const emptyEl = document.getElementById("cart-empty");
-      const filledEl = document.getElementById("cart-filled");
-      const subEl = document.getElementById("cart-subtotal");
-      const form = document.getElementById("order-form");
-      const statusEl = document.getElementById("form-status");
-      const btnSubmit = document.getElementById("btn-submit");
 
-      if (!form || !statusEl || !btnSubmit) {
-        console.error("SEC cart: missing #order-form, #form-status, or #btn-submit");
-        return;
-      }
-
-      /* Block default form POST (e.g. Enter in a field) — submit is handled in JS only. */
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-      });
-
-      function customer() {
-        return {
-          name: document.getElementById("cust-name").value.trim(),
-          email: document.getElementById("cust-email").value.trim(),
-          phone: document.getElementById("cust-phone").value.trim(),
-          company: document.getElementById("cust-co").value.trim(),
-        };
-      }
-
-      /** Name, email, and phone must be filled before PDF, print, or submit. */
-      function ensureContactForQuotation() {
-        statusEl.textContent = "";
-        if (!form.checkValidity()) {
-          form.reportValidity();
-          statusEl.textContent =
-            "Add your full name, email, and phone number before you print, download a PDF, or submit.";
-          return false;
-        }
-        return true;
-      }
-
-      function fmtLine(jmd, inquire) {
-        if (inquire) return "TBD";
-        if (window.SEC_Currency && window.SEC_Currency.formatFromJmd) {
-          return window.SEC_Currency.formatFromJmd((jmd || 0) * 1);
-        }
-        return "$" + Number(jmd || 0).toLocaleString();
-      }
-
-      function syncCurrencyNote() {
-        const el = document.getElementById("cart-currency-note");
-        if (!el || !window.SEC_Currency || !window.SEC_Currency.get) return;
-        const cur = window.SEC_Currency.get();
-        if (cur === "usd") {
-          el.innerHTML =
-            "<strong>USD</strong> is approximate (converted from JMD). Final totals are confirmed in <strong>JMD</strong> unless otherwise agreed.";
-        } else {
-          el.innerHTML = "All $ amounts are <strong>Jamaican dollars (JMD)</strong>.";
-        }
-      }
-
-      function render() {
-        const items = SECCart.load();
-        syncCurrencyNote();
-        if (!items.length) {
-          emptyEl.hidden = false;
-          filledEl.hidden = true;
-          return;
-        }
-        statusEl.textContent = "";
-        emptyEl.hidden = true;
-        filledEl.hidden = false;
-        tbody.innerHTML = "";
-        items.forEach((i) => {
-          const tr = document.createElement("tr");
-          const lineTotal = (i.price || 0) * (i.qty || 1);
-          const line = i.inquire ? "TBD" : fmtLine(lineTotal, false);
-          tr.innerHTML =
-            "<td>" +
-            escapeHtml(i.name) +
-            (i.notes ? "<br><small style='color:var(--text-muted)'>" + escapeHtml(i.notes) + "</small>" : "") +
-            "</td><td>" +
-            (i.qty || 1) +
-            "</td><td>" +
-            line +
-            "</td><td><button type='button' class='btn btn-ghost btn-sm' data-remove='" +
-            escapeHtml(i.lineId) +
-            "'>Remove</button></td>";
-          tbody.appendChild(tr);
-        });
-        tbody.querySelectorAll("[data-remove]").forEach((b) => {
-          b.addEventListener("click", () => SECCart.remove(b.getAttribute("data-remove")));
-        });
-        subEl.textContent = fmtLine(SECCart.subtotal(), false);
-        syncPreview();
-      }
-
-      window.SECCart_refreshDisplay = render;
-
-      function escapeHtml(s) {
+      /* ─── helpers ─────────────────────────────────────────── */
+      function esc(s) {
         if (!s) return "";
-        const d = document.createElement("div");
+        var d = document.createElement("div");
         d.textContent = s;
         return d.innerHTML;
       }
 
-      function formatQuotDate(d) {
-        const dd = String(d.getDate()).padStart(2, "0");
-        const mm = String(d.getMonth() + 1).padStart(2, "0");
-        const yyyy = d.getFullYear();
-        return dd + "." + mm + "." + yyyy;
+      function fmt(jmd) {
+        if (window.SEC_Currency && window.SEC_Currency.formatFromJmd) {
+          return window.SEC_Currency.formatFromJmd(Number(jmd) || 0);
+        }
+        return "$" + Math.round(Number(jmd) || 0).toLocaleString();
       }
 
-      function syncPreview() {
-        const items = SECCart.load();
-        const c = customer();
-        const cfg = window.SEC_CONFIG || {};
-        const text = SECCheckout.buildInvoiceText(items, c);
-        document.getElementById("f-order-json").value = JSON.stringify(items);
-        document.getElementById("f-invoice-text").value = text;
-
-        const qPhone = document.getElementById("q-phone");
-        const qEmail = document.getElementById("q-email");
-        if (qPhone) qPhone.textContent = cfg.CONTACT_PHONE_DISPLAY || "—";
-        if (qEmail) qEmail.textContent = cfg.CONTACT_EMAIL || "—";
-
-        const qDate = document.getElementById("q-date");
-        if (qDate) qDate.textContent = formatQuotDate(new Date());
-
-        const quotedTo = document.getElementById("q-quoted-to");
-        const qBits = [];
-        if (c.name) qBits.push("<strong>" + escapeHtml(c.name) + "</strong>");
-        if (c.company) qBits.push(escapeHtml(c.company));
-        if (c.email) qBits.push(escapeHtml(c.email));
-        if (c.phone) qBits.push(escapeHtml(c.phone));
-        if (quotedTo) {
-          quotedTo.innerHTML =
-            qBits.length > 0 ? qBits.join("<br>") : '<span class="sec-quotation__placeholder">—</span>';
-        }
-
-        const pay = document.getElementById("q-payment");
-        const bankBits = [];
-        if (cfg.BANK_NAME) bankBits.push("Bank: " + escapeHtml(cfg.BANK_NAME));
-        if (cfg.BANK_ACCOUNT_NUMBER != null && cfg.BANK_ACCOUNT_NUMBER !== "") {
-          bankBits.push("Account Number: " + escapeHtml(String(cfg.BANK_ACCOUNT_NUMBER)));
-        }
-        if (cfg.BANK_ACCOUNT_NAME) bankBits.push("A/C Name: " + escapeHtml(cfg.BANK_ACCOUNT_NAME));
-        if (cfg.BANK_BRANCH) bankBits.push("Branch: " + escapeHtml(cfg.BANK_BRANCH));
-        if (pay) {
-          pay.innerHTML =
-            bankBits.length > 0 ? bankBits.join("<br>") : '<span class="sec-quotation__placeholder">—</span>';
-        }
-
-        const qBody = document.getElementById("q-items-body");
-        if (qBody) {
-          qBody.innerHTML = "";
-          items.forEach((i) => {
-            const tr = document.createElement("tr");
-            const qty = i.qty || 1;
-            let desc = escapeHtml(i.name || "");
-            if (qty > 1) desc += " × " + qty;
-            if (i.notes) {
-              desc +=
-                '<br><span class="sec-quotation__item-note">' + escapeHtml(i.notes) + "</span>";
-            }
-            const lineTotal = (i.price || 0) * qty;
-            const priceCell = i.inquire ? "TBD" : fmtLine(lineTotal, false);
-            tr.innerHTML =
-              "<td>" +
-              desc +
-              '</td><td class="sec-quotation__price">' +
-              escapeHtml(priceCell) +
-              "</td>";
-            qBody.appendChild(tr);
-          });
-        }
-
-        const qSub = document.getElementById("q-subtotal");
-        if (qSub) qSub.textContent = fmtLine(SECCart.subtotal(), false);
+      function fmtLine(jmd, inquire) {
+        return inquire ? "TBD" : fmt(jmd);
       }
 
-      window.addEventListener("sec-cart-updated", render);
-      form.addEventListener("input", syncPreview);
+      function loadScript(src) {
+        return new Promise(function (resolve, reject) {
+          var s = document.createElement("script");
+          s.src = src; s.async = true;
+          s.onload = resolve;
+          s.onerror = function () { reject(new Error("Failed: " + src)); };
+          document.head.appendChild(s);
+        });
+      }
 
-      document.getElementById("btn-print").addEventListener("click", () => {
-        const items = SECCart.load();
-        if (!items.length) return;
-        if (!ensureContactForQuotation()) return;
-        syncPreview();
-        window.print();
-      });
+      function ensurePdfLibs() {
+        if (typeof html2canvas === "function" && window.jspdf) return Promise.resolve();
+        return loadScript(
+          "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"
+        ).then(function () {
+          return loadScript("https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js");
+        });
+      }
 
-      document.getElementById("btn-pdf").addEventListener("click", async function () {
-        const items = SECCart.load();
-        if (!items.length) return;
-        if (!ensureContactForQuotation()) return;
-        syncPreview();
-        const frame = document.querySelector("#quotation-preview .sec-quotation__frame");
-        const btn = document.getElementById("btn-pdf");
-        if (!frame || typeof html2canvas !== "function" || !window.jspdf) {
-          statusEl.textContent =
-            "PDF export is unavailable. Use Print and choose “Save as PDF” instead.";
-          return;
-        }
-        const prev = btn.textContent;
-        btn.disabled = true;
-        btn.textContent = "Generating…";
-        statusEl.textContent = "";
-        try {
-          if (document.fonts && document.fonts.ready) {
-            await document.fonts.ready;
-          }
-          const canvas = await html2canvas(frame, {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: "#ffffff",
-            logging: false,
-          });
-          const { jsPDF } = window.jspdf;
-          const pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
-          const pageW = pdf.internal.pageSize.getWidth();
-          const pageH = pdf.internal.pageSize.getHeight();
-          const margin = 12;
-          const maxW = pageW - margin * 2;
-          const maxH = pageH - margin * 2;
-          const imgWpx = canvas.width;
-          const imgHpx = canvas.height;
-          let drawW = maxW;
-          let drawH = (imgHpx * drawW) / imgWpx;
-          if (drawH > maxH) {
-            drawH = maxH;
-            drawW = (imgWpx * drawH) / imgHpx;
-          }
-          const x = margin + (maxW - drawW) / 2;
-          const y = margin + (maxH - drawH) / 2;
-          const imgData = canvas.toDataURL("image/png");
-          pdf.addImage(imgData, "PNG", x, y, drawW, drawH);
-          pdf.save("sec-quotation-" + Date.now() + ".pdf");
-        } catch (e) {
-          statusEl.textContent =
-            "Could not build the PDF. Use Print and choose “Save as PDF”.";
-        } finally {
-          btn.disabled = false;
-          btn.textContent = prev;
-        }
-      });
+      function fmtDate(d) {
+        return String(d.getDate()).padStart(2,"0") + "." +
+               String(d.getMonth()+1).padStart(2,"0") + "." + d.getFullYear();
+      }
 
-      btnSubmit.addEventListener("click", async function () {
-        statusEl.textContent = "";
-        const items = SECCart.load();
-        if (!items.length) {
-          statusEl.textContent = "Cart is empty.";
-          return;
-        }
-        if (!document.getElementById("accept-terms").checked) {
-          statusEl.textContent = "Please accept the terms of business.";
-          return;
-        }
-        if (!ensureContactForQuotation()) return;
-        const action = (window.SEC_CONFIG && window.SEC_CONFIG.FORMSPREE_ACTION) || "";
-        if (!action || action.indexOf("YOUR_FORM_ID") !== -1) {
-          statusEl.textContent =
-            "Set your Formspree URL in js/config.js (replace YOUR_FORM_ID) to enable email. You can still download a PDF or print.";
+      /* ─── main init (runs after DOM ready) ───────────────── */
+      function init() {
+        var tbody    = document.getElementById("cart-body");
+        var emptyEl  = document.getElementById("cart-empty");
+        var filledEl = document.getElementById("cart-filled");
+        var subSpan  = document.getElementById("cart-subtotal");
+        var totSpan  = document.getElementById("cart-total");
+        var form     = document.getElementById("order-form");
+        var statusEl = document.getElementById("form-status");
+        var btnSubmit = document.getElementById("btn-submit");
+
+        if (!form || !statusEl || !btnSubmit) {
+          console.error("SEC cart: missing required elements");
           return;
         }
 
-        let syncErr = null;
-        try {
-          syncPreview();
-        } catch (err) {
-          syncErr = err;
-          console.error("SEC cart syncPreview:", err);
-        }
-        if (syncErr) {
-          statusEl.textContent =
-            "Something went wrong preparing your request. Refresh the page and try again, or email SEC directly.";
-          return;
-        }
+        var suppressEmptyCart = false;
 
-        const fd = new FormData(form);
-        btnSubmit.disabled = true;
-        const prevLabel = btnSubmit.textContent;
-        btnSubmit.textContent = "Sending…";
-        statusEl.textContent = "Sending…";
+        form.addEventListener("submit", function (e) { e.preventDefault(); });
 
-        try {
-          const res = await fetch(action, {
-            method: "POST",
-            body: fd,
-            headers: { Accept: "application/json" },
-          });
-          const data = await res.json().catch(() => ({}));
-          const formspreeOk = res.ok && data.ok !== false && !data.error;
-          if (formspreeOk) {
-            statusEl.textContent = "Request sent. SEC will follow up shortly.";
-            SECCart.clear();
-            render();
+        /* ── totals bar ───────────────────────────────────── */
+        function updateTotals() {
+          var sub   = SECCart.subtotal();
+          var disc  = SECCart.getDiscount();
+          var off   = SECCart.discountAmountJmd();
+          var grand = SECCart.subtotalAfterDiscount();
+
+          if (subSpan) subSpan.textContent = fmt(sub);
+          if (totSpan) totSpan.textContent = fmt(grand);
+
+          var sumRow  = document.getElementById("cart-discount-summary");
+          var descEl  = document.getElementById("cart-discount-desc");
+          var amtEl   = document.getElementById("cart-discount-amount");
+          var btnClr  = document.getElementById("btn-discount-clear");
+          var inpDisc = document.getElementById("discount-code");
+          var noteEl  = document.getElementById("cart-currency-note");
+
+          if (disc && off > 0) {
+            if (sumRow) sumRow.hidden = false;
+            if (descEl) descEl.textContent = disc.code + " \xB7 " + disc.percent + "%";
+            if (amtEl)  amtEl.textContent  = "-" + fmt(off);
+            if (btnClr) btnClr.hidden = false;
+            if (inpDisc && !inpDisc.matches(":focus")) inpDisc.value = disc.code;
           } else {
-            statusEl.textContent =
-              (typeof data.error === "string" && data.error) ||
-              (data.errors && JSON.stringify(data.errors)) ||
-              "Send failed (" +
-                res.status +
-                "). Try again or email SEC with your cart details.";
+            if (sumRow) sumRow.hidden = true;
+            if (btnClr) btnClr.hidden = true;
+            if (inpDisc && !disc) inpDisc.value = "";
           }
-        } catch (e) {
-          console.error("SEC cart Formspree fetch:", e);
-          statusEl.textContent = "Network error. Check your connection and try again.";
-        } finally {
-          btnSubmit.disabled = false;
-          btnSubmit.textContent = prevLabel;
+
+          if (noteEl && window.SEC_Currency && window.SEC_Currency.get) {
+            if (window.SEC_Currency.get() === "usd") {
+              noteEl.innerHTML = "<strong>USD</strong> is approximate. Final totals confirmed in <strong>JMD</strong>.";
+            } else {
+              noteEl.innerHTML = "All $ amounts are <strong>Jamaican dollars (JMD)</strong>.";
+            }
+          }
         }
-      });
+
+        /* ── quotation / hidden-field sync ───────────────── */
+        function updatePreview() {
+          var items = SECCart.load();
+          var sub   = SECCart.subtotal();
+          var disc  = SECCart.getDiscount();
+          var off   = SECCart.discountAmountJmd();
+          var grand = SECCart.subtotalAfterDiscount();
+          var cfg   = window.SEC_CONFIG || {};
+          var c = {
+            name:    (document.getElementById("cust-name")  || {value:""}).value,
+            email:   (document.getElementById("cust-email") || {value:""}).value,
+            phone:   (document.getElementById("cust-phone") || {value:""}).value,
+            company: (document.getElementById("cust-co")    || {value:""}).value,
+          };
+
+          var text = (window.SECCheckout && window.SECCheckout.buildInvoiceText)
+                     ? window.SECCheckout.buildInvoiceText(items, c) : "";
+
+          var el;
+          el = document.getElementById("f-order-json");
+          if (el) el.value = JSON.stringify({ items: items, discount: disc, subtotalJmd: sub, discountJmd: disc && sub > 0 ? off : 0, totalJmd: grand });
+          el = document.getElementById("f-invoice-text");    if (el) el.value = text;
+          el = document.getElementById("f-discount-code");   if (el) el.value = disc && off > 0 ? disc.code : "";
+          el = document.getElementById("f-discount-pct");    if (el) el.value = disc && off > 0 ? String(disc.percent) : "";
+          el = document.getElementById("f-subtotal-jmd");    if (el) el.value = String(sub);
+          el = document.getElementById("f-total-jmd");       if (el) el.value = String(grand);
+
+          el = document.getElementById("q-phone"); if (el) el.textContent = cfg.CONTACT_PHONE_DISPLAY || "\u2014";
+          el = document.getElementById("q-email"); if (el) el.textContent = cfg.CONTACT_EMAIL || "\u2014";
+          el = document.getElementById("q-date");  if (el) el.textContent = fmtDate(new Date());
+
+          var quotedTo = document.getElementById("q-quoted-to");
+          if (quotedTo) {
+            var bits = [];
+            if (c.name)    bits.push("<strong>" + esc(c.name) + "</strong>");
+            if (c.company) bits.push(esc(c.company));
+            if (c.email)   bits.push(esc(c.email));
+            if (c.phone)   bits.push(esc(c.phone));
+            quotedTo.innerHTML = bits.length ? bits.join("<br>") : '<span class="sec-quotation__placeholder">\u2014</span>';
+          }
+
+          var pay = document.getElementById("q-payment");
+          if (pay) {
+            var bb = [];
+            if (cfg.BANK_NAME)         bb.push("Bank: " + esc(cfg.BANK_NAME));
+            if (cfg.BANK_ACCOUNT_NUMBER != null && cfg.BANK_ACCOUNT_NUMBER !== "") bb.push("Account Number: " + esc(String(cfg.BANK_ACCOUNT_NUMBER)));
+            if (cfg.BANK_ACCOUNT_NAME) bb.push("A/C Name: " + esc(cfg.BANK_ACCOUNT_NAME));
+            if (cfg.BANK_BRANCH)       bb.push("Branch: " + esc(cfg.BANK_BRANCH));
+            pay.innerHTML = bb.length ? bb.join("<br>") : '<span class="sec-quotation__placeholder">\u2014</span>';
+          }
+
+          var qBody = document.getElementById("q-items-body");
+          if (qBody) {
+            qBody.innerHTML = "";
+            items.forEach(function (i) {
+              var tr = document.createElement("tr");
+              var q2 = i.qty || 1;
+              var desc = esc(i.name || "");
+              if (q2 > 1) desc += " \xD7 " + q2;
+              if (i.notes) desc += '<br><span class="sec-quotation__item-note">' + esc(i.notes) + "</span>";
+              var price = i.inquire ? "TBD" : fmt((i.price || 0) * q2);
+              tr.innerHTML = "<td>" + desc + '</td><td class="sec-quotation__price">' + esc(price) + "</td>";
+              qBody.appendChild(tr);
+            });
+          }
+
+          var qSub     = document.getElementById("q-subtotal");
+          var qRowDisc = document.getElementById("q-row-discount");
+          var qRowGrand = document.getElementById("q-row-grand");
+          var qLabSub  = document.getElementById("q-label-lines-sub");
+          var qGrand   = document.getElementById("q-grand-total");
+          var qDiscLab = document.getElementById("q-discount-label");
+          var qDiscVal = document.getElementById("q-discount-value");
+          if (qSub) qSub.textContent = fmt(sub);
+          if (disc && sub > 0 && off > 0) {
+            if (qLabSub)  qLabSub.textContent = "SUBTOTAL";
+            if (qRowDisc) { qRowDisc.hidden = false; }
+            if (qDiscLab) qDiscLab.textContent = "DISCOUNT (" + disc.code + " \xB7 " + disc.percent + "%)";
+            if (qDiscVal) qDiscVal.textContent = "-" + fmt(off);
+            if (qRowGrand) qRowGrand.hidden = false;
+            if (qGrand) qGrand.textContent = fmt(grand);
+          } else {
+            if (qLabSub)  qLabSub.textContent = "SUBTOTAL";
+            if (qRowDisc) qRowDisc.hidden = true;
+            if (qRowGrand) qRowGrand.hidden = true;
+          }
+        }
+
+        /* ── customer details validation ──────────────────── */
+        function customer() {
+          return {
+            name:    (document.getElementById("cust-name")  || {value:""}).value.trim(),
+            email:   (document.getElementById("cust-email") || {value:""}).value.trim(),
+            phone:   (document.getElementById("cust-phone") || {value:""}).value.trim(),
+            company: (document.getElementById("cust-co")    || {value:""}).value.trim(),
+          };
+        }
+
+        function ensureContact() {
+          statusEl.textContent = "";
+          if (!form.checkValidity()) {
+            form.reportValidity();
+            statusEl.textContent = "Add your full name, email, and phone number before you print, download a PDF, or submit.";
+            return false;
+          }
+          return true;
+        }
+
+        /* ── main render ─────────────────────────────────── */
+        function render() {
+          var items = SECCart.load();
+
+          if (!items.length) {
+            if (emptyEl)  emptyEl.hidden  = suppressEmptyCart;
+            if (filledEl) filledEl.hidden = true;
+            /* still update totals so spans read $0 */
+            updateTotals();
+            return;
+          }
+
+          suppressEmptyCart = false;
+          statusEl.textContent = "";
+          if (emptyEl)  emptyEl.hidden  = true;
+          if (filledEl) filledEl.hidden = false;
+
+          /* build table */
+          if (tbody) {
+            tbody.innerHTML = "";
+            items.forEach(function (i) {
+              var tr = document.createElement("tr");
+              var q = Number(i.qty);
+              q = (Number.isFinite(q) && q > 0) ? q : 1;
+              var lineJmd  = i.inquire ? 0 : Number(i.price || 0) * q;
+              var lineText = i.inquire ? "TBD" : fmt(lineJmd);
+              tr.innerHTML =
+                "<td>" + esc(i.name) +
+                (i.notes ? "<br><small style='color:var(--text-muted)'>" + esc(i.notes) + "</small>" : "") +
+                "</td><td>" + q +
+                "</td><td>" + lineText +
+                "</td><td><button type='button' class='btn btn-ghost btn-sm' data-remove='" + esc(i.lineId) + "'>Remove</button></td>";
+              tbody.appendChild(tr);
+            });
+            tbody.querySelectorAll("[data-remove]").forEach(function (b) {
+              b.addEventListener("click", function () {
+                SECCart.remove(b.getAttribute("data-remove"));
+              });
+            });
+          }
+
+          /* update money display AFTER table is visible */
+          updateTotals();
+          updatePreview();
+        }
+
+        /* expose so currency.js can re-trigger on currency switch */
+        window.SECCart_refreshDisplay = render;
+
+        /* ── event wiring ─────────────────────────────────── */
+        window.addEventListener("sec-cart-updated", render);
+        window.addEventListener("storage", function (ev) {
+          if (ev.key === "sec_cart_v1" || ev.key === "sec_cart_discount_v1") render();
+        });
+        window.addEventListener("pageshow", function (ev) {
+          if (ev.persisted) render();
+        });
+        /* update quotation preview while customer types contact details */
+        form.addEventListener("input", function () { updateTotals(); updatePreview(); });
+
+        /* discount apply */
+        var btnDiscApply = document.getElementById("btn-discount-apply");
+        if (btnDiscApply) {
+          btnDiscApply.addEventListener("click", function () {
+            var msg = document.getElementById("discount-msg");
+            var inp = document.getElementById("discount-code");
+            var raw = inp ? inp.value : "";
+            if (msg) msg.textContent = "";
+            if (!window.SEC_validateDiscountCode) {
+              if (msg) msg.textContent = "Discount codes are unavailable.";
+              return;
+            }
+            var v = SEC_validateDiscountCode(raw);
+            if (!v) { if (msg) msg.textContent = "That code isn\u2019t valid."; return; }
+            SECCart.setDiscount(v.code, v.percent);
+            if (msg) msg.textContent = "Applied " + v.percent + "% off priced lines.";
+          });
+        }
+
+        /* discount remove */
+        var btnDiscClear = document.getElementById("btn-discount-clear");
+        if (btnDiscClear) {
+          btnDiscClear.addEventListener("click", function () {
+            SECCart.clearDiscount();
+            var inp = document.getElementById("discount-code");
+            var msg = document.getElementById("discount-msg");
+            if (inp) inp.value = "";
+            if (msg) msg.textContent = "";
+          });
+        }
+
+        /* print */
+        var btnPrint = document.getElementById("btn-print");
+        if (btnPrint) {
+          btnPrint.addEventListener("click", function () {
+            if (!SECCart.load().length) return;
+            if (!ensureContact()) return;
+            updatePreview();
+            window.print();
+          });
+        }
+
+        /* pdf download */
+        var btnPdf = document.getElementById("btn-pdf");
+        if (btnPdf) {
+          btnPdf.addEventListener("click", async function () {
+            if (!SECCart.load().length) return;
+            if (!ensureContact()) return;
+            updatePreview();
+            var frame = document.querySelector("#quotation-preview .sec-quotation__frame");
+            var btn   = document.getElementById("btn-pdf");
+            if (!frame || !btn) { statusEl.textContent = "PDF unavailable. Use Print \u2192 Save as PDF."; return; }
+            try { await ensurePdfLibs(); } catch (e) {
+              statusEl.textContent = "Could not load PDF tools. Use Print \u2192 Save as PDF."; return;
+            }
+            if (typeof html2canvas !== "function" || !window.jspdf) {
+              statusEl.textContent = "PDF unavailable. Use Print \u2192 Save as PDF."; return;
+            }
+            var prev = btn.textContent;
+            btn.disabled = true; btn.textContent = "Generating\u2026"; statusEl.textContent = "";
+            try {
+              if (document.fonts && document.fonts.ready) await document.fonts.ready;
+              var canvas = await html2canvas(frame, { scale: 2, useCORS: true, backgroundColor: "#ffffff", logging: false });
+              var { jsPDF } = window.jspdf;
+              var pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
+              var pw = pdf.internal.pageSize.getWidth();
+              var ph = pdf.internal.pageSize.getHeight();
+              var m  = 12;
+              var mw = pw - m * 2; var mh = ph - m * 2;
+              var iw = canvas.width; var ih = canvas.height;
+              var dw = mw; var dh = (ih * dw) / iw;
+              if (dh > mh) { dh = mh; dw = (iw * dh) / ih; }
+              pdf.addImage(canvas.toDataURL("image/png"), "PNG", m + (mw - dw) / 2, m + (mh - dh) / 2, dw, dh);
+              pdf.save("sec-quotation-" + Date.now() + ".pdf");
+            } catch (e) {
+              statusEl.textContent = "Could not build PDF. Use Print \u2192 Save as PDF.";
+            } finally {
+              btn.disabled = false; btn.textContent = prev;
+            }
+          });
+        }
+
+        /* submit */
+        btnSubmit.addEventListener("click", async function () {
+          statusEl.textContent = "";
+          if (!SECCart.load().length) { statusEl.textContent = "Cart is empty."; return; }
+          if (!document.getElementById("accept-terms").checked) { statusEl.textContent = "Please accept the terms of business."; return; }
+          if (!ensureContact()) return;
+          var action = (window.SEC_CONFIG && window.SEC_CONFIG.FORMSPREE_ACTION) || "";
+          if (!action || action.indexOf("YOUR_FORM_ID") !== -1) {
+            statusEl.textContent = "Set your Formspree URL in js/config.js to enable email. You can still download a PDF or print."; return;
+          }
+          updatePreview();
+          var fd = new FormData(form);
+          btnSubmit.disabled = true;
+          var prev = btnSubmit.textContent;
+          btnSubmit.textContent = "Sending\u2026"; statusEl.textContent = "Sending\u2026";
+          try {
+            var res  = await fetch(action, { method: "POST", body: fd, headers: { Accept: "application/json" } });
+            var data = await res.json().catch(function () { return {}; });
+            if (res.ok && data.ok !== false && !data.error) {
+              statusEl.textContent = "Request sent. SEC will follow up shortly.";
+              suppressEmptyCart = true;
+              SECCart.clear();
+              render();
+            } else {
+              statusEl.textContent = (typeof data.error === "string" && data.error)
+                || (data.errors && JSON.stringify(data.errors))
+                || "Send failed (" + res.status + "). Try again or email SEC directly.";
+            }
+          } catch (e) {
+            console.error("SEC cart Formspree:", e);
+            statusEl.textContent = "Network error. Check your connection and try again.";
+          } finally {
+            btnSubmit.disabled = false; btnSubmit.textContent = prev;
+          }
+        });
+
+        /* ── initial render ── */
+        render();
+      }
+
+      /* Run after DOM is ready */
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
     })();
   </script>
 </body>

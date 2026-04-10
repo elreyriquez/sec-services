@@ -1,10 +1,10 @@
 /**
  * Maps client self-report to Light / Standard / Heavy (guidance only — final classification on intake).
  * Light: replace image and/or text in existing areas.
- * Standard: add section or add content (no swap, or swaps only — user spec).
+ * Standard: add section or blog post (no swap, or swaps only — user spec).
  * Heavy: combination of changes (swap) AND additions, or strong signals in description.
  */
-function secEstimateCareTier({ swapImage, swapText, addSection, addContent, description }) {
+function secEstimateCareTier({ swapImage, swapText, addSection, addBlogPost, description }) {
   const desc = (description || "").toLowerCase();
   const heavyKw = [
     "new page",
@@ -24,7 +24,7 @@ function secEstimateCareTier({ swapImage, swapText, addSection, addContent, desc
   }
 
   const hasSwap = swapImage || swapText;
-  const hasAdd = addSection || addContent;
+  const hasAdd = addSection || addBlogPost;
 
   if (hasSwap && hasAdd) {
     return {
@@ -33,7 +33,16 @@ function secEstimateCareTier({ swapImage, swapText, addSection, addContent, desc
     };
   }
   if (hasAdd && !hasSwap) {
-    return { tier: "standard", reason: "Adding sections or new content (without also changing existing images/text in place) usually maps to **Standard**." };
+    const blogOnly = addBlogPost && !addSection;
+    const sectionOnly = addSection && !addBlogPost;
+    return {
+      tier: "standard",
+      reason: blogOnly
+        ? "**Add blog post** (with no in-place image/text swaps selected) usually maps to **Standard**."
+        : sectionOnly
+          ? "Adding a new section (without also changing existing images/text in place) usually maps to **Standard**."
+          : "Adding a section or blog post (without also changing existing images/text in place) usually maps to **Standard**.",
+    };
   }
   if (hasSwap && !hasAdd) {
     return { tier: "light", reason: "Replacing pictures and/or paragraph text in existing areas usually maps to **Light**." };
@@ -44,12 +53,10 @@ function secEstimateCareTier({ swapImage, swapText, addSection, addContent, desc
   };
 }
 
-function tierPrice(tier, platform) {
+function tierPrice(tier, _platform) {
   if (!tier) return null;
-  const map =
-    platform === "sec"
-      ? { light: 9000, standard: 14000, heavy: 23000 }
-      : { light: 8000, standard: 12000, heavy: 20000 };
+  /* Single à la carte JMD per tier (aligned with site guide); platform only picks product id for intake. */
+  const map = { light: 9000, standard: 14000, heavy: 23000 };
   return map[tier];
 }
 

@@ -12,7 +12,7 @@
       <a href="index.html" class="logo-mark" aria-current="page" aria-label="SEC — Home">
         <img class="logo-mark__img" src="assets/logo/SECLogo.png" alt="" decoding="async" />
       </a>
-      <nav class="nav-main" aria-label="Main">
+      <nav class="nav-main" id="site-main-nav" aria-label="Main">
         <a href="production.html">Graphic, Motion &amp; Video</a>
         <a href="web-services.html">Web Services</a>
         <a href="retainers.html">Retainers &amp; bundles</a>
@@ -27,13 +27,28 @@
         </div>
         <a href="cart.html" class="cart-link">Cart <span id="cart-badge" hidden></span></a>
       </div>
+      <button
+        type="button"
+        class="nav-toggle no-print"
+        id="nav-toggle"
+        aria-expanded="false"
+        aria-controls="site-main-nav"
+        aria-label="Open menu"
+      >
+        <span class="nav-toggle__icon" aria-hidden="true">
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+        </span>
+      </button>
     </div>
   </header>
   <main>
     <div class="hero">
       <h1>Build your request. Get a clear quote.</h1>
       <p>
-        Browse services by category, add items to your cart, then download or send your order. Final quotes are always confirmed by SEC after review.
+        Browse services by category, add items to your cart, then download or send your order. Cart amounts are
+        <strong>guides for discussion</strong> — SEC confirms the final quote in writing after reviewing your request.
       </p>
     </div>
     <div class="category-grid">
@@ -63,7 +78,9 @@
       </a>
     </div>
     <p class="callout" style="margin-top:2rem">
-      Submit a cart as a <strong>job request</strong> and it is emailed via <strong>Formspree</strong>. You can also <strong>download a PDF</strong> or <strong>print</strong> the quotation from the cart.
+      Submit a cart as a <strong>job request</strong> (not a final quote) via <strong>Formspree</strong>. SEC follows up
+      with a proper quote once they have considered your brief. You can also <strong>download a PDF</strong> or
+      <strong>print</strong> the indicative summary from the cart.
     </p>
   </main>
   <script src="js/config.js"></script>

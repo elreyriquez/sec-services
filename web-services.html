@@ -12,7 +12,7 @@
       <a href="index.html" class="logo-mark" aria-label="SEC — Home">
         <img class="logo-mark__img" src="assets/logo/SECLogo.png" alt="" decoding="async" />
       </a>
-      <nav class="nav-main" aria-label="Main">
+      <nav class="nav-main" id="site-main-nav" aria-label="Main">
         <a href="production.html">Graphic, Motion &amp; Video</a>
         <a href="web-services.html" aria-current="page">Web Services</a>
         <a href="retainers.html">Retainers &amp; bundles</a>
@@ -27,6 +27,20 @@
         </div>
         <a href="cart.html" class="cart-link">Cart <span id="cart-badge" hidden></span></a>
       </div>
+      <button
+        type="button"
+        class="nav-toggle no-print"
+        id="nav-toggle"
+        aria-expanded="false"
+        aria-controls="site-main-nav"
+        aria-label="Open menu"
+      >
+        <span class="nav-toggle__icon" aria-hidden="true">
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+        </span>
+      </button>
     </div>
   </header>
   <main>
@@ -37,23 +51,23 @@
         type="button"
         class="web-tabs__btn"
         role="tab"
-        id="tab-brand-new"
-        aria-selected="false"
-        aria-controls="brand-new"
-        data-web-tab="brand-new"
-      >
-        Brand new website
-      </button>
-      <button
-        type="button"
-        class="web-tabs__btn"
-        role="tab"
         id="tab-care"
         aria-selected="false"
         aria-controls="care"
         data-web-tab="care"
       >
         Website care &amp; management
+      </button>
+      <button
+        type="button"
+        class="web-tabs__btn"
+        role="tab"
+        id="tab-brand-new"
+        aria-selected="false"
+        aria-controls="brand-new"
+        data-web-tab="brand-new"
+      >
+        Brand new website
       </button>
     </div>
 
@@ -91,21 +105,16 @@
           <a href="https://www.wix.com/pricing" target="_blank" rel="noopener">wix.com/pricing</a>.
         </p>
 
-        <h3>Wix — build fees (JMD)</h3>
+        <h3>Wix — build fees</h3>
         <div class="service-panel">
         <div class="pick-list">
           <div class="pick-row">
             <div class="pick-row__main">
-              <span class="pick-row__title">Site foundation</span>
-              <span class="pick-row__meta">Global styles, header/footer, nav, go-live checklist.</span>
+              <span class="pick-row__title">Site foundation + Home page</span>
+              <span class="pick-row__meta">US$100. Global styles, header/footer, nav, go-live checklist; full home layout (hero, sections, CTAs, mobile pass). JMD follows site rate.</span>
             </div>
-            <span class="pick-row__price">28,000</span>
-            <button type="button" class="pick-add" data-add-product="wix-foundation">Add</button>
-          </div>
-          <div class="pick-row">
-            <div class="pick-row__main"><span class="pick-row__title">Home page</span></div>
-            <span class="pick-row__price">38,000</span>
-            <button type="button" class="pick-add" data-add-product="wix-home">Add</button>
+            <span class="pick-row__price">15,600</span>
+            <button type="button" class="pick-add" data-add-product="wix-foundation-home">Add</button>
           </div>
           <div class="pick-row">
             <div class="pick-row__main"><span class="pick-row__title">Additional Pages</span></div>
@@ -141,19 +150,17 @@
         <p class="brand-journey-back-wrap no-print">
           <button type="button" class="link-like" id="btn-brand-back-sec">← Change build path</button>
         </p>
-        <h3>Custom SEC Built Website — build fees (JMD)</h3>
+        <h3>Custom SEC Built Website — build fees</h3>
         <p class="meta" style="margin-bottom:1rem">Coded site; you pay domain &amp; hosting (often low/free tier). Future updates and care can be handled under Website care &amp; management.</p>
         <div class="service-panel">
         <div class="pick-list">
           <div class="pick-row">
-            <div class="pick-row__main"><span class="pick-row__title">Site foundation</span></div>
-            <span class="pick-row__price">36,000</span>
-            <button type="button" class="pick-add" data-add-product="sec-foundation">Add</button>
-          </div>
-          <div class="pick-row">
-            <div class="pick-row__main"><span class="pick-row__title">Home page</span></div>
-            <span class="pick-row__price">46,000</span>
-            <button type="button" class="pick-add" data-add-product="sec-home">Add</button>
+            <div class="pick-row__main">
+              <span class="pick-row__title">Site foundation + Home page</span>
+              <span class="pick-row__meta">US$200. Repo/hosting connect, global styles, header/footer/nav, deploy shell; coded home (hero, sections, CTAs, mobile pass). JMD follows site rate.</span>
+            </div>
+            <span class="pick-row__price">31,200</span>
+            <button type="button" class="pick-add" data-add-product="sec-foundation-home">Add</button>
           </div>
           <div class="pick-row">
             <div class="pick-row__main"><span class="pick-row__title">Additional Pages</span></div>
@@ -193,121 +200,133 @@
       aria-labelledby="tab-care"
       hidden
     >
-      <h2>Website care &amp; management</h2>
-      <div class="ticket-tier-guide">
-        <p class="meta ticket-tier-guide__intro">
-          Classify each update as <strong>Light</strong>, <strong>Standard</strong>, or <strong>Heavy</strong> tickets.
+      <details class="section-block section-block--collapsible web-care-collapsible">
+        <summary class="section-block__h2">General Web Care and Management</summary>
+        <div class="ticket-tier-guide">
+          <p class="meta ticket-tier-guide__intro">
+            Classify each update as <strong>Light</strong>, <strong>Standard</strong>, or <strong>Heavy</strong> tickets.
+          </p>
+          <div class="service-panel">
+            <div class="pick-list ticket-tier-guide__list">
+              <div class="pick-row ticket-tier-guide__row">
+                <div class="pick-row__main">
+                  <span class="pick-row__title">Light</span>
+                  <span class="pick-row__meta">Replace/update images or paragraph text in existing areas.</span>
+                </div>
+                <span class="pick-row__price" data-jmd-amount="9000">9,000</span>
+              </div>
+              <div class="pick-row ticket-tier-guide__row">
+                <div class="pick-row__main">
+                  <span class="pick-row__title">Standard</span>
+                  <span class="pick-row__meta">Add section or <strong>add blog post</strong>.</span>
+                </div>
+                <span class="pick-row__price" data-jmd-amount="14000">14,000</span>
+              </div>
+              <div class="pick-row ticket-tier-guide__row">
+                <div class="pick-row__main">
+                  <span class="pick-row__title">Heavy</span>
+                  <span class="pick-row__meta">Combination of changes and additions, or scope signals a large rebuild (use estimator below).</span>
+                </div>
+                <span class="pick-row__price" data-jmd-amount="23000">23,000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="care-estimator-entry no-print">
+          <button
+            type="button"
+            class="btn btn-primary care-estimator-reveal"
+            id="btn-care-reveal"
+            aria-expanded="false"
+            aria-controls="care-estimator-panel"
+          >
+            Get your update ticket quote
+          </button>
+        </div>
+
+        <div id="care-estimator-panel" class="care-panel care-estimator-panel" role="region" aria-labelledby="btn-care-reveal" hidden>
+          <p class="meta" style="margin-top:0">Prices are not final and are subject to change after review.</p>
+          <label class="meta" for="care-platform">Site type</label>
+          <select id="care-platform" class="field" style="max-width:280px;margin-bottom:1rem">
+            <option value="wix">Wix / Webflow / Squarespace</option>
+            <option value="sec">Custom SEC built</option>
+          </select>
+          <div class="care-checks">
+            <label><input type="checkbox" id="c-swap-img" /> Replace or update image(s) in an existing area</label>
+            <label><input type="checkbox" id="c-swap-txt" /> Replace or update text in an existing paragraph/block</label>
+            <label><input type="checkbox" id="c-add-sec" /> Add a new section</label>
+            <label><input type="checkbox" id="c-blog-post" /> Add blog post</label>
+          </div>
+          <label class="meta" for="care-desc">Describe the work</label>
+          <textarea id="care-desc" class="field" placeholder="Page URL, what should change, deadline…"></textarea>
+          <div class="actions-row no-print">
+            <button type="button" class="btn btn-ghost" id="btn-care-estimate">Estimate tier</button>
+          </div>
+          <div id="care-result" class="estimator-result" hidden>
+            <div class="tier-label" id="care-tier-title"></div>
+            <p id="care-tier-reason" style="margin:0;font-size:0.9rem;color:var(--text-muted)"></p>
+            <p id="care-tier-price" style="margin:0.75rem 0 0;font-weight:700;color:var(--accent-hover)"></p>
+            <button type="button" class="pick-add" id="btn-care-add" hidden style="margin-top:0.75rem">Add to cart</button>
+          </div>
+        </div>
+
+        <p class="callout no-print" style="margin-top: 1.25rem">
+          <strong>Monthly website retainers</strong> (Essential / Growth) now live on
+          <a href="retainers.html">Retainers &amp; bundles</a>.
+        </p>
+      </details>
+
+      <details class="section-block section-block--collapsible web-care-collapsible">
+        <summary class="section-block__h2">Structural Web Updates</summary>
+        <p class="meta" style="margin: 0.35rem 0 0.75rem; max-width: 42rem">
+          Fixed-scope work on an existing site — <strong>not</strong> billed as Light, Standard, or Heavy tickets.
         </p>
         <div class="service-panel">
-          <div class="pick-list ticket-tier-guide__list">
-            <div class="pick-row ticket-tier-guide__row">
+          <div class="pick-list">
+            <div class="pick-row">
               <div class="pick-row__main">
-                <span class="pick-row__title">Light</span>
-                <span class="pick-row__meta">Replace/update images or paragraph text in existing areas.</span>
+                <span class="pick-row__title">Site Foundation Update</span>
+                <span class="pick-row__meta">Global styles, header/footer, nav refresh on an existing site.</span>
               </div>
-              <div class="ticket-tier-guide__prices" aria-label="À la carte JMD">
-                <div class="ticket-tier-guide__price-slot">
-                  <span class="ticket-tier-guide__amount" data-jmd-amount="8000">$8,000</span>
-                  <span class="ticket-tier-guide__site">Wix / builder</span>
-                </div>
-                <div class="ticket-tier-guide__price-slot">
-                  <span class="ticket-tier-guide__amount" data-jmd-amount="9000">$9,000</span>
-                  <span class="ticket-tier-guide__site">Custom SEC</span>
-                </div>
-              </div>
+              <span class="pick-row__price">28,000</span>
+              <button type="button" class="pick-add" data-add-product="care-scoped-found">Add</button>
             </div>
-            <div class="pick-row ticket-tier-guide__row">
+            <div class="pick-row">
               <div class="pick-row__main">
-                <span class="pick-row__title">Standard</span>
-                <span class="pick-row__meta">Add section or add content (no in-place swaps, or per your brief).</span>
+                <span class="pick-row__title">Add Additional Page</span>
+                <span class="pick-row__meta">New page on an existing site.</span>
               </div>
-              <div class="ticket-tier-guide__prices" aria-label="À la carte JMD">
-                <div class="ticket-tier-guide__price-slot">
-                  <span class="ticket-tier-guide__amount" data-jmd-amount="12000">$12,000</span>
-                  <span class="ticket-tier-guide__site">Wix / builder</span>
-                </div>
-                <div class="ticket-tier-guide__price-slot">
-                  <span class="ticket-tier-guide__amount" data-jmd-amount="14000">$14,000</span>
-                  <span class="ticket-tier-guide__site">Custom SEC</span>
-                </div>
-              </div>
+              <span class="pick-row__price">25,000</span>
+              <button type="button" class="pick-add" data-add-product="care-scoped-page">Add</button>
             </div>
-            <div class="pick-row ticket-tier-guide__row">
+            <div class="pick-row">
               <div class="pick-row__main">
-                <span class="pick-row__title">Heavy</span>
-                <span class="pick-row__meta">Combination of changes and additions, or scope signals a large rebuild (use estimator below).</span>
+                <span class="pick-row__title">Premium Landing and Hero Section Upgrade</span>
+                <span class="pick-row__meta">Hero / landing treatment upgrade on an existing page.</span>
               </div>
-              <div class="ticket-tier-guide__prices" aria-label="À la carte JMD">
-                <div class="ticket-tier-guide__price-slot">
-                  <span class="ticket-tier-guide__amount" data-jmd-amount="20000">$20,000</span>
-                  <span class="ticket-tier-guide__site">Wix / builder</span>
-                </div>
-                <div class="ticket-tier-guide__price-slot">
-                  <span class="ticket-tier-guide__amount" data-jmd-amount="23000">$23,000</span>
-                  <span class="ticket-tier-guide__site">Custom SEC</span>
-                </div>
-              </div>
+              <span class="pick-row__price">20,000</span>
+              <button type="button" class="pick-add" data-add-product="care-scoped-hero">Add</button>
             </div>
           </div>
         </div>
-      </div>
+      </details>
 
-      <div class="care-estimator-entry no-print">
-        <button
-          type="button"
-          class="btn btn-ghost care-estimator-reveal"
-          id="btn-care-reveal"
-          aria-expanded="false"
-          aria-controls="care-estimator-panel"
-        >
-          Estimate your update ticket cost
-        </button>
-      </div>
-
-      <div id="care-estimator-panel" class="care-panel care-estimator-panel" role="region" aria-labelledby="btn-care-reveal" hidden>
-        <p class="meta" style="margin-top:0">Prices are not final and are subject to change after review.</p>
-        <label class="meta" for="care-platform">Site type</label>
-        <select id="care-platform" class="field" style="max-width:280px;margin-bottom:1rem">
-          <option value="wix">Wix / Webflow / Squarespace</option>
-          <option value="sec">Custom SEC built</option>
-        </select>
-        <div class="care-checks">
-          <label><input type="checkbox" id="c-swap-img" /> Replace or update image(s) in an existing area</label>
-          <label><input type="checkbox" id="c-swap-txt" /> Replace or update text in an existing paragraph/block</label>
-          <label><input type="checkbox" id="c-add-sec" /> Add a new section</label>
-          <label><input type="checkbox" id="c-add-cnt" /> Add new content blocks</label>
-        </div>
-        <label class="meta" for="care-desc">Describe the work</label>
-        <textarea id="care-desc" class="field" placeholder="Page URL, what should change, deadline…"></textarea>
-        <div class="actions-row no-print">
-          <button type="button" class="btn btn-ghost" id="btn-care-estimate">Estimate tier</button>
-        </div>
-        <div id="care-result" class="estimator-result" hidden>
-          <div class="tier-label" id="care-tier-title"></div>
-          <p id="care-tier-reason" style="margin:0;font-size:0.9rem;color:var(--text-muted)"></p>
-          <p id="care-tier-price" style="margin:0.75rem 0 0;font-weight:700;color:var(--accent-hover)"></p>
-          <button type="button" class="pick-add" id="btn-care-add" hidden style="margin-top:0.75rem">Add to cart</button>
-        </div>
-      </div>
-
-      <h3>Search Engine Optimization</h3>
-      <div class="service-panel">
-        <div class="pick-list">
-          <div class="pick-row">
-            <div class="pick-row__main">
-              <span class="pick-row__title">Search Engine Optimization</span>
-              <span class="pick-row__meta">Technical and on-page basics; scope confirmed after review.</span>
+      <details class="section-block section-block--collapsible web-care-collapsible">
+        <summary class="section-block__h2">Search Engine Optimization</summary>
+        <div class="service-panel">
+          <div class="pick-list">
+            <div class="pick-row">
+              <div class="pick-row__main">
+                <span class="pick-row__title">Search Engine Optimization</span>
+                <span class="pick-row__meta">Technical and on-page basics; scope confirmed after review.</span>
+              </div>
+              <span class="pick-row__price">12,000</span>
+              <button type="button" class="pick-add" data-add-product="care-seo">Add</button>
             </div>
-            <span class="pick-row__price">12,000</span>
-            <button type="button" class="pick-add" data-add-product="care-seo">Add</button>
           </div>
         </div>
-      </div>
-
-      <p class="callout no-print" style="margin-top: 1.25rem">
-        <strong>Monthly website retainers</strong> (Essential / Growth) now live on
-        <a href="retainers.html">Retainers &amp; bundles</a>.
-      </p>
+      </details>
     </section>
   </main>
   <script src="js/config.js"></script>
@@ -380,6 +399,8 @@
       var initial = panelFromHash();
       if (initial) {
         showPanel(initial, false);
+      } else {
+        hideBothPanels();
       }
 
       tabs.forEach(function (btn) {
@@ -437,7 +458,7 @@
           swapImage: document.getElementById("c-swap-img").checked,
           swapText: document.getElementById("c-swap-txt").checked,
           addSection: document.getElementById("c-add-sec").checked,
-          addContent: document.getElementById("c-add-cnt").checked,
+          addBlogPost: document.getElementById("c-blog-post").checked,
           description: document.getElementById("care-desc").value,
         });
         const plat = document.getElementById("care-platform").value;

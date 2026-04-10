@@ -12,7 +12,7 @@
       <a href="index.html" class="logo-mark" aria-label="SEC — Home">
         <img class="logo-mark__img" src="assets/logo/SECLogo.png" alt="" decoding="async" />
       </a>
-      <nav class="nav-main" aria-label="Main">
+      <nav class="nav-main" id="site-main-nav" aria-label="Main">
         <a href="production.html" aria-current="page">Graphic, Motion &amp; Video</a>
         <a href="web-services.html">Web Services</a>
         <a href="retainers.html">Retainers &amp; bundles</a>
@@ -27,14 +27,27 @@
         </div>
         <a href="cart.html" class="cart-link">Cart <span id="cart-badge" hidden></span></a>
       </div>
+      <button
+        type="button"
+        class="nav-toggle no-print"
+        id="nav-toggle"
+        aria-expanded="false"
+        aria-controls="site-main-nav"
+        aria-label="Open menu"
+      >
+        <span class="nav-toggle__icon" aria-hidden="true">
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+        </span>
+      </button>
     </div>
   </header>
-  <main>
+  <main id="production-main">
     <h1 class="page-title">Graphic, motion &amp; video</h1>
-    <p class="lead">All amounts are <strong>Jamaican dollars (JMD)</strong>, shown with a <strong>$</strong> prefix.</p>
 
-    <section class="section-block">
-      <h2>Graphics &amp; motion</h2>
+    <details class="section-block section-block--collapsible production-collapsible">
+      <summary class="section-block__h2">Graphics &amp; motion</summary>
       <div class="service-panel">
         <div class="pick-list">
           <div class="pick-row">
@@ -61,10 +74,11 @@
           </div>
         </div>
       </div>
-    </section>
+    </details>
 
-    <section class="section-block">
-      <h2>Video editing — social (max 3:00)</h2>
+    <details class="section-block section-block--collapsible production-collapsible">
+      <summary class="section-block__h2">Video editing</summary>
+      <p class="meta" style="margin: 0.35rem 0 0.75rem; max-width: 42rem">Social deliverables, finished length up to <strong>3:00</strong>.</p>
       <div class="service-panel">
         <div class="pick-list">
           <div class="pick-row pick-row--vid-edit">
@@ -90,16 +104,17 @@
           </div>
         </div>
       </div>
-    </section>
+    </details>
 
-    <section class="section-block">
-      <h2>Videography — on location</h2>
+    <details class="section-block section-block--collapsible production-collapsible">
+      <summary class="section-block__h2">Videography</summary>
+      <p class="meta" style="margin: 0.35rem 0 0.75rem; max-width: 42rem">On location — hourly blocks below.</p>
       <div class="service-panel">
         <div class="pick-list">
           <div class="pick-row pick-row--shoot">
             <div class="pick-row__main">
               <span class="pick-row__title">Shoot — per hour</span>
-              <span class="pick-row__meta">Max 4 hrs / session ($60,000 cap). Outside Kingston &amp; St Andrew, Portmore, Spanish Town: +30% on shoot fees only.</span>
+              <span class="pick-row__meta">Max 4 hrs / session ($60,000 cap). Outside Kingston &amp; St Andrew, Portmore, Spanish Town: +15% on shoot fees only.</span>
             </div>
             <span class="pick-row__price" data-price-suffix=" / hr">15,000</span>
             <div class="pick-row__actions">
@@ -112,7 +127,7 @@
           </div>
         </div>
       </div>
-    </section>
+    </details>
 
     <div class="callout production-footnotes" style="margin-top: 2rem">
       <p>Two revision rounds included on graphics / motion / edits.</p>

@@ -12,7 +12,7 @@
       <a href="index.html" class="logo-mark" aria-label="SEC — Home">
         <img class="logo-mark__img" src="assets/logo/SECLogo.png" alt="" decoding="async" />
       </a>
-      <nav class="nav-main" aria-label="Main">
+      <nav class="nav-main" id="site-main-nav" aria-label="Main">
         <a href="production.html">Graphic, Motion &amp; Video</a>
         <a href="web-services.html">Web Services</a>
         <a href="retainers.html" aria-current="page">Retainers &amp; bundles</a>
@@ -27,16 +27,57 @@
         </div>
         <a href="cart.html" class="cart-link">Cart <span id="cart-badge" hidden></span></a>
       </div>
+      <button
+        type="button"
+        class="nav-toggle no-print"
+        id="nav-toggle"
+        aria-expanded="false"
+        aria-controls="site-main-nav"
+        aria-label="Open menu"
+      >
+        <span class="nav-toggle__icon" aria-hidden="true">
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+        </span>
+      </button>
     </div>
   </header>
   <main>
     <h1 class="page-title">Retainers &amp; bundles</h1>
 
-    <section class="section-block">
-      <h2>Website care retainers</h2>
-      <div class="ticket-tier-guide">
+    <details class="section-block section-block--collapsible">
+      <summary class="section-block__h2">Website care retainers</summary>
+      <div class="service-panel">
+        <div class="pick-list">
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Essential — 4 web edit units + 1 scoped update / month</span>
+              <span class="pick-row__meta">Ticket units: Light 1 · Standard 2 · Heavy 3. E.g. 2 Light + 1 Standard, or 4 Light, or 1 Heavy + 1 Light. One Scoped update per month, see scoped updates list on Web Care and Management page.</span>
+            </div>
+            <span class="pick-row__price">28,000</span>
+            <button type="button" class="pick-add" data-add-product="care-ess">Add</button>
+          </div>
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Growth — 8 web edit units + 2 scoped updates / month</span>
+              <span class="pick-row__meta">Same unit weighting. E.g. 4 Light + 2 Standard, or 2 Heavy + 2 Light, or 8 Light. <strong>Scoped updates:</strong> two per month from the same scoped list.</span>
+            </div>
+            <span class="pick-row__price">52,000</span>
+            <button type="button" class="pick-add" data-add-product="care-grow">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <hr class="retainers-divider retainers-divider--nested" />
+
+      <div class="ticket-tier-guide ticket-tier-guide--nested">
+        <h3 class="ticket-tier-guide__nested-title">Web edit units &amp; ticket tiers</h3>
         <p class="meta ticket-tier-guide__intro">
-          Classify each update as <strong>Light</strong>, <strong>Standard</strong>, or <strong>Heavy</strong> tickets.
+          Each website care request is classified as <strong>Light</strong>, <strong>Standard</strong>, or <strong>Heavy</strong>. Your retainer includes a monthly <strong>unit budget</strong> (for example <strong>4</strong> or <strong>8</strong> units). Each ticket <strong>spends</strong> units: <strong>Light = 1 edit unit</strong>, <strong>Standard = 2 edit units</strong>, <strong>Heavy = 3 edit units</strong>. You can mix tiers any way you like within that monthly total — e.g. four Light tickets use all 4 units; one Heavy plus one Light uses 3 + 1 = 4 edit units.
+        </p>
+        <p class="meta" style="margin-bottom: 0.85rem; max-width: 42rem">
+          <strong>Scoped updates</strong> (site foundation update, additional page, premium landing/hero — under Web Services → Website care) are <strong>not</strong> counted in ticket units. Essential web and Full Digital Essential include <strong>1</strong> scoped update per month; Growth plans include <strong>2</strong> per month, as stated in the rows above.
         </p>
         <div class="service-panel">
           <div class="pick-list ticket-tier-guide__list">
@@ -45,76 +86,29 @@
                 <span class="pick-row__title">Light</span>
                 <span class="pick-row__meta">Replace/update images or paragraph text in existing areas.</span>
               </div>
-              <div class="ticket-tier-guide__prices" aria-label="À la carte JMD">
-                <div class="ticket-tier-guide__price-slot">
-                  <span class="ticket-tier-guide__amount" data-jmd-amount="8000">$8,000</span>
-                  <span class="ticket-tier-guide__site">Wix / builder</span>
-                </div>
-                <div class="ticket-tier-guide__price-slot">
-                  <span class="ticket-tier-guide__amount" data-jmd-amount="9000">$9,000</span>
-                  <span class="ticket-tier-guide__site">Custom SEC</span>
-                </div>
-              </div>
+              <span class="pick-row__price" data-jmd-amount="9000">9,000</span>
             </div>
             <div class="pick-row ticket-tier-guide__row">
               <div class="pick-row__main">
                 <span class="pick-row__title">Standard</span>
-                <span class="pick-row__meta">Add section or add content (no in-place swaps, or per your brief).</span>
+                <span class="pick-row__meta">Add section or <strong>add blog post</strong>.</span>
               </div>
-              <div class="ticket-tier-guide__prices" aria-label="À la carte JMD">
-                <div class="ticket-tier-guide__price-slot">
-                  <span class="ticket-tier-guide__amount" data-jmd-amount="12000">$12,000</span>
-                  <span class="ticket-tier-guide__site">Wix / builder</span>
-                </div>
-                <div class="ticket-tier-guide__price-slot">
-                  <span class="ticket-tier-guide__amount" data-jmd-amount="14000">$14,000</span>
-                  <span class="ticket-tier-guide__site">Custom SEC</span>
-                </div>
-              </div>
+              <span class="pick-row__price" data-jmd-amount="14000">14,000</span>
             </div>
             <div class="pick-row ticket-tier-guide__row">
               <div class="pick-row__main">
                 <span class="pick-row__title">Heavy</span>
                 <span class="pick-row__meta">Combination of changes and additions, or scope signals a large rebuild.</span>
               </div>
-              <div class="ticket-tier-guide__prices" aria-label="À la carte JMD">
-                <div class="ticket-tier-guide__price-slot">
-                  <span class="ticket-tier-guide__amount" data-jmd-amount="20000">$20,000</span>
-                  <span class="ticket-tier-guide__site">Wix / builder</span>
-                </div>
-                <div class="ticket-tier-guide__price-slot">
-                  <span class="ticket-tier-guide__amount" data-jmd-amount="23000">$23,000</span>
-                  <span class="ticket-tier-guide__site">Custom SEC</span>
-                </div>
-              </div>
+              <span class="pick-row__price" data-jmd-amount="23000">23,000</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="service-panel">
-        <div class="pick-list">
-          <div class="pick-row">
-            <div class="pick-row__main">
-              <span class="pick-row__title">Essential — 4 web edits per month</span>
-              <span class="pick-row__meta">Light 1 unit · Standard 2 · Heavy 3. E.g. 2 Light + 1 Standard, or 4 Light, or 1 Heavy + 1 Light.</span>
-            </div>
-            <span class="pick-row__price">28,000</span>
-            <button type="button" class="pick-add" data-add-product="care-ess">Add</button>
-          </div>
-          <div class="pick-row">
-            <div class="pick-row__main">
-              <span class="pick-row__title">Growth — 8 web edits per month</span>
-              <span class="pick-row__meta">Same weighting. E.g. 4 Light + 2 Standard, or 2 Heavy + 2 Light, or 8 Light.</span>
-            </div>
-            <span class="pick-row__price">52,000</span>
-            <button type="button" class="pick-add" data-add-product="care-grow">Add</button>
-          </div>
-        </div>
-      </div>
-    </section>
+    </details>
 
-    <section class="section-block">
-      <h2>Graphics, motion &amp; video retainers</h2>
+    <details class="section-block section-block--collapsible">
+      <summary class="section-block__h2">Graphics, motion &amp; video retainers</summary>
       <div class="service-panel">
         <div class="pick-list">
           <div class="pick-row">
@@ -135,16 +129,43 @@
           </div>
         </div>
       </div>
-    </section>
+    </details>
 
-    <section class="section-block">
-      <h2>Full Digital Media retainer</h2>
+    <details class="section-block section-block--collapsible">
+      <summary class="section-block__h2">Social content creation retainers</summary>
+      <p class="meta" style="max-width: 42rem; margin: 0.4rem 0 1rem">
+        Bundles <strong>on-location videography</strong> with <strong>social-length edits</strong> and static creative. Counts reset each billing month unless otherwise agreed. Same revision policy as Graphic, motion &amp; video (see production page).
+      </p>
+      <div class="service-panel">
+        <div class="pick-list">
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Essential</span>
+              <span class="pick-row__meta">2 video shoots (1.5 hrs each) + 2 social video edits (0:30) + 1 static graphic per month</span>
+            </div>
+            <span class="pick-row__price">50,000</span>
+            <button type="button" class="pick-add" data-add-product="ret-soc-ess">Add</button>
+          </div>
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Growth</span>
+              <span class="pick-row__meta">2 video shoots (2 hrs each) + 3 social video edits (0:30) + 1 static graphic + 1 motion graphic (15s) per month</span>
+            </div>
+            <span class="pick-row__price">72,000</span>
+            <button type="button" class="pick-add" data-add-product="ret-soc-grow">Add</button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="section-block section-block--collapsible">
+      <summary class="section-block__h2">Full Digital Media retainer</summary>
       <div class="service-panel service-panel--featured">
         <div class="pick-list">
           <div class="pick-row">
             <div class="pick-row__main">
               <span class="pick-row__title">Essential</span>
-              <span class="pick-row__meta">4 web edits per month (Light 1 · Std 2 · Hvy 3) + 2 static graphics + 1 motion graphic (15s) + 1 social video edit / mo</span>
+              <span class="pick-row__meta">4 web edit units + 1 scoped web update per month + 2 static graphics + 1 motion graphic (15s) + 1 social video edit per month</span>
             </div>
             <span class="pick-row__price">48,000</span>
             <button type="button" class="pick-add" data-add-product="ret-full-ess">Add</button>
@@ -152,18 +173,14 @@
           <div class="pick-row">
             <div class="pick-row__main">
               <span class="pick-row__title">Growth</span>
-              <span class="pick-row__meta">8 web edits per month (Light 1 · Std 2 · Hvy 3) + 4 static graphics + 2 motion graphics (15s) + 2 social video edits / mo</span>
+              <span class="pick-row__meta">8 web edit units + 2 scoped web updates per month + 4 static graphics + 2 motion graphics (15s) + 2 social video edits per month</span>
             </div>
             <span class="pick-row__price">82,000</span>
             <button type="button" class="pick-add" data-add-product="ret-full-grow">Add</button>
           </div>
         </div>
       </div>
-    </section>
-
-    <p class="meta" style="margin-top: 2rem">
-      À la carte work stays on <a href="production.html">Graphic, Motion &amp; Video</a> and <a href="web-services.html">Web Services</a>. Final quotes always confirmed by SEC.
-    </p>
+    </details>
   </main>
   <script src="js/config.js"></script>
   <script src="js/products.js"></script>
