@@ -62,16 +62,10 @@ a:hover {
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 50;
+  /* No z-index here — setting z-index on a sticky element creates a stacking
+     context that traps position:fixed children (the nav drawer), preventing
+     them from painting above page content. Sticky works without z-index. */
   border-bottom: 1px solid var(--border);
-}
-/* Blur background via pseudo-element so backdrop-filter doesn't trap
-   position:fixed children (nav drawer) inside a stacking context */
-.site-header::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
   background: rgba(248, 246, 242, 0.92);
   backdrop-filter: blur(10px);
 }
