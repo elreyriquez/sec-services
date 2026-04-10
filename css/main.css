@@ -62,9 +62,7 @@ a:hover {
 .site-header {
   position: sticky;
   top: 0;
-  /* No z-index here — setting z-index on a sticky element creates a stacking
-     context that traps position:fixed children (the nav drawer), preventing
-     them from painting above page content. Sticky works without z-index. */
+  z-index: 50;
   border-bottom: 1px solid var(--border);
   background: rgba(248, 246, 242, 0.92);
   backdrop-filter: blur(10px);
@@ -392,10 +390,10 @@ body.nav-drawer-open {
     max-width: none;
     scrollbar-width: thin;
   }
-  .site-header.is-menu-open .nav-main {
+  body.nav-drawer-open .nav-main {
     transform: translateX(0);
   }
-  .site-header:not(.is-menu-open) .nav-main {
+  body:not(.nav-drawer-open) .nav-main {
     pointer-events: none;
   }
   .nav-main a {

@@ -13,6 +13,24 @@
     const nav = document.getElementById("site-main-nav");
     if (!header || !toggle || !nav) return;
 
+    // Remember desktop parent + sibling so we can restore nav for desktop layout
+    const desktopParent = nav.parentNode;
+    const desktopNextSibling = nav.nextSibling;
+
+    // Move nav into/out of header depending on viewport so that on mobile the
+    // nav is a direct child of <body> and escapes the header's stacking context
+    // (position:sticky + z-index creates a stacking context that traps
+    // position:fixed children, making the drawer invisible above page content).
+    function syncNavDOM() {
+      if (NAV_MQ.matches) {
+        if (nav.parentNode !== document.body) document.body.appendChild(nav);
+      } else {
+        if (nav.parentNode !== desktopParent) {
+          desktopParent.insertBefore(nav, desktopNextSibling);
+        }
+      }
+    }
+
     const overlay = document.createElement("div");
     overlay.className = "nav-overlay no-print";
     overlay.setAttribute("aria-hidden", "true");
@@ -35,7 +53,10 @@
     }
 
     function closeIfDesktop() {
-      if (!NAV_MQ.matches) setOpen(false);
+      if (!NAV_MQ.matches) {
+        setOpen(false);
+        syncNavDOM();
+      }
     }
 
     toggle.addEventListener("click", function () {
@@ -60,11 +81,18 @@
       closeIfDesktop();
     });
     if (typeof NAV_MQ.addEventListener === "function") {
-      NAV_MQ.addEventListener("change", closeIfDesktop);
+      NAV_MQ.addEventListener("change", function (e) {
+        syncNavDOM();
+        closeIfDesktop();
+      });
     } else if (typeof NAV_MQ.addListener === "function") {
-      NAV_MQ.addListener(closeIfDesktop);
+      NAV_MQ.addListener(function () {
+        syncNavDOM();
+        closeIfDesktop();
+      });
     }
 
+    syncNavDOM();
     if (NAV_MQ.matches) {
       nav.setAttribute("aria-hidden", "true");
     }
