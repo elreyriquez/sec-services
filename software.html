@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Software — SEC</title>
+  <title>Software | SEC</title>
   <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
@@ -46,29 +46,64 @@
   <main>
     <h1 class="page-title">Software</h1>
     <p class="lead">
-      SEC is building <strong>software solutions</strong> for teams that hit the same operational problems over and over — starting with tools for money and paperwork, not generic “apps for everything.”
+      SEC is building <strong>software solutions</strong> for teams that hit the same operational problems over and over, starting with tools for money and paperwork, not generic &ldquo;apps for everything.&rdquo;
     </p>
 
     <div class="callout" style="margin-bottom: 1.5rem">
-      <strong>Coming soon.</strong> This section will list products you can subscribe to or buy, with clear scope and pricing. Nothing here is for sale yet — we’re laying the groundwork in public.
+      <strong>SEC Billing is available.</strong> Multi-seat workspaces for invoicing, payments, client portal, reports, optional time tracking, and tiered plans. Use the links under the product card to sign in, review pricing and features, or create an account.
     </div>
 
-    <section class="section-block">
-      <h2>In the pipeline</h2>
-      <div class="service-panel software-pipeline-card">
-        <h3 class="software-pipeline-card__title">Invoice &amp; billing tracking</h3>
+    <section class="section-block" id="sec-billing">
+      <h2>Available now</h2>
+      <div class="service-panel software-pipeline-card software-pipeline-card--live">
+        <h3 class="software-pipeline-card__title">SEC Billing</h3>
         <p class="meta" style="margin: 0">
-          A focused system for companies that need reliable invoicing, payment status, and billing history — without fighting a giant accounting suite. Details and pricing TBD.
+          Invoice and billing workspace for companies, agencies, and firms: clients, invoices, manual payment recording, PDFs, performance reports, CSV exports, recurring invoices, email automation (within plan limits), roles for admin, bookkeeper, and viewer, and time tracking for staff. Subscription and access are arranged with SEC; see pricing in the app.
         </p>
-        <p class="software-pipeline-card__badge" aria-hidden="true">Coming soon</p>
+        <p class="software-pipeline-card__badge software-pipeline-card__badge--live" aria-hidden="true">Available now</p>
+        <p class="meta software-pipeline-card__config-hint" id="billing-app-config-hint" hidden>
+          Add <code>BILLING_APP_BASE</code> in <code>js/config.js</code> (your production URL, or <code>http://127.0.0.1:3000</code> while the Next app runs locally) to enable Sign in, Pricing, and Create account links.
+        </p>
+        <div class="software-pipeline-card__actions" id="billing-app-actions" hidden>
+          <a class="btn btn-primary btn-sm" data-billing-path="/login">Sign in</a>
+          <a class="btn btn-ghost btn-sm" data-billing-path="/pricing">Pricing &amp; features</a>
+          <a class="btn btn-ghost btn-sm" data-billing-path="/register">Create account</a>
+        </div>
       </div>
     </section>
 
+    <section class="section-block">
+      <h2>In the pipeline</h2>
+      <p class="meta" style="margin-top: 0">
+        More SEC-built tools will be listed here as they are ready. Suggestions welcome.
+      </p>
+    </section>
+
     <p class="meta">
-      Have a workflow that’s broken? <a href="cart.html">Send a cart / note</a> after browsing other services, or reach out through your usual SEC channel — product ideas often start from real briefs.
+      Have a workflow that is broken? <a href="cart.html">Send a cart / note</a> after browsing other services, or reach out through your usual SEC channel; product ideas often start from real briefs.
     </p>
   </main>
   <script src="js/config.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var cfg = window.SEC_CONFIG || {};
+      var base = String(cfg.BILLING_APP_BASE || "").replace(/\/$/, "");
+      var actions = document.getElementById("billing-app-actions");
+      var hint = document.getElementById("billing-app-config-hint");
+      if (!actions || !hint) return;
+      if (!base) {
+        actions.hidden = true;
+        hint.hidden = false;
+        return;
+      }
+      hint.hidden = true;
+      actions.hidden = false;
+      actions.querySelectorAll("[data-billing-path]").forEach(function (a) {
+        var p = a.getAttribute("data-billing-path") || "/";
+        a.href = base + (p.charAt(0) === "/" ? p : "/" + p);
+      });
+    });
+  </script>
   <script src="js/currency.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/app.js"></script>

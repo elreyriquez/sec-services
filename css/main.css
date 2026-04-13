@@ -732,6 +732,31 @@ details.section-block--collapsible[open] > .section-block__h2::after {
   text-transform: uppercase;
   color: var(--accent-hover);
 }
+.software-pipeline-card--live {
+  border-color: rgba(166, 125, 36, 0.45);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(196, 149, 46, 0.18);
+}
+.software-pipeline-card__badge--live {
+  color: var(--accent-hover);
+}
+.software-pipeline-card__config-hint {
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+.software-pipeline-card__config-hint code {
+  font-size: 0.85em;
+}
+.software-pipeline-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  align-items: center;
+}
+.software-pipeline-card__actions a {
+  text-decoration: none;
+}
 
 .pick-list {
   display: flex;

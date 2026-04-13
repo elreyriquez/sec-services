@@ -6,6 +6,14 @@ SEC services site — email orders (Formspree)
 3. Replace YOUR_FORM_ID in FORMSPREE_ACTION with your form path (e.g. https://formspree.io/f/abcdefgh).
 4. Formspree will email submissions to the address you verify on their dashboard.
 
+SEC Billing funnel (software.html)
+----------------------------------
+5. BILLING_APP_BASE in js/config.js defaults to http://127.0.0.1:3000 for local testing
+   (billing app on npm run dev, sec-services on python -m http.server).
+6. Before deploying sec-services publicly, change BILLING_APP_BASE to your live billing URL
+   with no trailing slash (e.g. https://your-app.up.railway.app).
+7. software.html then shows Sign in, Pricing & features, and Create account links to that host.
+
 Local preview (avoid 404 — server root must be THIS folder):
 
   cd /path/to/sec-services

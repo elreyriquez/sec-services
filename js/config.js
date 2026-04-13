@@ -16,4 +16,12 @@ window.SEC_CONFIG = {
   BANK_BRANCH: "Oxford Road (81505)",
   /** For USD quote view: how many JMD equal 1 USD (update to your rate). */
   JMD_PER_USD: 156,
+  /**
+   * SEC Billing (Next.js app). Public site root URL, no trailing slash.
+   * Used on software.html for Sign in, Pricing, and Create account.
+   * Local testing: keep http://127.0.0.1:3000 while billing-invoice-system runs (npm run dev).
+   * Before you deploy sec-services to the public web, set this to your live billing host
+   * (for example https://your-app.up.railway.app) so visitors are not sent to localhost.
+   */
+  BILLING_APP_BASE: "http://127.0.0.1:3000",
 };
