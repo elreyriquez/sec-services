@@ -50,7 +50,8 @@
     </p>
 
     <div class="callout" style="margin-bottom: 1.5rem">
-      <strong>SEC Billing is available.</strong> Multi-seat workspaces for invoicing, payments, client portal, reports, optional time tracking, and tiered plans. Use the links under the product card to sign in, review pricing and features, or create an account.
+      <strong>SEC Billing is available.</strong> Multi-seat workspaces for invoicing, payments, client portal, reports, optional time tracking, and tiered plans.
+      Use <strong>Create an account</strong> to open the public <strong>Pricing &amp; features</strong> page and sign up for the app, or <strong>Sign in</strong> if your workspace is already active.
     </div>
 
     <section class="section-block" id="sec-billing">
@@ -62,12 +63,11 @@
         </p>
         <p class="software-pipeline-card__badge software-pipeline-card__badge--live" aria-hidden="true">Available now</p>
         <p class="meta software-pipeline-card__config-hint" id="billing-app-config-hint" hidden>
-          Add <code>BILLING_APP_BASE</code> in <code>js/config.js</code> (your production URL, or <code>http://127.0.0.1:3000</code> while the Next app runs locally) to enable Sign in, Pricing, and Create account links.
+          Add <code>BILLING_APP_BASE</code> in <code>js/config.js</code> (your live SEC Billing URL, or <code>http://127.0.0.1:3000</code> while the app runs locally) so <strong>Sign in</strong> works. Pricing lives on this site at <a href="billing-pricing.html">billing-pricing.html</a>.
         </p>
-        <div class="software-pipeline-card__actions" id="billing-app-actions" hidden>
-          <a class="btn btn-primary btn-sm" data-billing-path="/login">Sign in</a>
-          <a class="btn btn-ghost btn-sm" data-billing-path="/pricing">Pricing &amp; features</a>
-          <a class="btn btn-ghost btn-sm" data-billing-path="/register">Create account</a>
+        <div class="software-pipeline-card__actions" id="billing-app-actions">
+          <a class="btn btn-primary btn-sm" href="billing-pricing.html">Create an account</a>
+          <a class="btn btn-ghost btn-sm" id="billing-sign-in" data-billing-path="/login" href="#">Sign in</a>
         </div>
       </div>
     </section>
@@ -88,20 +88,19 @@
     document.addEventListener("DOMContentLoaded", function () {
       var cfg = window.SEC_CONFIG || {};
       var base = String(cfg.BILLING_APP_BASE || "").replace(/\/$/, "");
-      var actions = document.getElementById("billing-app-actions");
       var hint = document.getElementById("billing-app-config-hint");
-      if (!actions || !hint) return;
+      var signIn = document.getElementById("billing-sign-in");
+      if (!signIn || !hint) return;
       if (!base) {
-        actions.hidden = true;
+        signIn.classList.add("software-pipeline-card__signin-disabled");
+        signIn.setAttribute("aria-disabled", "true");
+        signIn.href = "#";
         hint.hidden = false;
         return;
       }
       hint.hidden = true;
-      actions.hidden = false;
-      actions.querySelectorAll("[data-billing-path]").forEach(function (a) {
-        var p = a.getAttribute("data-billing-path") || "/";
-        a.href = base + (p.charAt(0) === "/" ? p : "/" + p);
-      });
+      var p = signIn.getAttribute("data-billing-path") || "/login";
+      signIn.href = base + (p.charAt(0) === "/" ? p : "/" + p);
     });
   </script>
   <script src="js/currency.js"></script>

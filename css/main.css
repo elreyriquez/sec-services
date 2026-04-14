@@ -757,6 +757,11 @@ details.section-block--collapsible[open] > .section-block__h2::after {
 .software-pipeline-card__actions a {
   text-decoration: none;
 }
+.software-pipeline-card__signin-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+  cursor: not-allowed;
+}
 
 .pick-list {
   display: flex;
