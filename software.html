@@ -51,7 +51,7 @@
 
     <div class="callout" style="margin-bottom: 1.5rem">
       <strong>SEC Billing is available.</strong> Multi-seat workspaces for invoicing, payments, client portal, reports, optional time tracking, and tiered plans.
-      Use <strong>Create an account</strong> to open the public <strong>Pricing &amp; features</strong> page and sign up for the app, or <strong>Sign in</strong> if your workspace is already active.
+      Use <strong>Sign up</strong> to open the SEC Billing site (pricing and registration) in a <strong>new browser tab</strong>, or <strong>Sign in</strong> to open the app in a new tab if your workspace is already active.
     </div>
 
     <section class="section-block" id="sec-billing">
@@ -67,7 +67,13 @@
           <a href="https://elreyriquez.github.io/sec-billing/" target="_blank" rel="noopener noreferrer">sec-billing</a> (dedicated site).
         </p>
         <div class="software-pipeline-card__actions" id="billing-app-actions">
-          <a class="btn btn-primary btn-sm" href="https://elreyriquez.github.io/sec-billing/" target="_blank" rel="noopener noreferrer">Create an account</a>
+          <a
+            class="btn btn-primary btn-sm"
+            id="billing-sign-up"
+            href="https://elreyriquez.github.io/sec-billing/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Sign up</a>
           <a class="btn btn-ghost btn-sm" id="billing-sign-in" data-billing-path="/login" href="#">Sign in</a>
         </div>
       </div>
@@ -96,12 +102,16 @@
         signIn.classList.add("software-pipeline-card__signin-disabled");
         signIn.setAttribute("aria-disabled", "true");
         signIn.href = "#";
+        signIn.removeAttribute("target");
+        signIn.removeAttribute("rel");
         hint.hidden = false;
         return;
       }
       hint.hidden = true;
       var p = signIn.getAttribute("data-billing-path") || "/login";
       signIn.href = base + (p.charAt(0) === "/" ? p : "/" + p);
+      signIn.target = "_blank";
+      signIn.rel = "noopener noreferrer";
     });
   </script>
   <script src="js/currency.js"></script>
