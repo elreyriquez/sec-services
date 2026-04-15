@@ -18,9 +18,9 @@ window.SEC_CONFIG = {
   JMD_PER_USD: 156,
   /**
    * SEC Billing (Next.js app). Public site root URL, no trailing slash.
-   * Used on software.html (Sign in) and billing-pricing.html (Sign up / Sign in).
+   * Used on software.html (Sign in). Pricing/sign-up: https://elreyriquez.github.io/sec-billing/ (separate repo).
    * Local testing: keep http://127.0.0.1:3000 while billing-invoice-system runs (npm run dev).
-   * For GitHub Pages, set this to your live billing host (e.g. https://your-app.up.railway.app).
+   * For production, set this to your live billing host (e.g. https://your-app.up.railway.app).
    */
   BILLING_APP_BASE: "http://127.0.0.1:3000",
 };

@@ -6,4 +6,4 @@ Static site for browsing SEC freelance services, building a cart, and submitting
 
 See `SETUP.txt` for local run and deploy notes.
 
-**SEC Billing funnel:** [Software](software.html) → [Pricing & features](billing-pricing.html) (standalone page on this site) → live app (`BILLING_APP_BASE` in `js/config.js` for Sign in / Sign up).
+**SEC Billing:** [Software](software.html) links to the dedicated pricing site [sec-billing](https://elreyriquez.github.io/sec-billing/) (separate repo). Old URL [`billing-pricing.html`](billing-pricing.html) redirects there. **Sign in** on the Software card uses `BILLING_APP_BASE` in `js/config.js`.
