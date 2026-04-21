@@ -7,10 +7,10 @@ window.SEC_CONFIG = {
 
   /**
    * Optional: after a successful Formspree submit, POST the generated quotation PDF here.
-   * Set URL after deploying quote-pdf-service to Railway: https://YOUR_SERVICE.up.railway.app/api/quote-pdf
    * Railway WEBHOOK_SECRET must equal QUOTE_PDF_WEBHOOK_SECRET (already generated below).
    */
-  QUOTE_PDF_WEBHOOK_URL: "",
+  QUOTE_PDF_WEBHOOK_URL:
+    "https://sec-services-production.up.railway.app/api/quote-pdf",
   QUOTE_PDF_WEBHOOK_SECRET:
     "d4cd8e497adb4da20548a236c319bc52946e73bf277bc72d826779471e6f7cdb",
   WHATSAPP_E164: "18763236158",
