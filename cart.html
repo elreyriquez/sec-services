@@ -134,7 +134,6 @@
           <label for="cust-co">Company (optional)</label>
           <input id="cust-co" name="company" type="text" autocomplete="organization" />
         </div>
-        <input type="hidden" name="order_json" id="f-order-json" value="" />
         <input type="hidden" name="invoice_text" id="f-invoice-text" value="" />
         <input type="hidden" name="discount_code" id="f-discount-code" value="" />
         <input type="hidden" name="discount_percent" id="f-discount-pct" value="" />
@@ -274,6 +273,48 @@
         });
       }
 
+      /** Returns a Blob (single-page image PDF of the quotation frame). */
+      async function buildQuotationPdfBlob() {
+        var frame = document.querySelector("#quotation-preview .sec-quotation__frame");
+        if (!frame) throw new Error("Missing quotation preview");
+        await ensurePdfLibs();
+        if (typeof html2canvas !== "function" || !window.jspdf) {
+          throw new Error("PDF libraries unavailable");
+        }
+        if (document.fonts && document.fonts.ready) await document.fonts.ready;
+        var canvas = await html2canvas(frame, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+        });
+        var pdfLib = window.jspdf;
+        var jsPDF = pdfLib.jsPDF || pdfLib;
+        var pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
+        var pw = pdf.internal.pageSize.getWidth();
+        var ph = pdf.internal.pageSize.getHeight();
+        var m = 12;
+        var mw = pw - m * 2;
+        var mh = ph - m * 2;
+        var iw = canvas.width;
+        var ih = canvas.height;
+        var dw = mw;
+        var dh = (ih * dw) / iw;
+        if (dh > mh) {
+          dh = mh;
+          dw = (iw * dh) / ih;
+        }
+        pdf.addImage(
+          canvas.toDataURL("image/png"),
+          "PNG",
+          m + (mw - dw) / 2,
+          m + (mh - dh) / 2,
+          dw,
+          dh
+        );
+        return pdf.output("blob");
+      }
+
       function fmtDate(d) {
         return String(d.getDate()).padStart(2,"0") + "." +
                String(d.getMonth()+1).padStart(2,"0") + "." + d.getFullYear();
@@ -296,6 +337,7 @@
         }
 
         var suppressEmptyCart = false;
+        var CONTACT_STORAGE_KEY = "sec_cart_contact_v1";
 
         form.addEventListener("submit", function (e) { e.preventDefault(); });
 
@@ -356,8 +398,6 @@
                      ? window.SECCheckout.buildInvoiceText(items, c) : "";
 
           var el;
-          el = document.getElementById("f-order-json");
-          if (el) el.value = JSON.stringify({ items: items, discount: disc, subtotalJmd: sub, discountJmd: disc && sub > 0 ? off : 0, totalJmd: grand });
           el = document.getElementById("f-invoice-text");    if (el) el.value = text;
           el = document.getElementById("f-discount-code");   if (el) el.value = disc && off > 0 ? disc.code : "";
           el = document.getElementById("f-discount-pct");    if (el) el.value = disc && off > 0 ? String(disc.percent) : "";
@@ -445,6 +485,46 @@
           return true;
         }
 
+        function saveContactDraft() {
+          try {
+            var c = customer();
+            localStorage.setItem(
+              CONTACT_STORAGE_KEY,
+              JSON.stringify({
+                name: c.name,
+                email: c.email,
+                phone: c.phone,
+                company: c.company,
+              })
+            );
+          } catch (e) {
+            /* quota or private mode */
+          }
+        }
+
+        function loadContactDraft() {
+          try {
+            var raw = localStorage.getItem(CONTACT_STORAGE_KEY);
+            if (!raw) return;
+            var o = JSON.parse(raw);
+            if (!o || typeof o !== "object") return;
+            var n = document.getElementById("cust-name");
+            var e = document.getElementById("cust-email");
+            var p = document.getElementById("cust-phone");
+            var co = document.getElementById("cust-co");
+            if (n && typeof o.name === "string") n.value = o.name;
+            if (e && typeof o.email === "string") e.value = o.email;
+            if (p && typeof o.phone === "string") p.value = o.phone;
+            if (co && typeof o.company === "string") co.value = o.company;
+          } catch (err) {
+            /* corrupt or unavailable */
+          }
+        }
+
+        loadContactDraft();
+        updateTotals();
+        updatePreview();
+
         /* ── main render ─────────────────────────────────── */
         function render() {
           var items = SECCart.load();
@@ -502,8 +582,15 @@
         window.addEventListener("pageshow", function (ev) {
           if (ev.persisted) render();
         });
-        /* update quotation preview while customer types contact details */
-        form.addEventListener("input", function () { updateTotals(); updatePreview(); });
+        /* persist contact fields + update quotation preview while typing */
+        form.addEventListener("input", function () {
+          saveContactDraft();
+          updateTotals();
+          updatePreview();
+        });
+        form.addEventListener("change", function () {
+          saveContactDraft();
+        });
 
         /* discount apply */
         var btnDiscApply = document.getElementById("btn-discount-apply");
@@ -554,35 +641,28 @@
             if (!SECCart.load().length) return;
             if (!ensureContact()) return;
             updatePreview();
-            var frame = document.querySelector("#quotation-preview .sec-quotation__frame");
-            var btn   = document.getElementById("btn-pdf");
-            if (!frame || !btn) { statusEl.textContent = "PDF unavailable. Use Print \u2192 Save as PDF."; return; }
-            try { await ensurePdfLibs(); } catch (e) {
-              statusEl.textContent = "Could not load PDF tools. Use Print \u2192 Save as PDF."; return;
-            }
-            if (typeof html2canvas !== "function" || !window.jspdf) {
-              statusEl.textContent = "PDF unavailable. Use Print \u2192 Save as PDF."; return;
-            }
+            var btn = document.getElementById("btn-pdf");
+            if (!btn) return;
             var prev = btn.textContent;
-            btn.disabled = true; btn.textContent = "Generating\u2026"; statusEl.textContent = "";
+            btn.disabled = true;
+            btn.textContent = "Generating\u2026";
+            statusEl.textContent = "";
             try {
-              if (document.fonts && document.fonts.ready) await document.fonts.ready;
-              var canvas = await html2canvas(frame, { scale: 2, useCORS: true, backgroundColor: "#ffffff", logging: false });
-              var { jsPDF } = window.jspdf;
-              var pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
-              var pw = pdf.internal.pageSize.getWidth();
-              var ph = pdf.internal.pageSize.getHeight();
-              var m  = 12;
-              var mw = pw - m * 2; var mh = ph - m * 2;
-              var iw = canvas.width; var ih = canvas.height;
-              var dw = mw; var dh = (ih * dw) / iw;
-              if (dh > mh) { dh = mh; dw = (iw * dh) / ih; }
-              pdf.addImage(canvas.toDataURL("image/png"), "PNG", m + (mw - dw) / 2, m + (mh - dh) / 2, dw, dh);
-              pdf.save("sec-quotation-" + Date.now() + ".pdf");
+              var blob = await buildQuotationPdfBlob();
+              var url = URL.createObjectURL(blob);
+              var a = document.createElement("a");
+              a.href = url;
+              a.download = "sec-quotation-" + Date.now() + ".pdf";
+              a.rel = "noopener";
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
             } catch (e) {
               statusEl.textContent = "Could not build PDF. Use Print \u2192 Save as PDF.";
             } finally {
-              btn.disabled = false; btn.textContent = prev;
+              btn.disabled = false;
+              btn.textContent = prev;
             }
           });
         }
@@ -606,7 +686,36 @@
             var res  = await fetch(action, { method: "POST", body: fd, headers: { Accept: "application/json" } });
             var data = await res.json().catch(function () { return {}; });
             if (res.ok && data.ok !== false && !data.error) {
+              var cfg = window.SEC_CONFIG || {};
+              var webhookUrl = String(cfg.QUOTE_PDF_WEBHOOK_URL || "").trim();
+              var webhookSecret = String(cfg.QUOTE_PDF_WEBHOOK_SECRET || "").trim();
+              var pdfDelivered = true;
+              if (webhookUrl && webhookSecret) {
+                statusEl.textContent = "Request sent. Sending PDF copy\u2026";
+                try {
+                  var blob = await buildQuotationPdfBlob();
+                  var pdfFd = new FormData();
+                  pdfFd.append("file", blob, "sec-quotation-" + Date.now() + ".pdf");
+                  pdfFd.append("meta", JSON.stringify(customer()));
+                  var wr = await fetch(webhookUrl, {
+                    method: "POST",
+                    body: pdfFd,
+                    headers: {
+                      Accept: "application/json",
+                      "X-Webhook-Secret": webhookSecret,
+                    },
+                  });
+                  if (!wr.ok) pdfDelivered = false;
+                } catch (e) {
+                  console.error("SEC quote PDF webhook:", e);
+                  pdfDelivered = false;
+                }
+              }
               statusEl.textContent = "Request sent. SEC will follow up shortly.";
+              if (webhookUrl && webhookSecret && !pdfDelivered) {
+                statusEl.textContent +=
+                  " We could not deliver the PDF copy to our office automatically; your request was still received.";
+              }
               suppressEmptyCart = true;
               SECCart.clear();
               render();

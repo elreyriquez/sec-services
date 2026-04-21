@@ -1,9 +1,12 @@
 .DS_Store
 *.log
 .env
-.env.*
+!.env.example
 .venv/
 
 # Discount secrets and private reference (never push to GitHub)
 js/discount-codes.secret.js
 docs/discount-codes-reference.pdf
+
+# Node (Railway PDF webhook)
+quote-pdf-service/node_modules/

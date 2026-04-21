@@ -6,6 +6,43 @@ SEC services site — email orders (Formspree)
 3. Replace YOUR_FORM_ID in FORMSPREE_ACTION with your form path (e.g. https://formspree.io/f/abcdefgh).
 4. Formspree will email submissions to the address you verify on their dashboard.
 
+Quotation PDF to your inbox (outside Formspree) — optional
+---------------------------------------------------------
+The cart POSTs the generated PDF to quote-pdf-service → Resend → your inbox.
+
+Already done in this repo:
+  • js/config.js has QUOTE_PDF_WEBHOOK_SECRET generated (must match Railway).
+
+You still complete (needs your accounts):
+
+A) Resend — https://resend.com
+   • Create an API key (Dashboard → API Keys).
+   • First tests: FROM_EMAIL can stay SEC Quotations <onboarding@resend.dev> (see Resend rules
+     for which “to” addresses work on the free tier).
+   • Production: verify your domain in Resend; use FROM_EMAIL on that domain.
+
+B) Railway — https://railway.app
+   • New project → Deploy repo (or “Empty” + connect GitHub).
+   • Set Root Directory to: quote-pdf-service  (if the repo root is sec-services or Projects).
+   • Variables (exact names):
+       WEBHOOK_SECRET = copy the full string from js/config.js → QUOTE_PDF_WEBHOOK_SECRET
+       RESEND_API_KEY = paste from Resend
+       TO_EMAIL       = 1secfreelance@gmail.com
+       FROM_EMAIL     = SEC Quotations <onboarding@resend.dev>   (or your verified domain later)
+   • Deploy, then copy the public HTTPS URL (e.g. https://something.up.railway.app).
+   • Visit https://YOUR_URL/health — should return JSON {"ok":true}.
+
+C) Finish js/config.js on the static site
+   • Set QUOTE_PDF_WEBHOOK_URL to: https://YOUR_URL/api/quote-pdf  (no trailing slash before /api).
+   • QUOTE_PDF_WEBHOOK_SECRET is already set — do not change unless you change Railway too.
+   • Redeploy GitHub Pages / Netlify / wherever sec-services is hosted.
+
+Local webhook test: copy quote-pdf-service/.env.example to .env; set WEBHOOK_SECRET (same as
+config.js), RESEND_API_KEY, TO_EMAIL, FROM_EMAIL. Then:
+     cd quote-pdf-service && npm install && node server.js
+Temporarily set QUOTE_PDF_WEBHOOK_URL to http://127.0.0.1:8787/api/quote-pdf (HTTPS site may
+block mixed content — test from http://localhost only, or use Railway directly).
+
 SEC Billing funnel (software.html)
 ----------------------------------
 5. BILLING_APP_BASE in js/config.js defaults to http://127.0.0.1:3000 for local testing

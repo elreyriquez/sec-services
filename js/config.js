@@ -4,9 +4,18 @@
  */
 window.SEC_CONFIG = {
   FORMSPREE_ACTION: "https://formspree.io/f/mpqoevoy",
+
+  /**
+   * Optional: after a successful Formspree submit, POST the generated quotation PDF here.
+   * Set URL after deploying quote-pdf-service to Railway: https://YOUR_SERVICE.up.railway.app/api/quote-pdf
+   * Railway WEBHOOK_SECRET must equal QUOTE_PDF_WEBHOOK_SECRET (already generated below).
+   */
+  QUOTE_PDF_WEBHOOK_URL: "",
+  QUOTE_PDF_WEBHOOK_SECRET:
+    "d4cd8e497adb4da20548a236c319bc52946e73bf277bc72d826779471e6f7cdb",
   WHATSAPP_E164: "18763236158",
   BUSINESS_NAME: "Shaquille Comrie — SEC Freelance Services",
-  CONTACT_EMAIL: "shaqcomrie@gmail.com",
+  CONTACT_EMAIL: "1secfreelance@gmail.com",
   /** Shown on quotation layout (human-readable). */
   CONTACT_PHONE_DISPLAY: "876-323-6158",
   /** Shown under Payment info on quotation preview / print. */
