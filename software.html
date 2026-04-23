@@ -58,8 +58,9 @@
         </p>
         <p class="software-pipeline-card__badge software-pipeline-card__badge--live" aria-hidden="true">Available now</p>
         <p class="meta software-pipeline-card__config-hint" id="billing-app-config-hint" hidden>
-          Add <code>BILLING_APP_BASE</code> in <code>js/config.js</code> (your live SEC Billing URL, or <code>http://127.0.0.1:3000</code> while the app runs locally) so <strong>Sign in</strong> works. Pricing &amp; sign-up live at
-          <a href="https://elreyriquez.github.io/sec-billing/" target="_blank" rel="noopener noreferrer">sec-billing</a> (dedicated site).
+          Add <code>BILLING_APP_BASE</code> in <code>js/config.js</code> (your live SEC Billing URL, or <code>http://127.0.0.1:3000</code> while the app runs locally) so <strong>Sign in</strong> works.
+          <strong>Sign up</strong> uses <code>BILLING_SIGNUP_URL</code> (public billing site by default):
+          <a href="https://elreyriquez.github.io/sec-billing/" target="_blank" rel="noopener noreferrer">sec-billing</a>.
         </p>
         <div class="software-pipeline-card__actions" id="billing-app-actions">
           <a
@@ -88,6 +89,11 @@
     document.addEventListener("DOMContentLoaded", function () {
       var cfg = window.SEC_CONFIG || {};
       var base = String(cfg.BILLING_APP_BASE || "").replace(/\/$/, "");
+      var signupUrl =
+        String(cfg.BILLING_SIGNUP_URL || "").trim() ||
+        "https://elreyriquez.github.io/sec-billing";
+      var signUp = document.getElementById("billing-sign-up");
+      if (signUp) signUp.href = signupUrl;
       var hint = document.getElementById("billing-app-config-hint");
       var signIn = document.getElementById("billing-sign-in");
       if (!signIn || !hint) return;
