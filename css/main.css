@@ -1277,6 +1277,18 @@ select.field {
   color: var(--text);
   font-size: 0.875rem;
 }
+.form-grid textarea {
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.875rem;
+  resize: vertical;
+  min-height: 5rem;
+  font-family: inherit;
+}
 
 .check-row {
   display: flex;

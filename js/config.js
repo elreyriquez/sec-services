@@ -4,6 +4,11 @@
  */
 window.SEC_CONFIG = {
   FORMSPREE_ACTION: "https://formspree.io/f/mpqoevoy",
+  /**
+   * Software requests (cart.html — In the pipeline). If empty, uses FORMSPREE_ACTION.
+   * Create a dedicated Form at formspree.io if you want these separate from job requests.
+   */
+  FORMSPREE_SOFTWARE_ACTION: "",
 
   /**
    * Optional: after a successful Formspree submit, POST the generated quotation PDF here.
