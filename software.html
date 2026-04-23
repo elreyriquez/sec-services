@@ -75,13 +75,49 @@
       </div>
     </section>
 
-    <section class="section-block">
+    <section class="section-block" id="software-pipeline">
       <h2>In the pipeline</h2>
       <p class="meta" style="margin-top: 0">
-        More SEC-built tools will be listed here as they are ready. Have a workflow that is broken?
-        <a href="cart.html">Send a cart / note</a> after browsing other services, or reach out at
+        More SEC-built tools will be listed here as they are ready. Have a workflow that is broken? Open the form
+        below, <a href="cart.html">send a cart / note</a> after browsing other services, or reach out at
         <a href="mailto:1secfreelance@gmail.com">1secfreelance@gmail.com</a>.
       </p>
+
+      <details class="section-block section-block--collapsible software-pipeline-request">
+        <summary class="section-block__h2">Request custom software</summary>
+        <div class="service-panel software-pipeline-request__panel">
+          <p class="meta" style="margin: 0 0 0.75rem">
+            Tell us what you need (CRM, operations tools, integrations, etc.). Submissions are delivered to SEC via
+            the same secure form service as cart job requests (typically
+            <a href="mailto:1secfreelance@gmail.com">1secfreelance@gmail.com</a>).
+          </p>
+          <form id="software-page-request-form" class="form-grid" novalidate>
+            <div>
+              <label for="sw-name">Name *</label>
+              <input id="sw-name" name="name" type="text" required autocomplete="name" />
+            </div>
+            <div>
+              <label for="sw-organization">Organization *</label>
+              <input id="sw-organization" name="organization" type="text" required autocomplete="organization" />
+            </div>
+            <div>
+              <label for="sw-details">Software request details / specifications *</label>
+              <textarea
+                id="sw-details"
+                name="software_request_details"
+                required
+                rows="6"
+                placeholder="Problem, users, must-haves, timeline, budget range if any…"
+              ></textarea>
+            </div>
+            <input type="hidden" name="_subject" value="SEC software request (pipeline — software page)" />
+            <div>
+              <button type="submit" class="btn btn-primary" id="sw-submit">Send software request</button>
+            </div>
+          </form>
+          <p id="software-page-request-status" class="meta" style="margin: 0.75rem 0 0" aria-live="polite"></p>
+        </div>
+      </details>
     </section>
   </main>
   <script src="js/config.js"></script>
@@ -111,6 +147,62 @@
       signIn.href = base + (p.charAt(0) === "/" ? p : "/" + p);
       signIn.target = "_blank";
       signIn.rel = "noopener noreferrer";
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      var form = document.getElementById("software-page-request-form");
+      var statusEl = document.getElementById("software-page-request-status");
+      var btn = document.getElementById("sw-submit");
+      if (!form || !statusEl || !btn) return;
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        statusEl.textContent = "";
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+        var cfg = window.SEC_CONFIG || {};
+        var action =
+          String(cfg.FORMSPREE_SOFTWARE_ACTION || "").trim() ||
+          String(cfg.FORMSPREE_ACTION || "").trim();
+        if (!action || action.indexOf("YOUR_FORM_ID") !== -1) {
+          statusEl.textContent =
+            "Set FORMSPREE_ACTION (or FORMSPREE_SOFTWARE_ACTION) in js/config.js to enable sending. You can still email 1secfreelance@gmail.com directly.";
+          return;
+        }
+        var fd = new FormData(form);
+        btn.disabled = true;
+        var prev = btn.textContent;
+        btn.textContent = "Sending…";
+        statusEl.textContent = "Sending…";
+        fetch(action, { method: "POST", body: fd, headers: { Accept: "application/json" } })
+          .then(function (res) {
+            return res.json().then(function (data) {
+              return { res: res, data: data };
+            });
+          })
+          .then(function (_ref) {
+            var res = _ref.res;
+            var data = _ref.data;
+            if (res.ok && data.ok !== false && !data.error) {
+              statusEl.textContent = "Request sent. SEC will follow up shortly.";
+              form.reset();
+            } else {
+              statusEl.textContent =
+                (typeof data.error === "string" && data.error) ||
+                (data.errors && JSON.stringify(data.errors)) ||
+                "Send failed (" + res.status + "). Try again or email directly.";
+            }
+          })
+          .catch(function () {
+            statusEl.textContent = "Network error. Check your connection and try again.";
+          })
+          .finally(function () {
+            btn.disabled = false;
+            btn.textContent = prev;
+          });
+      });
     });
   </script>
   <script src="js/currency.js"></script>

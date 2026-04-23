@@ -763,6 +763,14 @@ details.section-block--collapsible[open] > .section-block__h2::after {
   cursor: not-allowed;
 }
 
+/* Software page — collapsible pipeline request */
+.software-pipeline-request {
+  margin-top: 0.65rem;
+}
+.software-pipeline-request__panel {
+  padding-top: 0.15rem;
+}
+
 .pick-list {
   display: flex;
   flex-direction: column;
