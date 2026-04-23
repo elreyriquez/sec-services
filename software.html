@@ -78,32 +78,30 @@
     <section class="section-block" id="software-pipeline">
       <h2>In the pipeline</h2>
       <p class="meta" style="margin-top: 0">
-        More SEC-built tools will be listed here as they are ready. Have a workflow that is broken? Open the form
-        below, <a href="cart.html">send a cart / note</a> after browsing other services, or reach out at
-        <a href="mailto:1secfreelance@gmail.com">1secfreelance@gmail.com</a>.
+        More SEC-built tools will be listed here as they are ready.
       </p>
 
       <details class="section-block section-block--collapsible software-pipeline-request">
         <summary class="section-block__h2">Request custom software</summary>
-        <div class="service-panel software-pipeline-request__panel">
-          <p class="meta" style="margin: 0 0 0.75rem">
-            Tell us what you need (CRM, operations tools, integrations, etc.). Submissions are delivered to SEC via
-            the same secure form service as cart job requests (typically
-            <a href="mailto:1secfreelance@gmail.com">1secfreelance@gmail.com</a>).
+        <div class="software-request-form-shell">
+          <h3 class="software-request-form-shell__title">Your request</h3>
+          <p class="meta software-request-form-shell__hint">
+            Same secure submit flow as the cart. SEC follows up after review — not a binding quote until confirmed in writing.
           </p>
-          <form id="software-page-request-form" class="form-grid" novalidate>
+          <form id="software-page-request-form" class="form-grid software-request-form-shell__form" novalidate>
             <div>
-              <label for="sw-name">Name *</label>
-              <input id="sw-name" name="name" type="text" required autocomplete="name" />
+              <label for="sw-name">Full name *</label>
+              <input id="sw-name" class="field" name="name" type="text" required autocomplete="name" />
             </div>
             <div>
               <label for="sw-organization">Organization *</label>
-              <input id="sw-organization" name="organization" type="text" required autocomplete="organization" />
+              <input id="sw-organization" class="field" name="organization" type="text" required autocomplete="organization" />
             </div>
             <div>
               <label for="sw-details">Software request details / specifications *</label>
               <textarea
                 id="sw-details"
+                class="field"
                 name="software_request_details"
                 required
                 rows="6"
@@ -111,11 +109,11 @@
               ></textarea>
             </div>
             <input type="hidden" name="_subject" value="SEC software request (pipeline — software page)" />
-            <div>
+            <div class="actions-row software-request-form-shell__actions">
               <button type="submit" class="btn btn-primary" id="sw-submit">Send software request</button>
             </div>
           </form>
-          <p id="software-page-request-status" class="meta" style="margin: 0.75rem 0 0" aria-live="polite"></p>
+          <p id="software-page-request-status" class="meta software-request-form-shell__status" aria-live="polite"></p>
         </div>
       </details>
     </section>

@@ -222,46 +222,6 @@
         </div>
       </div>
     </div>
-
-    <section
-      class="section-block cart-print-hide"
-      id="pipeline-software-request"
-      aria-labelledby="pipeline-software-heading"
-    >
-      <h2 class="page-title" id="pipeline-software-heading" style="font-size: 1.25rem; margin-top: 2.5rem">
-        In the pipeline
-      </h2>
-      <p class="meta" style="margin-top: 0">
-        Request a custom software build (CRM, operations tools, and more). Submissions go to
-        <a href="mailto:1secfreelance@gmail.com">1secfreelance@gmail.com</a> via the same secure form service as
-        job requests. You do not need items in your cart.
-      </p>
-      <form id="software-request-form" class="form-grid no-print" novalidate>
-        <div>
-          <label for="sr-name">Name *</label>
-          <input id="sr-name" name="name" type="text" required autocomplete="name" />
-        </div>
-        <div>
-          <label for="sr-organization">Organization *</label>
-          <input id="sr-organization" name="organization" type="text" required autocomplete="organization" />
-        </div>
-        <div>
-          <label for="sr-details">Software request details / specifications *</label>
-          <textarea
-            id="sr-details"
-            name="software_request_details"
-            required
-            rows="6"
-            placeholder="Problem, users, must-haves, timeline, budget range if any…"
-          ></textarea>
-        </div>
-        <input type="hidden" name="_subject" value="SEC software request (pipeline — cart page)" />
-        <div>
-          <button type="submit" class="btn btn-primary" id="sr-submit">Send software request</button>
-        </div>
-      </form>
-      <p id="software-request-status" class="meta" style="margin: 0.75rem 0 0" aria-live="polite"></p>
-    </section>
   </main>
 
   <script src="js/config.js"></script>
@@ -783,63 +743,6 @@
         init();
       }
     })();
-  </script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      var form = document.getElementById("software-request-form");
-      var statusEl = document.getElementById("software-request-status");
-      var btn = document.getElementById("sr-submit");
-      if (!form || !statusEl || !btn) return;
-
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        statusEl.textContent = "";
-        if (!form.checkValidity()) {
-          form.reportValidity();
-          return;
-        }
-        var cfg = window.SEC_CONFIG || {};
-        var action =
-          String(cfg.FORMSPREE_SOFTWARE_ACTION || "").trim() ||
-          String(cfg.FORMSPREE_ACTION || "").trim();
-        if (!action || action.indexOf("YOUR_FORM_ID") !== -1) {
-          statusEl.textContent =
-            "Set FORMSPREE_ACTION (or FORMSPREE_SOFTWARE_ACTION) in js/config.js to enable sending. You can still email 1secfreelance@gmail.com directly.";
-          return;
-        }
-        var fd = new FormData(form);
-        btn.disabled = true;
-        var prev = btn.textContent;
-        btn.textContent = "Sending…";
-        statusEl.textContent = "Sending…";
-        fetch(action, { method: "POST", body: fd, headers: { Accept: "application/json" } })
-          .then(function (res) {
-            return res.json().then(function (data) {
-              return { res: res, data: data };
-            });
-          })
-          .then(function (_ref) {
-            var res = _ref.res;
-            var data = _ref.data;
-            if (res.ok && data.ok !== false && !data.error) {
-              statusEl.textContent = "Request sent. SEC will follow up at 1secfreelance@gmail.com.";
-              form.reset();
-            } else {
-              statusEl.textContent =
-                (typeof data.error === "string" && data.error) ||
-                (data.errors && JSON.stringify(data.errors)) ||
-                "Send failed (" + res.status + "). Try again or email directly.";
-            }
-          })
-          .catch(function () {
-            statusEl.textContent = "Network error. Check your connection and try again.";
-          })
-          .finally(function () {
-            btn.disabled = false;
-            btn.textContent = prev;
-          });
-      });
-    });
   </script>
 </body>
 </html>
