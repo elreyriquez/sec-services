@@ -18,11 +18,11 @@ window.SEC_CONFIG = {
     "https://sec-services-production.up.railway.app/api/quote-pdf",
   QUOTE_PDF_WEBHOOK_SECRET:
     "d4cd8e497adb4da20548a236c319bc52946e73bf277bc72d826779471e6f7cdb",
-  WHATSAPP_E164: "18763236158",
+  WHATSAPP_E164: "18763236148",
   BUSINESS_NAME: "Shaquille Comrie — SEC Freelance Services",
   CONTACT_EMAIL: "1secfreelance@gmail.com",
   /** Shown on quotation layout (human-readable). */
-  CONTACT_PHONE_DISPLAY: "876-323-6158",
+  CONTACT_PHONE_DISPLAY: "876-323-6148",
   /** Shown under Payment info on quotation preview / print. */
   BANK_NAME: "Scotiabank",
   BANK_ACCOUNT_NUMBER: "831701",
@@ -36,7 +36,7 @@ window.SEC_CONFIG = {
    * Local testing: keep http://127.0.0.1:3000 while billing-invoice-system runs (npm run dev).
    * For production, set this to your live billing host (e.g. https://your-app.up.railway.app).
    */
-  BILLING_APP_BASE: "http://127.0.0.1:3000",
+  BILLING_APP_BASE: "https://billing-invoice-system-production-c173.up.railway.app",
   /**
    * Public SEC Billing marketing site (GitHub Pages). Full URL, no trailing slash.
    * Used on software.html (Sign up).
