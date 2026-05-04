@@ -38,5 +38,5 @@ window.SEC_CONFIG = {
   /**
    * Sign up link on software.html — SEC Billing marketing / plans (GitHub Pages on sec domain).
    */
-  BILLING_SIGNUP_URL: "https://pricing.secfreelance.com/",
+  BILLING_SIGNUP_URL: "https://billingdetails.secfreelance.com/",
 };
