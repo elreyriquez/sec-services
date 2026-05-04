@@ -37,6 +37,13 @@ C) Finish js/config.js on the static site
    • QUOTE_PDF_WEBHOOK_SECRET is already set — do not change unless you change Railway too.
    • Redeploy GitHub Pages / Netlify / wherever sec-services is hosted.
 
+Production layout (secfreelance.com) — already reflected in js/config.js
+   • services.secfreelance.com → GitHub Pages (this repo). Namecheap: CNAME services → elreyriquez.github.io;
+     GitHub repo Settings → Pages → custom domain services.secfreelance.com.
+   • api.secfreelance.com → Railway (quote-pdf-service only). Do not point services at that Railway URL
+     or the static site will show "Cannot GET /". QUOTE_PDF_WEBHOOK_URL uses https://api.secfreelance.com/api/quote-pdf
+   • billing.secfreelance.com → billing-invoice-system on Railway. BILLING_APP_BASE + BILLING_SIGNUP_URL in config.js.
+
 Local webhook test: copy quote-pdf-service/.env.example to .env; set WEBHOOK_SECRET (same as
 config.js), RESEND_API_KEY, TO_EMAIL, FROM_EMAIL. Then:
      cd quote-pdf-service && npm install && node server.js

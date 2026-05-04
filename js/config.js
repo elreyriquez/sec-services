@@ -11,11 +11,11 @@ window.SEC_CONFIG = {
   FORMSPREE_SOFTWARE_ACTION: "",
 
   /**
-   * Optional: after a successful Formspree submit, POST the generated quotation PDF here.
-   * Railway WEBHOOK_SECRET must equal QUOTE_PDF_WEBHOOK_SECRET (already generated below).
+   * Quote-PDF API (Express on Railway). Must match POST path in quote-pdf-service/server.js.
+   * Production: dedicated API host so services.secfreelance.com can point at GitHub Pages.
+   * Fallback if api subdomain not ready: https://sec-services-production.up.railway.app/api/quote-pdf
    */
-  QUOTE_PDF_WEBHOOK_URL:
-    "https://sec-services-production.up.railway.app/api/quote-pdf",
+  QUOTE_PDF_WEBHOOK_URL: "https://api.secfreelance.com/api/quote-pdf",
   QUOTE_PDF_WEBHOOK_SECRET:
     "d4cd8e497adb4da20548a236c319bc52946e73bf277bc72d826779471e6f7cdb",
   WHATSAPP_E164: "18763236148",
@@ -31,15 +31,13 @@ window.SEC_CONFIG = {
   /** For USD quote view: how many JMD equal 1 USD (update to your rate). */
   JMD_PER_USD: 156,
   /**
-   * SEC Billing (Next.js app). Public site root URL, no trailing slash.
-   * Used on software.html (Sign in). Public marketing / sign-up: BILLING_SIGNUP_URL below.
-   * Local testing: keep http://127.0.0.1:3000 while billing-invoice-system runs (npm run dev).
-   * For production, set this to your live billing host (e.g. https://your-app.up.railway.app).
+   * SEC Billing (Next.js on Railway). No trailing slash. software.html builds Sign in as base + /login.
+   * Fallback: https://billing-invoice-system-production-c173.up.railway.app
    */
-  BILLING_APP_BASE: "https://billing-invoice-system-production-c173.up.railway.app",
+  BILLING_APP_BASE: "https://billing.secfreelance.com",
   /**
-   * Public SEC Billing marketing site (GitHub Pages). Full URL, no trailing slash.
-   * Used on software.html (Sign up).
+   * Sign up link on software.html (full URL). Billing app register route.
+   * Fallback (old GH Pages marketing): https://elreyriquez.github.io/sec-billing
    */
-  BILLING_SIGNUP_URL: "https://elreyriquez.github.io/sec-billing",
+  BILLING_SIGNUP_URL: "https://billing.secfreelance.com/register",
 };
