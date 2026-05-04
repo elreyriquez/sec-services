@@ -42,7 +42,8 @@ Production layout (secfreelance.com) — already reflected in js/config.js
      GitHub repo Settings → Pages → custom domain services.secfreelance.com.
    • api.secfreelance.com → Railway (quote-pdf-service only). Do not point services at that Railway URL
      or the static site will show "Cannot GET /". QUOTE_PDF_WEBHOOK_URL uses https://api.secfreelance.com/api/quote-pdf
-   • billing.secfreelance.com → billing-invoice-system on Railway. BILLING_APP_BASE + BILLING_SIGNUP_URL in config.js.
+   • billing.secfreelance.com → billing-invoice-system on Railway (BILLING_APP_BASE).
+   • pricing.secfreelance.com → sec-billing marketing site on GitHub Pages (BILLING_SIGNUP_URL / plans).
 
 Local webhook test: copy quote-pdf-service/.env.example to .env; set WEBHOOK_SECRET (same as
 config.js), RESEND_API_KEY, TO_EMAIL, FROM_EMAIL. Then:

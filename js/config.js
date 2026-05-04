@@ -36,8 +36,7 @@ window.SEC_CONFIG = {
    */
   BILLING_APP_BASE: "https://billing.secfreelance.com",
   /**
-   * Sign up link on software.html (full URL). Billing app register route.
-   * Fallback (old GH Pages marketing): https://elreyriquez.github.io/sec-billing
+   * Sign up link on software.html — SEC Billing marketing / plans (GitHub Pages on sec domain).
    */
-  BILLING_SIGNUP_URL: "https://billing.secfreelance.com/register",
+  BILLING_SIGNUP_URL: "https://pricing.secfreelance.com/",
 };
