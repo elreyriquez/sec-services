@@ -60,13 +60,13 @@
         <p class="meta software-pipeline-card__config-hint" id="billing-app-config-hint" hidden>
           Add <code>BILLING_APP_BASE</code> in <code>js/config.js</code> (your live SEC Billing URL, or <code>http://127.0.0.1:3000</code> while the app runs locally) so <strong>Sign in</strong> works.
           <strong>Sign up</strong> uses <code>BILLING_SIGNUP_URL</code> (public billing site by default):
-          <a href="https://elreyriquez.github.io/sec-billing/" target="_blank" rel="noopener noreferrer">sec-billing</a>.
+          <a href="https://billingdetails.secfreelance.com/" target="_blank" rel="noopener noreferrer">billing details</a>.
         </p>
         <div class="software-pipeline-card__actions" id="billing-app-actions">
           <a
             class="btn btn-primary btn-sm"
             id="billing-sign-up"
-            href="https://elreyriquez.github.io/sec-billing/"
+            href="https://billingdetails.secfreelance.com/"
             target="_blank"
             rel="noopener noreferrer"
           >Sign up</a>
@@ -125,7 +125,7 @@
       var base = String(cfg.BILLING_APP_BASE || "").replace(/\/$/, "");
       var signupUrl =
         String(cfg.BILLING_SIGNUP_URL || "").trim() ||
-        "https://elreyriquez.github.io/sec-billing";
+        "https://billingdetails.secfreelance.com/";
       var signUp = document.getElementById("billing-sign-up");
       if (signUp) signUp.href = signupUrl;
       var hint = document.getElementById("billing-app-config-hint");
