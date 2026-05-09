@@ -731,6 +731,17 @@ details.section-block--collapsible[open] > .section-block__h2::after {
   min-height: 14rem;
   pointer-events: none;
   z-index: 0;
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .software-pipeline-card--billing .software-pipeline-card__squiggle {
+    transition-duration: 0.01ms;
+  }
+}
+.software-pipeline-card--billing:hover .software-pipeline-card__squiggle,
+.software-pipeline-card--billing:focus-within .software-pipeline-card__squiggle {
+  opacity: 0;
 }
 .software-pipeline-card--billing .software-pipeline-card__body {
   position: relative;
