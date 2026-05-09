@@ -108,7 +108,7 @@
     el.hidden = !n;
   }
 
-  /** Wix brand-journey SKUs (wix-*) vs Custom SEC build SKUs (sec-*) — mixing is usually one project / one path. */
+  /** Legacy carts may still hold old wix-* web-build lines; warn if mixing with sec-* web builds. */
   function cartWouldMixWixAndSecWebBuild(newId) {
     if (!newId || typeof newId !== "string") return false;
     const isWix = newId.startsWith("wix-");
@@ -131,7 +131,7 @@
     }
     if (cartWouldMixWixAndSecWebBuild(id)) {
       const ok = window.confirm(
-        "Your cart already has items from the other website path (Wix vs Custom SEC). " +
+        "Your cart mixes an older builder-path line with Custom SEC web lines. " +
           "Those are different delivery approaches — one project is usually one path. " +
           "Add this line anyway?"
       );

@@ -1056,7 +1056,7 @@ details.section-block--collapsible[open] > .section-block__h2::after {
   box-shadow: 0 0 0 1px var(--accent);
 }
 
-/* Brand new website — path choice (self-managed Wix vs SEC-managed build) */
+/* Brand new website — Custom SEC build journey (legacy: path-choice styles still available) */
 .brand-journey-lead {
   color: var(--text-muted);
   font-size: 0.875rem;

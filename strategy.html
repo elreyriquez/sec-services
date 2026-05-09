@@ -45,16 +45,22 @@
   </header>
   <main>
     <h1 class="page-title">Digital marketing strategy consultations</h1>
-    <p class="lead">Planning session to align creative, channels, and next steps. Duration confirmed on quote (often up to 60 minutes).</p>
+    <p class="lead">Consultation to align creative, channels, and next steps. Billed per hour; duration confirmed on quote.</p>
     <div class="service-panel">
       <div class="pick-list">
-        <div class="pick-row">
+        <div class="pick-row pick-row--shoot">
           <div class="pick-row__main">
-            <span class="pick-row__title">Strategy / planning call</span>
-            <span class="pick-row__meta">Per session.</span>
+            <span class="pick-row__title">Digital marketing consultation</span>
+            <span class="pick-row__meta">Per hour — stack quantity for multi-hour sessions.</span>
           </div>
-          <span class="pick-row__price">5,000</span>
-          <button type="button" class="pick-add" data-add-product="strat-call">Add</button>
+          <span class="pick-row__price" data-price-suffix=" / hr">5,000</span>
+          <div class="pick-row__actions">
+            <div class="qty-inline">
+              <label for="strat-hours">Hrs</label>
+              <input id="strat-hours" type="number" min="1" max="12" value="1" data-qty-for />
+            </div>
+            <button type="button" class="pick-add" data-add-product="strat-call">Add</button>
+          </div>
         </div>
       </div>
     </div>

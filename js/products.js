@@ -22,18 +22,6 @@ window.SEC_CATALOG = {
     { id: "vid-180", name: "Video editing — finished 3:00", price: 98000 },
     { id: "vid-shoot-hr", name: "Videography — per hour (on location)", price: 15000, unit: "hour", maxQty: 4, note: "Half-day max 4 hrs ($60,000 cap, JMD). Outside Kingston & St Andrew, Portmore, Spanish Town: +15% on shoot fees only." },
   ],
-  webBrandWix: [
-    {
-      id: "wix-foundation-home",
-      name: "Wix — Site foundation + Home page (new site)",
-      price: SEC_usdToJmd(100),
-      note: "US$100; JMD = US$ × JMD_PER_USD in js/config.js. Bundle: global styles, header/footer, nav, go-live; full home (hero, sections, CTAs, mobile pass).",
-    },
-    { id: "wix-inner-std", name: "Wix — Additional Pages", price: 25000 },
-    { id: "wix-land-spot", name: "Wix — Premium Landing and Hero Section Upgrade", price: 20000 },
-    { id: "wix-blog", name: "Wix — Custom blog post layout (mid anchor)", price: 12500 },
-    { id: "wix-embed", name: "Wix — Bookings Schedule System", price: 5000 },
-  ],
   webBrandSec: [
     {
       id: "sec-foundation-home",
@@ -43,8 +31,42 @@ window.SEC_CATALOG = {
     },
     { id: "sec-inner-std", name: "Custom SEC — Additional Pages", price: 30000 },
     { id: "sec-land-spot", name: "Custom SEC — Premium Landing and Hero Section Upgrade", price: 20000 },
-    { id: "sec-blog", name: "Custom SEC — Custom blog post layout (coded)", price: 12500, note: "Mid anchor; scope confirmed on quote." },
-    { id: "sec-embed", name: "Custom SEC — Bookings Schedule System", price: 5000, note: "Scheduling / bookings integrated in build." },
+    {
+      id: "sec-blog",
+      name: "Custom SEC — Custom blog post layout (coded)",
+      price: 18750,
+      note: "Mid anchor; scope confirmed on quote.",
+    },
+    {
+      id: "sec-embed",
+      name: "Custom SEC — Bookings Schedule System",
+      price: 15000,
+      note: "Scheduling / bookings integrated in build. Monthly booking-system maintenance is mandatory — add “Booking system — monthly maintenance” separately.",
+    },
+    {
+      id: "sec-domain-setup",
+      name: "Custom SEC — Domain purchase & setup",
+      price: 12000,
+      note: "SEC procurement, DNS, and connection to hosting; registrar/domain sticker price varies by name and TLD (quoted or reimbursed as agreed).",
+    },
+    {
+      id: "sec-payment-setup",
+      name: "Custom SEC — Payment system integration (setup)",
+      price: 15000,
+      note: "One-time integration/setup. Monthly payment-system maintenance is mandatory while payments are live — add “Payment system — monthly maintenance” separately.",
+    },
+    {
+      id: "sec-booking-maint",
+      name: "Booking system — monthly maintenance",
+      price: 3000,
+      note: "Mandatory while bookings/scheduling integration is live. Billed monthly in advance.",
+    },
+    {
+      id: "sec-payment-maint",
+      name: "Payment system — monthly maintenance",
+      price: 5000,
+      note: "Mandatory while payment flows are live. Billed monthly in advance.",
+    },
   ],
   webCarePlans: [
     { id: "care-seo", name: "Website care — Search Engine Optimization", price: 12000, note: "Technical and on-page basics; scope confirmed after review." },
@@ -112,9 +134,9 @@ window.SEC_CATALOG = {
   ],
   webCareTickets: {
     wix: [
-      { id: "tick-wix-L", tier: "Light", name: "Care ticket — Light (Wix / builder)", price: 9000 },
-      { id: "tick-wix-M", tier: "Standard", name: "Care ticket — Standard (Wix / builder)", price: 14000 },
-      { id: "tick-wix-H", tier: "Heavy", name: "Care ticket — Heavy (Wix / builder)", price: 23000 },
+      { id: "tick-wix-L", tier: "Light", name: "Care ticket — Light (builder platform)", price: 9000 },
+      { id: "tick-wix-M", tier: "Standard", name: "Care ticket — Standard (builder platform)", price: 14000 },
+      { id: "tick-wix-H", tier: "Heavy", name: "Care ticket — Heavy (builder platform)", price: 23000 },
     ],
     sec: [
       { id: "tick-sec-L", tier: "Light", name: "Care ticket — Light (Custom SEC)", price: 9000 },
@@ -130,7 +152,13 @@ window.SEC_CATALOG = {
     { id: "mkt-ads-pilot", name: "Paid ads management", price: 0, inquire: true, note: "Scoped after brief; pilot or ongoing — final scope in writing." },
   ],
   strategy: [
-    { id: "strat-call", name: "Digital marketing strategy / planning call", price: 5000, note: "Typically up to 60 minutes — confirm on quote." },
+    {
+      id: "strat-call",
+      name: "Digital marketing consultation",
+      price: 5000,
+      unit: "hour",
+      note: "Per hour; duration confirmed on quote.",
+    },
   ],
 };
 
@@ -138,7 +166,6 @@ window.SEC_findProduct = function findProduct(id) {
   const c = window.SEC_CATALOG;
   const lists = [
     c.production,
-    c.webBrandWix,
     c.webBrandSec,
     c.webCarePlans,
     ...(c.webCareFixed ? [c.webCareFixed] : []),
