@@ -821,6 +821,9 @@ details.section-block--collapsible[open] > .section-block__h2::after {
 .pick-row:last-child {
   border-bottom: none;
 }
+.pick-row--no-add {
+  grid-template-columns: 1fr auto;
+}
 .pick-row:hover {
   background: var(--surface-muted);
 }
@@ -910,6 +913,17 @@ details.section-block--collapsible[open] > .section-block__h2::after {
   font-size: 0.72rem;
   font-weight: 500;
   color: var(--accent-hover);
+}
+.pick-row__price--suffix {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.15rem;
+  justify-content: flex-end;
+}
+.pick-row__period {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
 }
 /* Small “choice” add control — pill, not imposing */
 .pick-add {
