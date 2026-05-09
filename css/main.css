@@ -723,19 +723,22 @@ details.section-block--collapsible[open] > .section-block__h2::after {
 }
 .software-pipeline-card--billing .software-pipeline-card__squiggle {
   position: absolute;
-  left: -4%;
-  right: -4%;
-  bottom: -12%;
-  width: 108%;
-  height: min(9rem, 52%);
-  min-height: 5.5rem;
-  max-height: 11rem;
+  left: -14%;
+  right: -14%;
+  top: -28%;
+  width: 128%;
+  height: 156%;
+  min-height: 14rem;
   pointer-events: none;
   z-index: 0;
 }
 .software-pipeline-card--billing .software-pipeline-card__body {
   position: relative;
   z-index: 1;
+}
+/* Dark navy “Available now” — billing card only (was accent peach) */
+.software-pipeline-card--billing .software-pipeline-card__badge--live {
+  color: #203f58;
 }
 .software-pipeline-card__title {
   font-family: var(--font-head);
