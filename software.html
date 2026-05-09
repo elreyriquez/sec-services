@@ -51,26 +51,56 @@
 
     <section class="section-block" id="sec-billing">
       <h2>Available now</h2>
-      <div class="service-panel software-pipeline-card software-pipeline-card--live">
-        <h3 class="software-pipeline-card__title">SEC Billing</h3>
-        <p class="meta" style="margin: 0">
-          Invoice and billing workspace for companies, agencies, and firms: clients, invoices, manual payment recording, PDFs, performance reports, CSV exports, recurring invoices, email automation (within plan limits), roles for admin, bookkeeper, and viewer, and time tracking for staff. Subscription and access are arranged with SEC; see pricing in the app.
-        </p>
-        <p class="software-pipeline-card__badge software-pipeline-card__badge--live" aria-hidden="true">Available now</p>
-        <p class="meta software-pipeline-card__config-hint" id="billing-app-config-hint" hidden>
-          Add <code>BILLING_APP_BASE</code> in <code>js/config.js</code> (your live SEC Billing URL, or <code>http://127.0.0.1:3000</code> while the app runs locally) so <strong>Sign in</strong> works.
-          <strong>Sign up</strong> uses <code>BILLING_SIGNUP_URL</code> (public billing site by default):
-          <a href="https://billingdetails.secfreelance.com/" target="_blank" rel="noopener noreferrer">billing details</a>.
-        </p>
-        <div class="software-pipeline-card__actions" id="billing-app-actions">
-          <a
-            class="btn btn-primary btn-sm"
-            id="billing-sign-up"
-            href="https://billingdetails.secfreelance.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >Sign up</a>
-          <a class="btn btn-ghost btn-sm" id="billing-sign-in" data-billing-path="/login" href="#">Sign in</a>
+      <div class="service-panel software-pipeline-card software-pipeline-card--live software-pipeline-card--billing">
+        <svg
+          class="software-pipeline-card__squiggle no-print"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 600 140"
+          preserveAspectRatio="xMidYMax slice"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <!-- Burnt peach / melon — matches billingdetails.secfreelance.com (--melon / --melon-hover) -->
+          <path
+            fill="none"
+            stroke="#f69268"
+            stroke-width="26"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            opacity="0.18"
+            d="M -40 118 C 45 118 95 28 165 58 S 265 128 345 48 S 455 22 545 68 S 620 52 640 78"
+          />
+          <path
+            fill="none"
+            stroke="#e07d52"
+            stroke-width="22"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            opacity="0.28"
+            d="M -35 102 C 55 108 100 35 175 55 S 275 118 360 42 S 470 18 555 62 S 615 88 645 70"
+          />
+        </svg>
+        <div class="software-pipeline-card__body">
+          <h3 class="software-pipeline-card__title">SEC Billing</h3>
+          <p class="meta" style="margin: 0">
+            Invoice and billing workspace for companies, agencies, and firms: clients, invoices, manual payment recording, PDFs, performance reports, CSV exports, recurring invoices, email automation (within plan limits), roles for admin, bookkeeper, and viewer, and time tracking for staff. Subscription and access are arranged with SEC; see pricing in the app.
+          </p>
+          <p class="software-pipeline-card__badge software-pipeline-card__badge--live" aria-hidden="true">Available now</p>
+          <p class="meta software-pipeline-card__config-hint" id="billing-app-config-hint" hidden>
+            Add <code>BILLING_APP_BASE</code> in <code>js/config.js</code> (your live SEC Billing URL, or <code>http://127.0.0.1:3000</code> while the app runs locally) so <strong>Sign in</strong> works.
+            <strong>Sign up</strong> uses <code>BILLING_SIGNUP_URL</code> (public billing site by default):
+            <a href="https://billingdetails.secfreelance.com/" target="_blank" rel="noopener noreferrer">billing details</a>.
+          </p>
+          <div class="software-pipeline-card__actions" id="billing-app-actions">
+            <a
+              class="btn btn-primary btn-sm"
+              id="billing-sign-up"
+              href="https://billingdetails.secfreelance.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Sign up</a>
+            <a class="btn btn-ghost btn-sm" id="billing-sign-in" data-billing-path="/login" href="#">Sign in</a>
+          </div>
         </div>
       </div>
     </section>
