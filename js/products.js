@@ -149,7 +149,13 @@ window.SEC_CATALOG = {
       id: "mkt-promo-capture",
       name: "Capturing content",
       price: 0,
-      note: "Videography on promotion; overtime on 6th hour when duration is 6 hours.",
+      note: "Videography on promotion; first 5 photo edits included free when on quote.",
+    },
+    {
+      id: "mkt-promo-coordination",
+      name: "Promotion coordination",
+      price: 0,
+      note: "Tiered by parish; waived when promotional vehicle and capturing content are both on your quote.",
     },
     {
       id: "mkt-promo-edit-photo",

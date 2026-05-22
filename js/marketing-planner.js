@@ -33,6 +33,7 @@
       captureBase4h: 30000,
       hostBase4h: 20000,
       miscBlock: 10000,
+      coordination: 10000,
       models: 9000,
     },
     middle: {
@@ -42,6 +43,7 @@
       captureBase4h: 30000,
       hostBase4h: 25000,
       miscBlock: 20000,
+      coordination: 15000,
       models: 10000,
     },
     outside: {
@@ -51,12 +53,18 @@
       captureBase4h: 35000,
       hostBase4h: 30000,
       miscBlock: 25000,
+      coordination: 18000,
       models: 10000,
     },
   };
 
   var EDIT_PHOTO = 1250;
   var EDIT_VIDEO = 10000;
+  var FREE_PHOTOS_WITH_CAPTURE = 5;
+
+  function computeCoordination(tier) {
+    return window.SEC_MARKETING_RATES[tier].coordination;
+  }
 
   function tierForParish(parishId) {
     return PARISH_TIER[parishId] || "outside";
@@ -228,11 +236,44 @@
     updatePriceEl(document.querySelector('[data-promo-price="capture"]'), computeCapture(tier, h));
     updatePriceEl(document.querySelector('[data-promo-price="host"]'), computeHost(tier, h));
     updatePriceEl(document.querySelector('[data-promo-price="misc"]'), computeMisc(tier));
+    var coordEl = document.querySelector('[data-promo-price="coordination"]');
+    if (coordEl) {
+      var fullState = getPlannerState();
+      var coordPrice = computeCoordination(tier);
+      var coordNote = document.querySelector('[data-promo-row="coordination"] .pick-row__meta');
+      if (fullState) {
+        ensureCoordinationInCart(fullState);
+        if (coordinationIsWaived(fullState)) {
+          coordPrice = 0;
+          if (coordNote) {
+            coordNote.textContent =
+              "Waived — promotional vehicle and capturing content are both on your quote.";
+          }
+        } else if (coordNote) {
+          coordNote.textContent =
+            "Included on every promotion quote — waived only when vehicle and capturing content are both added.";
+        }
+      } else if (coordNote) {
+        coordNote.textContent =
+          "Included on every promotion quote — waived only when vehicle and capturing content are both added.";
+      }
+      updatePriceEl(coordEl, coordPrice);
+      if (coordPrice === 0) coordEl.textContent = "Free";
+    }
     var photoPriceEl = document.querySelector('[data-promo-price="edit-photo"]');
     if (photoPriceEl) {
       updatePriceEl(photoPriceEl, EDIT_PHOTO);
       var suffix = photoPriceEl.getAttribute("data-price-suffix") || "";
       photoPriceEl.textContent = formatPrice(EDIT_PHOTO) + suffix;
+      var photoMeta = document.querySelector('[data-promo-row="edit-photo"] .pick-row__meta');
+      if (photoMeta) {
+        photoMeta.textContent =
+          "First " +
+          FREE_PHOTOS_WITH_CAPTURE +
+          " photos free when capturing content is on your quote; then " +
+          formatPrice(EDIT_PHOTO) +
+          " per photo.";
+      }
     }
     updatePriceEl(document.querySelector('[data-promo-price="edit-video"]'), EDIT_VIDEO);
     updatePriceEl(document.querySelector('[data-promo-price="models"]'), window.SEC_MARKETING_RATES[tier].models);
@@ -269,6 +310,33 @@
     });
   }
 
+  function cartHasCaptureForState(state) {
+    return cartHasLineForState(state, "mkt-promo-capture");
+  }
+
+  function cartHasVehicleForState(state) {
+    return cartHasLineForState(state, "mkt-promo-vehicle");
+  }
+
+  /** Waived only when both vehicle and capturing content are on the quote. */
+  function coordinationIsWaived(state) {
+    return cartHasVehicleForState(state) && cartHasCaptureForState(state);
+  }
+
+  function coordinationPriceForState(state) {
+    if (coordinationIsWaived(state)) return 0;
+    return computeCoordination(state.tier);
+  }
+
+  function removeCartLinesForState(state, productId) {
+    var prefix = productId + metaKey(state, productId);
+    window.SECCart.load().forEach(function (i) {
+      if (i.id === productId && String(i.lineId).indexOf(prefix) === 0) {
+        window.SECCart.remove(i.lineId);
+      }
+    });
+  }
+
   function ensureMiscInCart(state) {
     if (cartHasLineForState(state, "mkt-promo-misc")) return;
     var p = window.SEC_findProduct("mkt-promo-misc");
@@ -285,23 +353,83 @@
     });
   }
 
-  function ensurePhotoEditInCart(state) {
-    var estQty = getPhotoEstQty();
-    var suffix = "est" + estQty;
-    if (estQty < 1) return;
-    if (cartHasLineForState(state, "mkt-promo-edit-photo", suffix)) return;
-    var p = window.SEC_findProduct("mkt-promo-edit-photo");
+  function ensureCoordinationInCart(state) {
+    var productId = "mkt-promo-coordination";
+    var price = coordinationPriceForState(state);
+    var lineKey = productId + metaKey(state, productId);
+    var existing = window.SECCart.load().find(function (i) {
+      return i.lineId === lineKey;
+    });
+    if (existing && existing.price === price) return;
+    if (existing) window.SECCart.remove(lineKey);
+    var p = window.SEC_findProduct(productId);
     if (!p) return;
+    var extra =
+      price === 0
+        ? "Waived — promotional vehicle and capturing content on this quote."
+        : p.note;
     window.SECCart.add({
       id: p.id,
       name: p.name,
-      price: EDIT_PHOTO,
-      qty: estQty,
+      price: price,
+      qty: 1,
       inquire: false,
-      notes: contextNotes(state, [p.note, "Estimated qty: " + estQty].join("; ")),
-      metaKey: metaKey(state, "mkt-promo-edit-photo", suffix),
+      notes: contextNotes(state, extra),
+      metaKey: metaKey(state, productId),
       noMerge: false,
     });
+  }
+
+  function ensurePhotoEditInCart(state) {
+    var estQty = getPhotoEstQty();
+    var productId = "mkt-promo-edit-photo";
+    removeCartLinesForState(state, productId);
+    if (estQty < 1) return;
+    var p = window.SEC_findProduct(productId);
+    if (!p) return;
+    var hasCapture = cartHasCaptureForState(state);
+    var freeQty = hasCapture ? Math.min(estQty, FREE_PHOTOS_WITH_CAPTURE) : 0;
+    var paidQty = hasCapture ? Math.max(0, estQty - FREE_PHOTOS_WITH_CAPTURE) : estQty;
+
+    if (freeQty > 0) {
+      window.SECCart.add({
+        id: p.id,
+        name: p.name + " (included)",
+        price: 0,
+        qty: freeQty,
+        inquire: false,
+        notes: contextNotes(
+          state,
+          "Estimated qty: " +
+            estQty +
+            "; first " +
+            freeQty +
+            " photo edit(s) free with capturing content."
+        ),
+        metaKey: metaKey(state, productId, "free"),
+        noMerge: false,
+      });
+    }
+    if (paidQty > 0) {
+      window.SECCart.add({
+        id: p.id,
+        name: p.name,
+        price: EDIT_PHOTO,
+        qty: paidQty,
+        inquire: false,
+        notes: contextNotes(
+          state,
+          [
+            "Estimated qty: " + estQty,
+            hasCapture
+              ? "Billable after " + FREE_PHOTOS_WITH_CAPTURE + " free photos with capture."
+              : p.note,
+          ].join("; ")
+        ),
+        metaKey: metaKey(state, productId, "paid"),
+        noMerge: false,
+      });
+    }
   }
 
   function addPromoLine(productId, priceJmd, qty, extraNote) {
@@ -322,6 +450,7 @@
       noMerge: false,
     });
     ensureMiscInCart(state);
+    ensureCoordinationInCart(state);
     ensurePhotoEditInCart(state);
     var msg = document.getElementById("promo-planner-msg");
     if (msg) msg.hidden = true;
@@ -376,7 +505,17 @@
             break;
           case "capture":
             price = computeCapture(tier, h);
-            break;
+            addPromoLine(
+              productId,
+              price,
+              qty,
+              "First " + FREE_PHOTOS_WITH_CAPTURE + " photo edits included free on this quote."
+            );
+            btn.classList.add("added-flash");
+            setTimeout(function () {
+              btn.classList.remove("added-flash");
+            }, 600);
+            return;
           case "host":
             price = computeHost(tier, h);
             break;
