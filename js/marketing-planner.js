@@ -23,7 +23,7 @@
   };
 
   var BASE_PROMO_HOURS = 4;
-  var EXTRA_HOUR_PREMIUM = 0.05;
+  var EXTRA_HOUR_FLAT_JMD = 5000;
 
   window.SEC_MARKETING_RATES = {
     kingston: {
@@ -71,14 +71,13 @@
     return window.SEC_MARKETING_RATES[tier].vehicle;
   }
 
-  /** 4h base; each additional hour +5% on the hourly unit. */
+  /** 4h base; each additional hour +$5,000 (JMD). */
   function applyDurationToBase4h(base4h, hours) {
     var h = hours >= 4 && hours <= 6 ? hours : BASE_PROMO_HOURS;
     if (h <= BASE_PROMO_HOURS) return base4h;
-    var hourlyUnit = base4h / BASE_PROMO_HOURS;
     var total = base4h;
-    if (h >= 5) total += Math.round(hourlyUnit * (1 + EXTRA_HOUR_PREMIUM));
-    if (h >= 6) total += Math.round(hourlyUnit * (1 + EXTRA_HOUR_PREMIUM));
+    if (h >= 5) total += EXTRA_HOUR_FLAT_JMD;
+    if (h >= 6) total += EXTRA_HOUR_FLAT_JMD;
     return total;
   }
 
