@@ -22,37 +22,34 @@
     other: "Other parish",
   };
 
+  var BASE_PROMO_HOURS = 4;
+  var EXTRA_HOUR_PREMIUM = 0.05;
+
   window.SEC_MARKETING_RATES = {
     kingston: {
       label: "Around Town",
       vehicle: 50000,
-      speakersBlock: 10000,
-      speakersOvertime: 0.5,
-      capturePerHour: 7500,
-      captureOvertime: 0.5,
-      hostPerHour: 5000,
+      speakersBase4h: 10000,
+      captureBase4h: 30000,
+      hostBase4h: 20000,
       miscBlock: 10000,
       models: 9000,
     },
     middle: {
       label: "Neighbouring Towns",
       vehicle: 55000,
-      speakersBlock: 15000,
-      speakersOvertime: 0.5,
-      capturePerHour: 8000,
-      captureOvertime: 0.5,
-      hostPerHour: 7500,
+      speakersBase4h: 12000,
+      captureBase4h: 30000,
+      hostBase4h: 25000,
       miscBlock: 20000,
       models: 10000,
     },
     outside: {
       label: "Outside listed parishes",
       vehicle: 60000,
-      speakersBlock: 18000,
-      speakersOvertime: 0.5,
-      capturePerHour: 8200,
-      captureOvertime: 0.5,
-      hostPerHour: 7800,
+      speakersBase4h: 15000,
+      captureBase4h: 35000,
+      hostBase4h: 30000,
       miscBlock: 25000,
       models: 10000,
     },
@@ -74,22 +71,27 @@
     return window.SEC_MARKETING_RATES[tier].vehicle;
   }
 
+  /** 4h base; each additional hour +5% on the hourly unit. */
+  function applyDurationToBase4h(base4h, hours) {
+    var h = hours >= 4 && hours <= 6 ? hours : BASE_PROMO_HOURS;
+    if (h <= BASE_PROMO_HOURS) return base4h;
+    var hourlyUnit = base4h / BASE_PROMO_HOURS;
+    var total = base4h;
+    if (h >= 5) total += Math.round(hourlyUnit * (1 + EXTRA_HOUR_PREMIUM));
+    if (h >= 6) total += Math.round(hourlyUnit * (1 + EXTRA_HOUR_PREMIUM));
+    return total;
+  }
+
   function computeSpeakers(tier, hours) {
-    var r = window.SEC_MARKETING_RATES[tier];
-    var base = r.speakersBlock;
-    if (hours >= 6) return Math.round(base * (1 + r.speakersOvertime));
-    return base;
+    return applyDurationToBase4h(window.SEC_MARKETING_RATES[tier].speakersBase4h, hours);
   }
 
   function computeCapture(tier, hours) {
-    var r = window.SEC_MARKETING_RATES[tier];
-    var rate = r.capturePerHour;
-    if (hours <= 5) return rate * hours;
-    return Math.round(rate * 5 + rate * (1 + r.captureOvertime));
+    return applyDurationToBase4h(window.SEC_MARKETING_RATES[tier].captureBase4h, hours);
   }
 
   function computeHost(tier, hours) {
-    return window.SEC_MARKETING_RATES[tier].hostPerHour * hours;
+    return applyDurationToBase4h(window.SEC_MARKETING_RATES[tier].hostBase4h, hours);
   }
 
   function computeMisc(tier) {
@@ -110,7 +112,7 @@
     return "$" + Math.round(jmd).toLocaleString();
   }
 
-  var DEFAULT_PREVIEW_HOURS = 5;
+  var DEFAULT_PREVIEW_HOURS = 4;
 
   function getParishContext() {
     var parishEl = document.getElementById("promo-parish");
