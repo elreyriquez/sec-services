@@ -110,15 +110,15 @@
     return "$" + Math.round(jmd).toLocaleString();
   }
 
-  function getPlannerState() {
+  var DEFAULT_PREVIEW_HOURS = 5;
+
+  function getParishContext() {
     var parishEl = document.getElementById("promo-parish");
-    var durationEl = document.getElementById("promo-duration");
     var dateEl = document.getElementById("promo-date");
     var otherEl = document.getElementById("promo-parish-other");
-    if (!parishEl || !durationEl) return null;
+    if (!parishEl) return null;
     var parishId = parishEl.value;
-    var hours = parseDuration(durationEl.value);
-    if (!parishId || !hours) return null;
+    if (!parishId) return null;
     var parishLabel = PARISH_LABELS[parishId] || parishId;
     if (parishId === "other" && otherEl && otherEl.value.trim()) {
       parishLabel = otherEl.value.trim();
@@ -129,9 +129,30 @@
       parishLabel: parishLabel,
       tier: tier,
       tierLabel: window.SEC_MARKETING_RATES[tier].label,
-      hours: hours,
       date: dateEl && dateEl.value ? dateEl.value : "",
     };
+  }
+
+  function getPlannerState() {
+    var durationEl = document.getElementById("promo-duration");
+    var ctx = getParishContext();
+    if (!ctx || !durationEl) return null;
+    var hours = parseDuration(durationEl.value);
+    if (!hours) return null;
+    return {
+      parishId: ctx.parishId,
+      parishLabel: ctx.parishLabel,
+      tier: ctx.tier,
+      tierLabel: ctx.tierLabel,
+      hours: hours,
+      date: ctx.date,
+    };
+  }
+
+  function getDisplayHours() {
+    var durationEl = document.getElementById("promo-duration");
+    if (!durationEl) return DEFAULT_PREVIEW_HOURS;
+    return parseDuration(durationEl.value) || DEFAULT_PREVIEW_HOURS;
   }
 
   function contextNotes(state, extra) {
@@ -177,25 +198,29 @@
   }
 
   function refreshPrices() {
-    var state = getPlannerState();
+    var ctx = getParishContext();
     var panel = document.getElementById("promotion-rates-panel");
     var locked = document.getElementById("promotion-planner");
+    var msg = document.getElementById("promo-planner-msg");
     if (!panel) return;
 
-    if (!state) {
+    if (!ctx) {
       panel.hidden = true;
       if (locked) locked.classList.add("promotion-planner--locked");
       panel.querySelectorAll(".pick-add[data-promo-line]").forEach(function (btn) {
         btn.disabled = true;
       });
+      if (msg) msg.hidden = true;
       return;
     }
 
     panel.hidden = false;
+    panel.removeAttribute("hidden");
     if (locked) locked.classList.remove("promotion-planner--locked");
 
-    var tier = state.tier;
-    var h = state.hours;
+    var tier = ctx.tier;
+    var h = getDisplayHours();
+    var ready = Boolean(getPlannerState());
 
     updatePriceEl(document.querySelector('[data-promo-price="vehicle"]'), computeVehicle(tier));
     updatePriceEl(document.querySelector('[data-promo-price="speakers"]'), computeSpeakers(tier, h));
@@ -212,8 +237,17 @@
     updatePriceEl(document.querySelector('[data-promo-price="models"]'), window.SEC_MARKETING_RATES[tier].models);
 
     panel.querySelectorAll(".pick-add[data-promo-line]").forEach(function (btn) {
-      btn.disabled = false;
+      btn.disabled = !ready;
     });
+
+    if (msg) {
+      if (!ready) {
+        msg.textContent = "Select promotional duration to add lines to your cart.";
+        msg.hidden = false;
+      } else {
+        msg.hidden = true;
+      }
+    }
   }
 
   function requireState() {
@@ -221,7 +255,7 @@
     if (state) return state;
     var msg = document.getElementById("promo-planner-msg");
     if (msg) {
-      msg.textContent = "Select parish and promotional duration to see rates and add lines.";
+      msg.textContent = "Select promotional duration to add lines to your cart.";
       msg.hidden = false;
     }
     return null;
