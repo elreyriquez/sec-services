@@ -1180,6 +1180,159 @@ details.section-block--collapsible[open] > .section-block__h2::after {
   color: var(--text);
 }
 
+/* Marketing promotion planner */
+.promotion-planner {
+  margin-bottom: 2rem;
+}
+.promotion-planner__lead {
+  margin: 0 0 1.25rem;
+  max-width: 42rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+.promotion-planner__fields {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  max-width: 36rem;
+  margin-bottom: 1rem;
+}
+@media (min-width: 640px) {
+  .promotion-planner__fields {
+    grid-template-columns: 1fr 1fr;
+  }
+  .promotion-planner__field:first-child {
+    grid-column: 1 / -1;
+  }
+}
+.promotion-planner__field label {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+  color: var(--text);
+}
+.promotion-planner__optional {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.promotion-planner__required {
+  font-weight: 400;
+  color: var(--regal);
+}
+.promotion-planner__field input[type="date"],
+.promotion-planner__field input[type="text"],
+.promotion-planner__field select {
+  width: 100%;
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control, 6px);
+  background: var(--surface);
+  color: var(--text);
+}
+.promotion-planner__field input:focus,
+.promotion-planner__field select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.promotion-planner__msg {
+  margin: 0 0 1rem;
+}
+.promotion-planner--locked #promotion-rates-panel {
+  display: none;
+}
+.promotion-planner #promotion-rates-panel[hidden] {
+  display: none;
+}
+.promotion-planner .section-block__h2 {
+  margin-bottom: 0.65rem;
+  font-size: clamp(1.2rem, 2.5vw, 1.45rem);
+}
+.promotion-planner .section-block__h2::after {
+  display: none;
+}
+.promotion-planner .pick-add:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Promotion planner: title left; unit price, estimated qty (no add) */
+.pick-row--promo-estimate {
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+}
+.pick-row--promo-estimate .pick-row__main {
+  grid-column: 1;
+}
+.pick-row--promo-estimate .pick-row__price {
+  grid-column: 2;
+}
+.pick-row--promo-estimate .qty-inline {
+  grid-column: 3;
+}
+@media (max-width: 540px) {
+  .pick-row--promo-estimate {
+    grid-template-columns: 1fr auto auto;
+    grid-template-rows: auto auto;
+  }
+  .pick-row--promo-estimate .pick-row__main {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .pick-row--promo-estimate .pick-row__price {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .pick-row--promo-estimate .qty-inline {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
+
+/* Promotion planner: title left; price, qty, add on the right */
+.pick-row--promo-qty {
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+}
+.pick-row--promo-qty .pick-row__main {
+  grid-column: 1;
+}
+.pick-row--promo-qty .pick-row__price {
+  grid-column: 2;
+}
+.pick-row--promo-qty .qty-inline {
+  grid-column: 3;
+}
+.pick-row--promo-qty .pick-add {
+  grid-column: 4;
+}
+@media (max-width: 540px) {
+  .pick-row--promo-qty {
+    grid-template-columns: 1fr auto auto;
+    grid-template-rows: auto auto;
+  }
+  .pick-row--promo-qty .pick-row__main {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .pick-row--promo-qty .pick-row__price {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .pick-row--promo-qty .qty-inline {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .pick-row--promo-qty .pick-add {
+    grid-column: 3;
+    grid-row: 2;
+  }
+}
+
 .care-estimator-entry {
   margin-bottom: 1rem;
 }

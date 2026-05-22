@@ -45,56 +45,189 @@
   </header>
   <main>
     <h1 class="page-title">Marketing &amp; promotion executions</h1>
-    <p class="lead">Most lines are <strong>scoped after a brief</strong> (price TBD). Add to cart to flag them on your order.</p>
-    <div class="service-panel service-panel--hover-meta">
-      <div class="pick-list">
-        <div class="pick-row">
-          <div class="pick-row__main">
-            <span class="pick-row__title">Brand advocacy</span>
-            <span class="pick-row__meta">Events, on-ground presence — quote after brief.</span>
-          </div>
-          <span class="pick-row__price inquire">Inquire</span>
-          <button type="button" class="pick-add" data-add-product="mkt-advocacy">Add</button>
+
+    <section class="section-block promotion-planner promotion-planner--locked" id="promotion-planner" aria-labelledby="promo-plan-heading">
+      <h2 class="section-block__h2" id="promo-plan-heading">Plan your promotion executions</h2>
+      <p class="promotion-planner__lead">
+        Choose parish and duration to see tier rates. Block-priced lines (vehicle, speakers) bill a
+        <strong>minimum 5-hour block</strong> even for 4-hour promotions. <strong>6-hour</strong> promotions apply overtime on speakers and capture (6th hour).
+        Miscellaneous and photo editing (estimated qty) are included on every promotion quote when you add services.
+      </p>
+
+      <div class="promotion-planner__fields">
+        <div class="promotion-planner__field">
+          <label for="promo-date">Event date <span class="promotion-planner__optional">(optional)</span></label>
+          <input type="date" id="promo-date" name="promo-date" />
         </div>
-        <div class="pick-row">
-          <div class="pick-row__main">
-            <span class="pick-row__title">T-shirt printing</span>
-            <span class="pick-row__meta">Coordination / run — quote after specs.</span>
-          </div>
-          <span class="pick-row__price inquire">Inquire</span>
-          <button type="button" class="pick-add" data-add-product="mkt-tee">Add</button>
+        <div class="promotion-planner__field">
+          <label for="promo-parish">Parish <span class="promotion-planner__required">(required)</span></label>
+          <select id="promo-parish" name="promo-parish" required>
+            <option value="">Select parish…</option>
+            <optgroup label="Around Town">
+              <option value="kingston">Kingston</option>
+              <option value="st-andrew">St Andrew</option>
+            </optgroup>
+            <optgroup label="Neighbouring Towns">
+              <option value="portmore">Portmore</option>
+              <option value="spanish-town">Spanish Town</option>
+              <option value="st-catherine">St Catherine</option>
+              <option value="clarendon">Clarendon</option>
+            </optgroup>
+            <optgroup label="Outside listed parishes">
+              <option value="other">Other parish</option>
+            </optgroup>
+          </select>
         </div>
-        <div class="pick-row">
-          <div class="pick-row__main">
-            <span class="pick-row__title">Brochure printing</span>
-            <span class="pick-row__meta">Specs &amp; qty — quote after brief.</span>
-          </div>
-          <span class="pick-row__price inquire">Inquire</span>
-          <button type="button" class="pick-add" data-add-product="mkt-brochure">Add</button>
+        <div class="promotion-planner__field" id="promo-parish-other-wrap" hidden>
+          <label for="promo-parish-other">Parish name</label>
+          <input type="text" id="promo-parish-other" name="promo-parish-other" placeholder="e.g. Manchester" autocomplete="address-level2" />
         </div>
-        <div class="pick-row">
-          <div class="pick-row__main">
-            <span class="pick-row__title">Runner / road jobs</span>
-            <span class="pick-row__meta">Distribution, handoff — quote after route/hours.</span>
-          </div>
-          <span class="pick-row__price inquire">Inquire</span>
-          <button type="button" class="pick-add" data-add-product="mkt-runner">Add</button>
-        </div>
-        <div class="pick-row">
-          <div class="pick-row__main">
-            <span class="pick-row__title">Paid ads management</span>
-            <span class="pick-row__meta">Scoped pilot or ongoing — quote after brief; deliverables confirmed in writing.</span>
-          </div>
-          <span class="pick-row__price inquire">Inquire</span>
-          <button type="button" class="pick-add" data-add-product="mkt-ads-pilot">Add</button>
+        <div class="promotion-planner__field">
+          <label for="promo-duration">Promotional duration <span class="promotion-planner__required">(required)</span></label>
+          <select id="promo-duration" name="promo-duration" required>
+            <option value="">Select duration…</option>
+            <option value="4">4 hours</option>
+            <option value="5">5 hours</option>
+            <option value="6">6 hours (max)</option>
+          </select>
         </div>
       </div>
-    </div>
+
+      <p id="promo-planner-msg" class="promotion-planner__msg meta" hidden aria-live="polite"></p>
+
+      <div id="promotion-rates-panel" class="service-panel" hidden>
+        <div class="pick-list">
+          <div class="pick-row" data-promo-row="vehicle">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Promotional vehicle with driver and grip</span>
+            </div>
+            <span class="pick-row__price inquire" data-promo-price="vehicle">—</span>
+            <button type="button" class="pick-add" data-add-product="mkt-promo-vehicle" data-promo-line="vehicle" disabled>Add</button>
+          </div>
+          <div class="pick-row" data-promo-row="speakers">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Speakers</span>
+              <span class="pick-row__meta">Per 5-hour block; +50% at 6 hours.</span>
+            </div>
+            <span class="pick-row__price inquire" data-promo-price="speakers">—</span>
+            <button type="button" class="pick-add" data-add-product="mkt-promo-speakers" data-promo-line="speakers" disabled>Add</button>
+          </div>
+          <div class="pick-row" data-promo-row="capture">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Capturing content</span>
+              <span class="pick-row__meta">Videography on promotion — per hour; 6th hour at +50% when duration is 6 hours.</span>
+            </div>
+            <span class="pick-row__price inquire" data-promo-price="capture">—</span>
+            <button type="button" class="pick-add" data-add-product="mkt-promo-capture" data-promo-line="capture" disabled>Add</button>
+          </div>
+          <div class="pick-row pick-row--no-add pick-row--promo-estimate" data-promo-row="edit-photo">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Editing content per photo</span>
+              <span class="pick-row__meta">Included on every promotion quote when estimated qty is 1 or more.</span>
+            </div>
+            <span class="pick-row__price inquire" data-promo-price="edit-photo" data-price-suffix=" / photo">—</span>
+            <div class="qty-inline">
+              <label for="promo-edit-photo-est-qty">Estimated qty</label>
+              <input id="promo-edit-photo-est-qty" type="number" min="0" max="99" value="0" data-promo-est-qty="edit-photo" />
+            </div>
+          </div>
+          <div class="pick-row pick-row--promo-qty" data-promo-row="edit-video">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Editing content (15s video)</span>
+              <span class="pick-row__meta">Video concept agreed before promotion activity.</span>
+            </div>
+            <span class="pick-row__price inquire" data-promo-price="edit-video">—</span>
+            <div class="qty-inline">
+              <label for="promo-edit-video-qty">Qty</label>
+              <input id="promo-edit-video-qty" type="number" min="1" max="99" value="1" data-qty-for />
+            </div>
+            <button type="button" class="pick-add" data-add-product="mkt-promo-edit-video" data-promo-line="edit-video" disabled>Add</button>
+          </div>
+          <div class="pick-row" data-promo-row="host">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Host/DJ</span>
+              <span class="pick-row__meta">Per hour for your selected promotion duration.</span>
+            </div>
+            <span class="pick-row__price inquire" data-promo-price="host">—</span>
+            <button type="button" class="pick-add" data-add-product="mkt-promo-host" data-promo-line="host" disabled>Add</button>
+          </div>
+          <div class="pick-row pick-row--no-add" data-promo-row="misc">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Miscellaneous</span>
+              <span class="pick-row__meta">Included on every promotion quote when you add services above.</span>
+            </div>
+            <span class="pick-row__price inquire" data-promo-price="misc">—</span>
+          </div>
+          <div class="pick-row pick-row--promo-qty" data-promo-row="models">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Promotional models</span>
+              <span class="pick-row__meta">Per model / brand ambassador.</span>
+            </div>
+            <span class="pick-row__price inquire" data-promo-price="models">—</span>
+            <div class="qty-inline">
+              <label for="promo-models-qty">Qty</label>
+              <input id="promo-models-qty" type="number" min="1" max="20" value="1" data-qty-for />
+            </div>
+            <button type="button" class="pick-add" data-add-product="mkt-promo-models" data-promo-line="models" disabled>Add</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <details class="section-block section-block--collapsible">
+      <summary class="section-block__h2">Other marketing services (quote after brief)</summary>
+      <p class="lead" style="margin-top: 0.5rem">These lines are scoped after a brief. Add to cart to flag them on your order.</p>
+      <div class="service-panel service-panel--hover-meta">
+        <div class="pick-list">
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Brand advocacy</span>
+              <span class="pick-row__meta">Events, on-ground presence — quote after brief.</span>
+            </div>
+            <span class="pick-row__price inquire">Inquire</span>
+            <button type="button" class="pick-add" data-add-product="mkt-advocacy">Add</button>
+          </div>
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">T-shirt printing</span>
+              <span class="pick-row__meta">Coordination / run — quote after specs.</span>
+            </div>
+            <span class="pick-row__price inquire">Inquire</span>
+            <button type="button" class="pick-add" data-add-product="mkt-tee">Add</button>
+          </div>
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Brochure printing</span>
+              <span class="pick-row__meta">Specs &amp; qty — quote after brief.</span>
+            </div>
+            <span class="pick-row__price inquire">Inquire</span>
+            <button type="button" class="pick-add" data-add-product="mkt-brochure">Add</button>
+          </div>
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Runner / road jobs</span>
+              <span class="pick-row__meta">Distribution, handoff — quote after route/hours.</span>
+            </div>
+            <span class="pick-row__price inquire">Inquire</span>
+            <button type="button" class="pick-add" data-add-product="mkt-runner">Add</button>
+          </div>
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Paid ads management</span>
+              <span class="pick-row__meta">Scoped pilot or ongoing — quote after brief; deliverables confirmed in writing.</span>
+            </div>
+            <span class="pick-row__price inquire">Inquire</span>
+            <button type="button" class="pick-add" data-add-product="mkt-ads-pilot">Add</button>
+          </div>
+        </div>
+      </div>
+    </details>
   </main>
   <script src="js/config.js"></script>
   <script src="js/products.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/currency.js"></script>
+  <script src="js/marketing-planner.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

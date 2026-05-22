@@ -61,6 +61,7 @@
     document.querySelectorAll(".pick-row").forEach(function (row) {
       var priceEl = row.querySelector(".pick-row__price");
       if (!priceEl || priceEl.classList.contains("inquire")) return;
+      if (priceEl.hasAttribute("data-promo-price")) return;
       var addBtn = row.querySelector(".pick-add[data-add-product]");
       if (!addBtn) return;
       var id = addBtn.getAttribute("data-add-product");
@@ -108,6 +109,9 @@
     applyPickRows();
     applyVidEditPrice();
     applyFootnoteAmounts();
+    if (typeof window.SEC_marketingRefreshPrices === "function") {
+      window.SEC_marketingRefreshPrices();
+    }
     refreshCarePanel();
     if (typeof window.SECCart_refreshDisplay === "function") {
       window.SECCart_refreshDisplay();
