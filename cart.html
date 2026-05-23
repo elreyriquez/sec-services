@@ -46,7 +46,7 @@
       </button>
     </div>
   </header>
-  <main>
+  <main class="cart-page">
     <h1 class="page-title cart-print-hide">Cart &amp; quote</h1>
     <p class="lead cart-print-hide">
       Review your line items. This is an <strong>order request</strong> only: totals and line prices are
@@ -56,117 +56,121 @@
 
     <p id="form-status" class="meta cart-print-hide" style="margin:0 0 1rem" aria-live="polite"></p>
 
-    <div id="cart-empty" class="callout" hidden>
-      Your cart is empty. <a href="index.html">Browse services</a>.
+    <div id="cart-empty" class="cart-card cart-card--empty" hidden>
+      <p class="cart-card__empty-text">Your cart is empty. <a href="index.html">Browse services</a>.</p>
     </div>
 
     <div id="cart-filled" hidden>
-      <div class="cart-print-hide">
-      <table class="cart-table">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Qty</th>
-            <th>Line</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="cart-body"></tbody>
-      </table>
-      <p><strong>Subtotal (one-time):</strong> <span id="cart-subtotal">$0</span></p>
+      <div class="cart-layout cart-print-hide">
+        <div class="cart-layout__main">
+          <section class="cart-card" aria-labelledby="cart-onetime-heading">
+            <h2 class="cart-card__title" id="cart-onetime-heading">One-time items</h2>
+            <div class="cart-lines" id="cart-body" role="list"></div>
+            <div class="cart-card__row cart-card__row--subtotal">
+              <span class="cart-card__row-label">Subtotal (one-time)</span>
+              <span class="cart-card__row-value" id="cart-subtotal">$0</span>
+            </div>
+          </section>
 
-      <div id="cart-recurring-wrap" hidden>
-        <h2 class="page-title" style="font-size:1.1rem;margin-top:1.25rem">Recurring (monthly)</h2>
-        <table class="cart-table cart-table--recurring">
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Qty</th>
-              <th>Monthly</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="cart-recurring-body"></tbody>
-        </table>
-        <p><strong>Recurring subtotal:</strong> <span id="cart-recurring-subtotal">$0</span> / mo</p>
-        <p class="meta">Monthly subscriptions are billed separately from one-time project fees.</p>
+          <section class="cart-card cart-card--recurring" id="cart-recurring-wrap" hidden aria-labelledby="cart-recurring-heading">
+            <h2 class="cart-card__title" id="cart-recurring-heading">Recurring (monthly)</h2>
+            <div class="cart-lines cart-lines--recurring" id="cart-recurring-body" role="list"></div>
+            <div class="cart-card__row cart-card__row--subtotal">
+              <span class="cart-card__row-label">Recurring subtotal</span>
+              <span class="cart-card__row-value"><span id="cart-recurring-subtotal">$0</span> / mo</span>
+            </div>
+            <p class="cart-card__footnote">Monthly subscriptions are billed separately from one-time project fees.</p>
+          </section>
+
+          <section class="cart-card cart-card--details" aria-labelledby="cart-details-heading">
+            <h2 class="cart-card__title" id="cart-details-heading">Terms &amp; your details</h2>
+            <div class="terms-box">
+              <p><strong>Payment.</strong> A deposit (typically 40–50%) may be required before work starts on builds or large jobs. Balance on delivery / go-live or by milestones. Retainers are billed monthly in advance.</p>
+              <p><strong>Rights.</strong> After full payment, you receive a license to use deliverables for the purposes stated on the final quote. SEC retains portfolio credit unless otherwise agreed.</p>
+              <p><strong>Third-party platforms.</strong> Subscription fees, registrar renewals, and processing charges billed directly by a platform (e.g. hosting, SaaS, payments) are separate from SEC professional fees unless a quote says otherwise.</p>
+              <p><strong>Revisions.</strong> Included rounds and rush rules follow the rate card shared with your quote.</p>
+            </div>
+
+            <label class="check-row">
+              <input type="checkbox" id="accept-terms" required />
+              <span>I have read and accept the terms above. I understand this cart is a request and final pricing may be confirmed by SEC.</span>
+            </label>
+
+            <form id="order-form" class="form-grid form-grid--cart no-print" novalidate>
+              <div>
+                <label for="cust-name">Full name *</label>
+                <input id="cust-name" name="name" type="text" required autocomplete="name" />
+              </div>
+              <div>
+                <label for="cust-email">Email *</label>
+                <input id="cust-email" name="email" type="email" required autocomplete="email" />
+              </div>
+              <div>
+                <label for="cust-phone">Phone / WhatsApp *</label>
+                <input id="cust-phone" name="phone" type="tel" required autocomplete="tel" />
+              </div>
+              <div>
+                <label for="cust-co">Company (optional)</label>
+                <input id="cust-co" name="company" type="text" autocomplete="organization" />
+              </div>
+              <input type="hidden" name="invoice_text" id="f-invoice-text" value="" />
+              <input type="hidden" name="discount_code" id="f-discount-code" value="" />
+              <input type="hidden" name="discount_percent" id="f-discount-pct" value="" />
+              <input type="hidden" name="cart_subtotal_jmd" id="f-subtotal-jmd" value="" />
+              <input type="hidden" name="cart_total_jmd" id="f-total-jmd" value="" />
+              <input type="hidden" name="_subject" value="SEC job request" />
+            </form>
+          </section>
+        </div>
+
+        <aside class="cart-layout__aside">
+          <section class="cart-card cart-card--summary" aria-labelledby="cart-summary-heading">
+            <h2 class="cart-card__title" id="cart-summary-heading">Order summary</h2>
+
+            <div class="cart-discount">
+              <label class="cart-discount__label" for="discount-code">Discount code</label>
+              <div class="cart-discount__row">
+                <input
+                  id="discount-code"
+                  class="field cart-discount__input"
+                  type="text"
+                  name="discount_code_input"
+                  autocomplete="off"
+                  placeholder="Enter code"
+                />
+                <button type="button" class="btn btn-ghost" id="btn-discount-apply">Apply</button>
+                <button type="button" class="btn btn-ghost" id="btn-discount-clear" hidden>Remove</button>
+              </div>
+              <p class="meta" id="discount-msg" style="margin: 0.35rem 0 0"></p>
+            </div>
+
+            <div class="cart-summary-rows">
+              <p class="cart-summary-row" id="cart-discount-summary" hidden>
+                <span>Discount</span>
+                <span><span id="cart-discount-desc">—</span> (<span id="cart-discount-amount">$0</span>)</span>
+              </p>
+              <p class="cart-summary-row cart-summary-row--total">
+                <span>Total (one-time)</span>
+                <span id="cart-total">$0</span>
+              </p>
+            </div>
+
+            <p class="cart-card__disclaimer" role="note">
+              <strong>Not a final quote.</strong> SEC will confirm scope, pricing, and timeline after reviewing your request.
+            </p>
+            <p class="meta cart-card__currency" id="cart-currency-note">All $ amounts are <strong>Jamaican dollars (JMD)</strong>.</p>
+
+            <div class="cart-card__actions actions-row no-print">
+              <button type="button" class="btn btn-primary" id="btn-submit">Submit job request</button>
+              <button type="button" class="btn btn-ghost" id="btn-pdf">Download PDF</button>
+              <button type="button" class="btn btn-ghost" id="btn-print">Print</button>
+            </div>
+          </section>
+        </aside>
       </div>
 
-      <div class="cart-discount cart-print-hide">
-        <label class="cart-discount__label" for="discount-code">Discount code</label>
-        <div class="cart-discount__row">
-          <input
-            id="discount-code"
-            class="field cart-discount__input"
-            type="text"
-            name="discount_code_input"
-            autocomplete="off"
-            placeholder="Enter code"
-          />
-          <button type="button" class="btn btn-ghost" id="btn-discount-apply">Apply</button>
-          <button type="button" class="btn btn-ghost" id="btn-discount-clear" hidden>Remove</button>
-        </div>
-        <p class="meta" id="discount-msg" style="margin: 0.35rem 0 0"></p>
-      </div>
-
-      <p id="cart-discount-summary" hidden>
-        <strong>Discount:</strong> <span id="cart-discount-desc">—</span>
-        (<span id="cart-discount-amount">$0</span>)
-      </p>
-      <p><strong>Total:</strong> <span id="cart-total">$0</span></p>
-      <p class="callout cart-quote-disclaimer cart-print-hide" role="note">
-        <strong>Not a final quote.</strong> SEC will confirm scope, pricing, and timeline after reviewing your request.
-        Cart totals are a guide for discussion, not an invoice or binding offer.
-      </p>
-      <p class="meta" id="cart-currency-note">All $ amounts are <strong>Jamaican dollars (JMD)</strong>.</p>
-
-      <h2 class="page-title" style="font-size:1.25rem;margin-top:2rem">Terms of business</h2>
-      <div class="terms-box">
-        <p><strong>Payment.</strong> A deposit (typically 40–50%) may be required before work starts on builds or large jobs. Balance on delivery / go-live or by milestones. Retainers are billed monthly in advance.</p>
-        <p><strong>Rights.</strong> After full payment, you receive a license to use deliverables for the purposes stated on the final quote. SEC retains portfolio credit unless otherwise agreed.</p>
-        <p><strong>Third-party platforms.</strong> Subscription fees, registrar renewals, and processing charges billed directly by a platform (e.g. hosting, SaaS, payments) are separate from SEC professional fees unless a quote says otherwise.</p>
-        <p><strong>Revisions.</strong> Included rounds and rush rules follow the rate card shared with your quote.</p>
-      </div>
-
-      <label class="check-row">
-        <input type="checkbox" id="accept-terms" required />
-        <span>I have read and accept the terms above. I understand this cart is a request and final pricing may be confirmed by SEC.</span>
-      </label>
-
-      <h2 class="page-title" style="font-size:1.25rem;margin-top:2rem">Your details</h2>
-      <form id="order-form" class="form-grid no-print" novalidate>
-        <div>
-          <label for="cust-name">Full name *</label>
-          <input id="cust-name" name="name" type="text" required autocomplete="name" />
-        </div>
-        <div>
-          <label for="cust-email">Email *</label>
-          <input id="cust-email" name="email" type="email" required autocomplete="email" />
-        </div>
-        <div>
-          <label for="cust-phone">Phone / WhatsApp *</label>
-          <input id="cust-phone" name="phone" type="tel" required autocomplete="tel" />
-        </div>
-        <div>
-          <label for="cust-co">Company (optional)</label>
-          <input id="cust-co" name="company" type="text" autocomplete="organization" />
-        </div>
-        <input type="hidden" name="invoice_text" id="f-invoice-text" value="" />
-        <input type="hidden" name="discount_code" id="f-discount-code" value="" />
-        <input type="hidden" name="discount_percent" id="f-discount-pct" value="" />
-        <input type="hidden" name="cart_subtotal_jmd" id="f-subtotal-jmd" value="" />
-        <input type="hidden" name="cart_total_jmd" id="f-total-jmd" value="" />
-        <input type="hidden" name="_subject" value="SEC job request" />
-      </form>
-
-      <div class="actions-row no-print">
-        <button type="button" class="btn btn-primary" id="btn-submit">Submit job request</button>
-        <button type="button" class="btn btn-ghost" id="btn-pdf">Download PDF</button>
-        <button type="button" class="btn btn-ghost" id="btn-print">Print</button>
-      </div>
-      </div>
-
-      <h2 class="page-title cart-quotation-heading" style="font-size:1.25rem;margin-top:2rem">Quotation preview</h2>
+      <h2 class="page-title cart-quotation-heading">Quotation preview</h2>
+      <div class="cart-card cart-card--quotation">
       <div class="sec-quotation" id="quotation-preview" aria-label="Quotation preview">
         <div class="sec-quotation__frame">
           <div class="sec-quotation__margin-art sec-quotation__margin-art--left" aria-hidden="true">
@@ -254,6 +258,7 @@
           </div>
         </div>
       </div>
+      </div>
     </div>
   </main>
 
@@ -303,16 +308,23 @@
         return { oneTime: oneTime, recurring: recurring };
       }
 
-      function buildCartRow(i, priceSuffix) {
+      function buildCartLine(i, priceSuffix) {
         var q = Number(i.qty);
         q = (Number.isFinite(q) && q > 0) ? q : 1;
         var lineJmd = i.inquire ? 0 : Number(i.price || 0) * q;
+        var recurringClass = priceSuffix ? " cart-line--recurring" : "";
         return (
-          "<td>" + esc(i.name) +
-          (i.notes ? "<br><small style='color:var(--text-muted)'>" + esc(i.notes) + "</small>" : "") +
-          "</td><td>" + q +
-          "</td><td>" + fmtLine(lineJmd, i.inquire, priceSuffix) +
-          "</td><td><button type='button' class='btn btn-ghost btn-sm' data-remove='" + esc(i.lineId) + "'>Remove</button></td>"
+          '<article class="cart-line' + recurringClass + '" role="listitem">' +
+            '<div class="cart-line__body">' +
+              '<h3 class="cart-line__title">' + esc(i.name) + '</h3>' +
+              (i.notes ? '<p class="cart-line__note">' + esc(i.notes) + '</p>' : '') +
+            '</div>' +
+            '<div class="cart-line__aside">' +
+              '<span class="cart-line__qty">Qty ' + q + '</span>' +
+              '<span class="cart-line__price">' + fmtLine(lineJmd, i.inquire, priceSuffix) + '</span>' +
+              '<button type="button" class="btn btn-ghost btn-sm cart-line__remove" data-remove="' + esc(i.lineId) + '">Remove</button>' +
+            '</div>' +
+          '</article>'
         );
       }
 
@@ -387,7 +399,7 @@
         if (window.SECCart && typeof SECCart.syncRecurringCompanions === "function") {
           SECCart.syncRecurringCompanions();
         }
-        var tbody    = document.getElementById("cart-body");
+        var cartBody = document.getElementById("cart-body");
         var emptyEl  = document.getElementById("cart-empty");
         var filledEl = document.getElementById("cart-filled");
         var subSpan  = document.getElementById("cart-subtotal");
@@ -637,14 +649,12 @@
           /* build table */
           var split = splitCartItems(items);
           var recBody = document.getElementById("cart-recurring-body");
-          if (tbody) {
-            tbody.innerHTML = "";
+          if (cartBody) {
+            cartBody.innerHTML = "";
             split.oneTime.forEach(function (i) {
-              var tr = document.createElement("tr");
-              tr.innerHTML = buildCartRow(i, "");
-              tbody.appendChild(tr);
+              cartBody.insertAdjacentHTML("beforeend", buildCartLine(i, ""));
             });
-            tbody.querySelectorAll("[data-remove]").forEach(function (b) {
+            cartBody.querySelectorAll("[data-remove]").forEach(function (b) {
               b.addEventListener("click", function () {
                 SECCart.remove(b.getAttribute("data-remove"));
               });
@@ -653,9 +663,7 @@
           if (recBody) {
             recBody.innerHTML = "";
             split.recurring.forEach(function (i) {
-              var tr = document.createElement("tr");
-              tr.innerHTML = buildCartRow(i, " / mo");
-              recBody.appendChild(tr);
+              recBody.insertAdjacentHTML("beforeend", buildCartLine(i, " / mo"));
             });
             recBody.querySelectorAll("[data-remove]").forEach(function (b) {
               b.addEventListener("click", function () {
