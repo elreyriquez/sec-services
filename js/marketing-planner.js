@@ -240,22 +240,17 @@
     if (coordEl) {
       var fullState = getPlannerState();
       var coordPrice = computeCoordination(tier);
-      var coordNote = document.querySelector('[data-promo-row="coordination"] .pick-row__meta');
+      var coordStatus = document.getElementById("promo-coordination-status");
       if (fullState) {
         ensureCoordinationInCart(fullState);
         if (coordinationIsWaived(fullState)) {
           coordPrice = 0;
-          if (coordNote) {
-            coordNote.textContent =
-              "Waived — promotional vehicle and capturing content are both on your quote.";
-          }
-        } else if (coordNote) {
-          coordNote.textContent =
-            "Included on every promotion quote — waived only when vehicle and capturing content are both added.";
+          if (coordStatus) coordStatus.textContent = "Waived on your quote.";
+        } else if (coordStatus) {
+          coordStatus.textContent = "Included on every promotion quote.";
         }
-      } else if (coordNote) {
-        coordNote.textContent =
-          "Included on every promotion quote — waived only when vehicle and capturing content are both added.";
+      } else if (coordStatus) {
+        coordStatus.textContent = "Included on every promotion quote.";
       }
       updatePriceEl(coordEl, coordPrice);
       if (coordPrice === 0) coordEl.textContent = "Free";
@@ -265,7 +260,7 @@
       updatePriceEl(photoPriceEl, EDIT_PHOTO);
       var suffix = photoPriceEl.getAttribute("data-price-suffix") || "";
       photoPriceEl.textContent = formatPrice(EDIT_PHOTO) + suffix;
-      var photoMeta = document.querySelector('[data-promo-row="edit-photo"] .pick-row__meta');
+      var photoMeta = document.getElementById("promo-edit-photo-meta");
       if (photoMeta) {
         photoMeta.textContent =
           "First " +

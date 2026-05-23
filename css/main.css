@@ -1255,6 +1255,39 @@ details.section-block--collapsible[open] > .section-block__h2::after {
 .promotion-planner .section-block__h2::after {
   display: none;
 }
+.service-panel--promo-categories {
+  padding: 0;
+  overflow: hidden;
+}
+.promo-category {
+  padding: 1rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+}
+.promo-category:last-child {
+  border-bottom: none;
+}
+.promo-category__title {
+  font-family: var(--font-head);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--regal);
+  margin: 0 0 0.5rem;
+}
+.promo-category__desc {
+  margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 42rem;
+}
+.promo-category .pick-list {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel, 6px);
+  overflow: hidden;
+}
+
 .promotion-planner .pick-add:disabled {
   opacity: 0.45;
   cursor: not-allowed;

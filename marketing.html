@@ -90,89 +90,129 @@
 
       <p id="promo-planner-msg" class="promotion-planner__msg meta" hidden aria-live="polite"></p>
 
-      <div id="promotion-rates-panel" class="service-panel" hidden>
-        <div class="pick-list">
-          <div class="pick-row" data-promo-row="vehicle">
-            <div class="pick-row__main">
-              <span class="pick-row__title">Promotional vehicle with driver and grip</span>
-            </div>
-            <span class="pick-row__price inquire" data-promo-price="vehicle">—</span>
-            <button type="button" class="pick-add" data-add-product="mkt-promo-vehicle" data-promo-line="vehicle" disabled>Add</button>
-          </div>
-          <div class="pick-row" data-promo-row="speakers">
-            <div class="pick-row__main">
-              <span class="pick-row__title">Speakers</span>
-              <span class="pick-row__meta">4-hour base; each additional hour +$5,000.</span>
-            </div>
-            <span class="pick-row__price inquire" data-promo-price="speakers">—</span>
-            <button type="button" class="pick-add" data-add-product="mkt-promo-speakers" data-promo-line="speakers" disabled>Add</button>
-          </div>
-          <div class="pick-row" data-promo-row="capture">
-            <div class="pick-row__main">
-              <span class="pick-row__title">Capturing content</span>
-              <span class="pick-row__meta">4-hour base; each additional hour +$5,000. First 5 photo edits included free.</span>
-            </div>
-            <span class="pick-row__price inquire" data-promo-price="capture">—</span>
-            <button type="button" class="pick-add" data-add-product="mkt-promo-capture" data-promo-line="capture" disabled>Add</button>
-          </div>
-          <div class="pick-row pick-row--no-add" data-promo-row="coordination">
-            <div class="pick-row__main">
-              <span class="pick-row__title">Promotion coordination</span>
-              <span class="pick-row__meta">Included on every promotion quote — waived only when vehicle and capturing content are both added.</span>
-            </div>
-            <span class="pick-row__price inquire" data-promo-price="coordination">—</span>
-          </div>
-          <div class="pick-row pick-row--no-add pick-row--promo-estimate" data-promo-row="edit-photo">
-            <div class="pick-row__main">
-              <span class="pick-row__title">Editing content per photo</span>
-              <span class="pick-row__meta">First 5 photos free when capturing content is on your quote; then $1,250 per photo.</span>
-            </div>
-            <span class="pick-row__price inquire" data-promo-price="edit-photo" data-price-suffix=" / photo">—</span>
-            <div class="qty-inline">
-              <label for="promo-edit-photo-est-qty">Estimated qty</label>
-              <input id="promo-edit-photo-est-qty" type="number" min="0" max="99" value="0" data-promo-est-qty="edit-photo" />
+      <div id="promotion-rates-panel" class="service-panel service-panel--promo-categories" hidden>
+        <section class="promo-category" aria-labelledby="promo-cat-transport">
+          <h3 class="promo-category__title" id="promo-cat-transport">Transportation</h3>
+          <p class="promo-category__desc">
+            Transports the team, promotional items, products and provides power for the speakers. The driver also
+            functions as a grip to help us lift, move and set up equipment during the day.
+          </p>
+          <div class="pick-list">
+            <div class="pick-row" data-promo-row="vehicle">
+              <div class="pick-row__main">
+                <span class="pick-row__title">Promotional vehicle and grip</span>
+              </div>
+              <span class="pick-row__price inquire" data-promo-price="vehicle">—</span>
+              <button type="button" class="pick-add" data-add-product="mkt-promo-vehicle" data-promo-line="vehicle" disabled>Add</button>
             </div>
           </div>
-          <div class="pick-row pick-row--promo-qty" data-promo-row="edit-video">
-            <div class="pick-row__main">
-              <span class="pick-row__title">Editing content (15s video)</span>
-              <span class="pick-row__meta">Video concept agreed before promotion activity.</span>
+        </section>
+
+        <section class="promo-category" aria-labelledby="promo-cat-activation">
+          <h3 class="promo-category__title" id="promo-cat-activation">Activation &amp; engagement</h3>
+          <div class="pick-list">
+            <div class="pick-row" data-promo-row="host">
+              <div class="pick-row__main">
+                <span class="pick-row__title">Host/DJ</span>
+                <span class="pick-row__meta">4-hour base; each additional hour +$5,000.</span>
+              </div>
+              <span class="pick-row__price inquire" data-promo-price="host">—</span>
+              <button type="button" class="pick-add" data-add-product="mkt-promo-host" data-promo-line="host" disabled>Add</button>
             </div>
-            <span class="pick-row__price inquire" data-promo-price="edit-video">—</span>
-            <div class="qty-inline">
-              <label for="promo-edit-video-qty">Qty</label>
-              <input id="promo-edit-video-qty" type="number" min="1" max="99" value="1" data-qty-for />
+            <div class="pick-row pick-row--promo-qty" data-promo-row="models">
+              <div class="pick-row__main">
+                <span class="pick-row__title">Promotional models</span>
+                <span class="pick-row__meta">Per model / brand ambassador.</span>
+              </div>
+              <span class="pick-row__price inquire" data-promo-price="models">—</span>
+              <div class="qty-inline">
+                <label for="promo-models-qty">Qty</label>
+                <input id="promo-models-qty" type="number" min="1" max="20" value="1" data-qty-for />
+              </div>
+              <button type="button" class="pick-add" data-add-product="mkt-promo-models" data-promo-line="models" disabled>Add</button>
             </div>
-            <button type="button" class="pick-add" data-add-product="mkt-promo-edit-video" data-promo-line="edit-video" disabled>Add</button>
+            <div class="pick-row" data-promo-row="speakers">
+              <div class="pick-row__main">
+                <span class="pick-row__title">Speakers</span>
+                <span class="pick-row__meta">4-hour base; each additional hour +$5,000.</span>
+              </div>
+              <span class="pick-row__price inquire" data-promo-price="speakers">—</span>
+              <button type="button" class="pick-add" data-add-product="mkt-promo-speakers" data-promo-line="speakers" disabled>Add</button>
+            </div>
+            <div class="pick-row" data-promo-row="capture">
+              <div class="pick-row__main">
+                <span class="pick-row__title">Capturing content</span>
+                <span class="pick-row__meta">4-hour base; each additional hour +$5,000. First 5 photo edits included free.</span>
+              </div>
+              <span class="pick-row__price inquire" data-promo-price="capture">—</span>
+              <button type="button" class="pick-add" data-add-product="mkt-promo-capture" data-promo-line="capture" disabled>Add</button>
+            </div>
           </div>
-          <div class="pick-row" data-promo-row="host">
-            <div class="pick-row__main">
-              <span class="pick-row__title">Host/DJ</span>
-              <span class="pick-row__meta">4-hour base; each additional hour +$5,000.</span>
+        </section>
+
+        <section class="promo-category" aria-labelledby="promo-cat-post">
+          <h3 class="promo-category__title" id="promo-cat-post">Post promotion production</h3>
+          <div class="pick-list">
+            <div class="pick-row pick-row--no-add pick-row--promo-estimate" data-promo-row="edit-photo">
+              <div class="pick-row__main">
+                <span class="pick-row__title">Editing content per photo</span>
+                <span class="pick-row__meta" id="promo-edit-photo-meta">First 5 photos free when capturing content is on your quote; then $1,250 per photo.</span>
+              </div>
+              <span class="pick-row__price inquire" data-promo-price="edit-photo" data-price-suffix=" / photo">—</span>
+              <div class="qty-inline">
+                <label for="promo-edit-photo-est-qty">Estimated qty</label>
+                <input id="promo-edit-photo-est-qty" type="number" min="0" max="99" value="0" data-promo-est-qty="edit-photo" />
+              </div>
             </div>
-            <span class="pick-row__price inquire" data-promo-price="host">—</span>
-            <button type="button" class="pick-add" data-add-product="mkt-promo-host" data-promo-line="host" disabled>Add</button>
+            <div class="pick-row pick-row--promo-qty" data-promo-row="edit-video">
+              <div class="pick-row__main">
+                <span class="pick-row__title">Editing content per 15s video</span>
+                <span class="pick-row__meta">Video concept agreed before promotion activity.</span>
+              </div>
+              <span class="pick-row__price inquire" data-promo-price="edit-video">—</span>
+              <div class="qty-inline">
+                <label for="promo-edit-video-qty">Qty</label>
+                <input id="promo-edit-video-qty" type="number" min="1" max="99" value="1" data-qty-for />
+              </div>
+              <button type="button" class="pick-add" data-add-product="mkt-promo-edit-video" data-promo-line="edit-video" disabled>Add</button>
+            </div>
           </div>
-          <div class="pick-row pick-row--no-add" data-promo-row="misc">
-            <div class="pick-row__main">
-              <span class="pick-row__title">Miscellaneous</span>
-              <span class="pick-row__meta">Included on every promotion quote when you add services above.</span>
+        </section>
+
+        <section class="promo-category" aria-labelledby="promo-cat-conditional">
+          <h3 class="promo-category__title" id="promo-cat-conditional">Conditional charges</h3>
+          <p class="promo-category__desc">
+            This is the cost incurred to organize the team and ensure optimization with location, timing and effective
+            communication among stakeholders and general organizational foresight for the day. This fee is waived when
+            both promotional vehicle and capturing content are requested as a discount to our clients.
+          </p>
+          <div class="pick-list">
+            <div class="pick-row pick-row--no-add" data-promo-row="coordination">
+              <div class="pick-row__main">
+                <span class="pick-row__title">Promotion coordination fee</span>
+                <span class="pick-row__meta" id="promo-coordination-status">Included on every promotion quote.</span>
+              </div>
+              <span class="pick-row__price inquire" data-promo-price="coordination">—</span>
             </div>
-            <span class="pick-row__price inquire" data-promo-price="misc">—</span>
           </div>
-          <div class="pick-row pick-row--promo-qty" data-promo-row="models">
-            <div class="pick-row__main">
-              <span class="pick-row__title">Promotional models</span>
-              <span class="pick-row__meta">Per model / brand ambassador.</span>
+        </section>
+
+        <section class="promo-category" aria-labelledby="promo-cat-misc">
+          <h3 class="promo-category__title" id="promo-cat-misc">Miscellaneous</h3>
+          <p class="promo-category__desc">
+            This charge covers additional expenses such as toll, ice, table, table cloths, refreshments and any other
+            untimely expense.
+          </p>
+          <div class="pick-list">
+            <div class="pick-row pick-row--no-add" data-promo-row="misc">
+              <div class="pick-row__main">
+                <span class="pick-row__title">Miscellaneous</span>
+                <span class="pick-row__meta">Included on every promotion quote when you add services above.</span>
+              </div>
+              <span class="pick-row__price inquire" data-promo-price="misc">—</span>
             </div>
-            <span class="pick-row__price inquire" data-promo-price="models">—</span>
-            <div class="qty-inline">
-              <label for="promo-models-qty">Qty</label>
-              <input id="promo-models-qty" type="number" min="1" max="20" value="1" data-qty-for />
-            </div>
-            <button type="button" class="pick-add" data-add-product="mkt-promo-models" data-promo-line="models" disabled>Add</button>
           </div>
-        </div>
+        </section>
       </div>
     </section>
   </main>

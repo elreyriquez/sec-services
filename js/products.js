@@ -135,7 +135,7 @@ window.SEC_CATALOG = {
   marketingPromotion: [
     {
       id: "mkt-promo-vehicle",
-      name: "Promotional vehicle with driver and grip",
+      name: "Promotional vehicle and grip",
       price: 0,
       note: "5-hour block; minimum block applies for shorter promotions.",
     },
@@ -153,7 +153,7 @@ window.SEC_CATALOG = {
     },
     {
       id: "mkt-promo-coordination",
-      name: "Promotion coordination",
+      name: "Promotion coordination fee",
       price: 0,
       note: "Tiered by parish; waived when promotional vehicle and capturing content are both on your quote.",
     },
@@ -165,7 +165,7 @@ window.SEC_CATALOG = {
     },
     {
       id: "mkt-promo-edit-video",
-      name: "Editing content (15s video)",
+      name: "Editing content per 15s video",
       price: 10000,
       note: "Video concept must be agreed before the promotion activity.",
     },
