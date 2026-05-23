@@ -146,10 +146,14 @@
       qty: q,
       inquire: p.inquire,
       notes: [p.note, extraNotes].filter(Boolean).join(" "),
+      recurring: Boolean(p.recurring),
     });
   }
 
   document.addEventListener("DOMContentLoaded", () => {
+    if (window.SECCart && typeof SECCart.syncRecurringCompanions === "function") {
+      SECCart.syncRecurringCompanions();
+    }
     document.querySelectorAll("[data-add-product]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const id = btn.getAttribute("data-add-product");

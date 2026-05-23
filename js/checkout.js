@@ -30,7 +30,13 @@
       lines.push("-".repeat(44));
     }
     let sub = 0;
-    items.forEach((i, n) => {
+    const oneTime = [];
+    const recurring = [];
+    items.forEach((i) => {
+      if (i.recurring) recurring.push(i);
+      else oneTime.push(i);
+    });
+    oneTime.forEach((i, n) => {
       const lineTotal = lineJmdTotal(i);
       sub += lineTotal;
       lines.push(`${n + 1}. ${i.name} × ${i.qty || 1}`);
@@ -39,7 +45,20 @@
       if (i.notes) lines.push(`   Note: ${i.notes}`);
     });
     lines.push("-".repeat(44));
-    lines.push(`Subtotal (priced items): ${fmt(sub)}`);
+    lines.push(`Subtotal (one-time priced items): ${fmt(sub)}`);
+    if (recurring.length) {
+      lines.push("-".repeat(44));
+      lines.push("Recurring (monthly):");
+      let recSub = 0;
+      recurring.forEach((i, n) => {
+        const lineTotal = lineJmdTotal(i);
+        recSub += lineTotal;
+        lines.push(`${n + 1}. ${i.name} × ${i.qty || 1}`);
+        lines.push(`   ${fmt(lineTotal)} / mo`);
+        if (i.notes) lines.push(`   Note: ${i.notes}`);
+      });
+      lines.push(`Recurring subtotal: ${fmt(recSub)} / mo`);
+    }
     const disc =
       window.SECCart && typeof SECCart.getDiscount === "function" ? SECCart.getDiscount() : null;
     if (disc && sub > 0) {

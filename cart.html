@@ -73,7 +73,24 @@
         </thead>
         <tbody id="cart-body"></tbody>
       </table>
-      <p><strong>Subtotal (priced lines):</strong> <span id="cart-subtotal">$0</span></p>
+      <p><strong>Subtotal (one-time):</strong> <span id="cart-subtotal">$0</span></p>
+
+      <div id="cart-recurring-wrap" hidden>
+        <h2 class="page-title" style="font-size:1.1rem;margin-top:1.25rem">Recurring (monthly)</h2>
+        <table class="cart-table cart-table--recurring">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Monthly</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="cart-recurring-body"></tbody>
+        </table>
+        <p><strong>Recurring subtotal:</strong> <span id="cart-recurring-subtotal">$0</span> / mo</p>
+        <p class="meta">Monthly subscriptions are billed separately from one-time project fees.</p>
+      </div>
 
       <div class="cart-discount cart-print-hide">
         <label class="cart-discount__label" for="discount-code">Discount code</label>
@@ -206,6 +223,22 @@
               <tbody id="q-items-body"></tbody>
             </table>
             </div>
+            <div class="sec-quotation__table-block" id="q-recurring-block" hidden>
+            <h4 class="sec-quotation__col-title" style="margin:0.75rem 0 0.35rem">Recurring (monthly)</h4>
+            <table class="sec-quotation__table">
+              <thead>
+                <tr>
+                  <th scope="col">ITEM DESCRIPTION</th>
+                  <th scope="col">PRICE</th>
+                </tr>
+              </thead>
+              <tbody id="q-recurring-body"></tbody>
+            </table>
+            <div class="sec-quotation__subtotal-row" id="q-row-recurring-sub">
+              <span class="sec-quotation__subtotal-label">RECURRING SUBTOTAL</span>
+              <span class="sec-quotation__subtotal-value" id="q-recurring-subtotal"></span>
+            </div>
+            </div>
             <div class="sec-quotation__subtotal-row" id="q-row-lines-sub">
               <span class="sec-quotation__subtotal-label" id="q-label-lines-sub">SUBTOTAL</span>
               <span class="sec-quotation__subtotal-value" id="q-subtotal"></span>
@@ -250,8 +283,37 @@
         return "$" + Math.round(Number(jmd) || 0).toLocaleString();
       }
 
-      function fmtLine(jmd, inquire) {
-        return inquire ? "TBD" : fmt(jmd);
+      function fmtLine(jmd, inquire, suffix) {
+        return inquire ? "TBD" : fmt(jmd) + (suffix || "");
+      }
+
+      function isRecurringLine(i) {
+        return window.SECCart && SECCart.isRecurringItem
+          ? SECCart.isRecurringItem(i)
+          : Boolean(i && i.recurring);
+      }
+
+      function splitCartItems(items) {
+        var oneTime = [];
+        var recurring = [];
+        items.forEach(function (i) {
+          if (isRecurringLine(i)) recurring.push(i);
+          else oneTime.push(i);
+        });
+        return { oneTime: oneTime, recurring: recurring };
+      }
+
+      function buildCartRow(i, priceSuffix) {
+        var q = Number(i.qty);
+        q = (Number.isFinite(q) && q > 0) ? q : 1;
+        var lineJmd = i.inquire ? 0 : Number(i.price || 0) * q;
+        return (
+          "<td>" + esc(i.name) +
+          (i.notes ? "<br><small style='color:var(--text-muted)'>" + esc(i.notes) + "</small>" : "") +
+          "</td><td>" + q +
+          "</td><td>" + fmtLine(lineJmd, i.inquire, priceSuffix) +
+          "</td><td><button type='button' class='btn btn-ghost btn-sm' data-remove='" + esc(i.lineId) + "'>Remove</button></td>"
+        );
       }
 
       function loadScript(src) {
@@ -322,6 +384,9 @@
 
       /* ─── main init (runs after DOM ready) ───────────────── */
       function init() {
+        if (window.SECCart && typeof SECCart.syncRecurringCompanions === "function") {
+          SECCart.syncRecurringCompanions();
+        }
         var tbody    = document.getElementById("cart-body");
         var emptyEl  = document.getElementById("cart-empty");
         var filledEl = document.getElementById("cart-filled");
@@ -344,12 +409,17 @@
         /* ── totals bar ───────────────────────────────────── */
         function updateTotals() {
           var sub   = SECCart.subtotal();
+          var recSub = SECCart.recurringSubtotal ? SECCart.recurringSubtotal() : 0;
           var disc  = SECCart.getDiscount();
           var off   = SECCart.discountAmountJmd();
           var grand = SECCart.subtotalAfterDiscount();
 
           if (subSpan) subSpan.textContent = fmt(sub);
           if (totSpan) totSpan.textContent = fmt(grand);
+          var recSubSpan = document.getElementById("cart-recurring-subtotal");
+          var recWrap = document.getElementById("cart-recurring-wrap");
+          if (recSubSpan) recSubSpan.textContent = fmt(recSub);
+          if (recWrap) recWrap.hidden = !(recSub > 0);
 
           var sumRow  = document.getElementById("cart-discount-summary");
           var descEl  = document.getElementById("cart-discount-desc");
@@ -428,10 +498,12 @@
             pay.innerHTML = bb.length ? bb.join("<br>") : '<span class="sec-quotation__placeholder">\u2014</span>';
           }
 
+          var split = splitCartItems(items);
+          var recSub = SECCart.recurringSubtotal ? SECCart.recurringSubtotal() : 0;
           var qBody = document.getElementById("q-items-body");
           if (qBody) {
             qBody.innerHTML = "";
-            items.forEach(function (i) {
+            split.oneTime.forEach(function (i) {
               var tr = document.createElement("tr");
               var q2 = i.qty || 1;
               var desc = esc(i.name || "");
@@ -443,6 +515,25 @@
             });
           }
 
+          var qRecBlock = document.getElementById("q-recurring-block");
+          var qRecBody = document.getElementById("q-recurring-body");
+          var qRecSub = document.getElementById("q-recurring-subtotal");
+          if (qRecBlock) qRecBlock.hidden = !(recSub > 0);
+          if (qRecBody) {
+            qRecBody.innerHTML = "";
+            split.recurring.forEach(function (i) {
+              var tr = document.createElement("tr");
+              var q2 = i.qty || 1;
+              var desc = esc(i.name || "");
+              if (q2 > 1) desc += " \xD7 " + q2;
+              if (i.notes) desc += '<br><span class="sec-quotation__item-note">' + esc(i.notes) + "</span>";
+              var price = i.inquire ? "TBD" : fmt((i.price || 0) * q2) + " / mo";
+              tr.innerHTML = "<td>" + desc + '</td><td class="sec-quotation__price">' + esc(price) + "</td>";
+              qRecBody.appendChild(tr);
+            });
+          }
+          if (qRecSub) qRecSub.textContent = fmt(recSub) + " / mo";
+
           var qSub     = document.getElementById("q-subtotal");
           var qRowDisc = document.getElementById("q-row-discount");
           var qRowGrand = document.getElementById("q-row-grand");
@@ -451,15 +542,16 @@
           var qDiscLab = document.getElementById("q-discount-label");
           var qDiscVal = document.getElementById("q-discount-value");
           if (qSub) qSub.textContent = fmt(sub);
+          var subtotalLabel = recSub > 0 ? "ONE-TIME SUBTOTAL" : "SUBTOTAL";
           if (disc && sub > 0 && off > 0) {
-            if (qLabSub)  qLabSub.textContent = "SUBTOTAL";
+            if (qLabSub)  qLabSub.textContent = subtotalLabel;
             if (qRowDisc) { qRowDisc.hidden = false; }
             if (qDiscLab) qDiscLab.textContent = "DISCOUNT (" + disc.code + " \xB7 " + disc.percent + "%)";
             if (qDiscVal) qDiscVal.textContent = "-" + fmt(off);
             if (qRowGrand) qRowGrand.hidden = false;
             if (qGrand) qGrand.textContent = fmt(grand);
           } else {
-            if (qLabSub)  qLabSub.textContent = "SUBTOTAL";
+            if (qLabSub)  qLabSub.textContent = subtotalLabel;
             if (qRowDisc) qRowDisc.hidden = true;
             if (qRowGrand) qRowGrand.hidden = true;
           }
@@ -543,23 +635,29 @@
           if (filledEl) filledEl.hidden = false;
 
           /* build table */
+          var split = splitCartItems(items);
+          var recBody = document.getElementById("cart-recurring-body");
           if (tbody) {
             tbody.innerHTML = "";
-            items.forEach(function (i) {
+            split.oneTime.forEach(function (i) {
               var tr = document.createElement("tr");
-              var q = Number(i.qty);
-              q = (Number.isFinite(q) && q > 0) ? q : 1;
-              var lineJmd  = i.inquire ? 0 : Number(i.price || 0) * q;
-              var lineText = i.inquire ? "TBD" : fmt(lineJmd);
-              tr.innerHTML =
-                "<td>" + esc(i.name) +
-                (i.notes ? "<br><small style='color:var(--text-muted)'>" + esc(i.notes) + "</small>" : "") +
-                "</td><td>" + q +
-                "</td><td>" + lineText +
-                "</td><td><button type='button' class='btn btn-ghost btn-sm' data-remove='" + esc(i.lineId) + "'>Remove</button></td>";
+              tr.innerHTML = buildCartRow(i, "");
               tbody.appendChild(tr);
             });
             tbody.querySelectorAll("[data-remove]").forEach(function (b) {
+              b.addEventListener("click", function () {
+                SECCart.remove(b.getAttribute("data-remove"));
+              });
+            });
+          }
+          if (recBody) {
+            recBody.innerHTML = "";
+            split.recurring.forEach(function (i) {
+              var tr = document.createElement("tr");
+              tr.innerHTML = buildCartRow(i, " / mo");
+              recBody.appendChild(tr);
+            });
+            recBody.querySelectorAll("[data-remove]").forEach(function (b) {
               b.addEventListener("click", function () {
                 SECCart.remove(b.getAttribute("data-remove"));
               });

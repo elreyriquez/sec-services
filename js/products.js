@@ -41,7 +41,7 @@ window.SEC_CATALOG = {
       id: "sec-embed",
       name: "Custom SEC — Bookings Schedule System",
       price: 15000,
-      note: "Scheduling / bookings integrated in build. Mandatory subscription maintenance while bookings are live — see Web Services for monthly rate (quoted separately).",
+      note: "Scheduling / bookings integrated in build. Mandatory subscription maintenance while bookings are live — added to your quote automatically.",
     },
     {
       id: "sec-domain-setup",
@@ -53,7 +53,21 @@ window.SEC_CATALOG = {
       id: "sec-payment-setup",
       name: "Custom SEC — Payment system integration (setup)",
       price: 15000,
-      note: "One-time integration/setup. Mandatory subscription maintenance while payments are live — see Web Services for monthly rate (quoted separately).",
+      note: "One-time integration/setup. Mandatory subscription maintenance while payments are live — added to your quote automatically.",
+    },
+    {
+      id: "sec-booking-maint",
+      name: "Booking system — monthly maintenance",
+      price: 3000,
+      recurring: true,
+      note: "Mandatory subscription while the bookings integration is live.",
+    },
+    {
+      id: "sec-payment-maint",
+      name: "Payment system — monthly maintenance",
+      price: 5000,
+      recurring: true,
+      note: "Mandatory subscription while payment flows are live on your site.",
     },
   ],
   webCarePlans: [

@@ -7,7 +7,6 @@
     "st-andrew": "kingston",
     portmore: "middle",
     "spanish-town": "middle",
-    "st-catherine": "middle",
     other: "outside",
   };
 
@@ -16,7 +15,6 @@
     "st-andrew": "St Andrew",
     portmore: "Portmore",
     "spanish-town": "Spanish Town",
-    "st-catherine": "St Catherine",
     other: "Other parish",
   };
 
@@ -236,19 +234,15 @@
     updatePriceEl(document.querySelector('[data-promo-price="misc"]'), computeMisc(tier));
     var coordEl = document.querySelector('[data-promo-price="coordination"]');
     if (coordEl) {
-      var fullState = getPlannerState();
       var coordPrice = computeCoordination(tier);
       var coordStatus = document.getElementById("promo-coordination-status");
-      if (fullState) {
-        ensureCoordinationInCart(fullState);
-        if (coordinationIsWaived(fullState)) {
-          coordPrice = 0;
-          if (coordStatus) coordStatus.textContent = "Waived on your quote.";
-        } else if (coordStatus) {
-          coordStatus.textContent = "Included on every promotion quote.";
-        }
+      if (coordinationIsWaived()) {
+        coordPrice = 0;
+        if (coordStatus) coordStatus.textContent = "Waived on your quote.";
+      } else if (cartHasBillablePromoLines()) {
+        if (coordStatus) coordStatus.textContent = "Included once on your quote.";
       } else if (coordStatus) {
-        coordStatus.textContent = "Included on every promotion quote.";
+        coordStatus.textContent = "Added once per quote when you add promotion services.";
       }
       updatePriceEl(coordEl, coordPrice);
       if (coordPrice === 0) coordEl.textContent = "Free";
@@ -296,6 +290,17 @@
     return null;
   }
 
+  var COORDINATION_CART_KEY = "promo-quote-once";
+  var PROMO_MISC_CART_KEY = "promo-quote-once";
+  var BILLABLE_PROMO_PRODUCT_IDS = [
+    "mkt-promo-vehicle",
+    "mkt-promo-speakers",
+    "mkt-promo-capture",
+    "mkt-promo-host",
+    "mkt-promo-edit-video",
+    "mkt-promo-models",
+  ];
+
   function cartHasLineForState(state, productId, suffix) {
     var key = productId + metaKey(state, productId, suffix);
     return window.SECCart.load().some(function (i) {
@@ -307,18 +312,34 @@
     return cartHasLineForState(state, "mkt-promo-capture");
   }
 
-  function cartHasVehicleForState(state) {
-    return cartHasLineForState(state, "mkt-promo-vehicle");
+  function cartHasBillablePromoLines() {
+    return window.SECCart.load().some(function (i) {
+      return BILLABLE_PROMO_PRODUCT_IDS.indexOf(i.id) >= 0;
+    });
+  }
+
+  function cartHasPromoProduct(productId) {
+    return window.SECCart.load().some(function (i) {
+      return i.id === productId;
+    });
   }
 
   /** Waived only when both vehicle and capturing content are on the quote. */
-  function coordinationIsWaived(state) {
-    return cartHasVehicleForState(state) && cartHasCaptureForState(state);
+  function coordinationIsWaived() {
+    return cartHasPromoProduct("mkt-promo-vehicle") && cartHasPromoProduct("mkt-promo-capture");
   }
 
   function coordinationPriceForState(state) {
-    if (coordinationIsWaived(state)) return 0;
+    if (coordinationIsWaived()) return 0;
     return computeCoordination(state.tier);
+  }
+
+  function removeAllCoordinationLines() {
+    window.SECCart.load().slice().forEach(function (i) {
+      if (i.id === "mkt-promo-coordination") {
+        window.SECCart.remove(i.lineId);
+      }
+    });
   }
 
   function removeCartLinesForState(state, productId) {
@@ -330,28 +351,61 @@
     });
   }
 
+  function removeAllMiscLines() {
+    window.SECCart.load().slice().forEach(function (i) {
+      if (i.id === "mkt-promo-misc") {
+        window.SECCart.remove(i.lineId);
+      }
+    });
+  }
+
   function ensureMiscInCart(state) {
-    if (cartHasLineForState(state, "mkt-promo-misc")) return;
-    var p = window.SEC_findProduct("mkt-promo-misc");
+    if (!cartHasBillablePromoLines()) {
+      removeAllMiscLines();
+      return;
+    }
+    var productId = "mkt-promo-misc";
+    var price = computeMisc(state.tier);
+    var lineKey = productId + PROMO_MISC_CART_KEY;
+    window.SECCart.load().slice().forEach(function (i) {
+      if (i.id === productId && i.lineId !== lineKey) {
+        window.SECCart.remove(i.lineId);
+      }
+    });
+    var existing = window.SECCart.load().find(function (i) {
+      return i.id === productId && i.lineId === lineKey;
+    });
+    if (existing && existing.price === price) return;
+    if (existing) window.SECCart.remove(lineKey);
+    var p = window.SEC_findProduct(productId);
     if (!p) return;
     window.SECCart.add({
       id: p.id,
       name: p.name,
-      price: computeMisc(state.tier),
+      price: price,
       qty: 1,
       inquire: false,
       notes: contextNotes(state, p.note),
-      metaKey: metaKey(state, "mkt-promo-misc"),
+      metaKey: PROMO_MISC_CART_KEY,
       noMerge: false,
     });
   }
 
   function ensureCoordinationInCart(state) {
+    if (!cartHasBillablePromoLines()) {
+      removeAllCoordinationLines();
+      return;
+    }
     var productId = "mkt-promo-coordination";
     var price = coordinationPriceForState(state);
-    var lineKey = productId + metaKey(state, productId);
+    var lineKey = productId + COORDINATION_CART_KEY;
+    window.SECCart.load().slice().forEach(function (i) {
+      if (i.id === productId && i.lineId !== lineKey) {
+        window.SECCart.remove(i.lineId);
+      }
+    });
     var existing = window.SECCart.load().find(function (i) {
-      return i.lineId === lineKey;
+      return i.id === productId && i.lineId === lineKey;
     });
     if (existing && existing.price === price) return;
     if (existing) window.SECCart.remove(lineKey);
@@ -368,9 +422,23 @@
       qty: 1,
       inquire: false,
       notes: contextNotes(state, extra),
-      metaKey: metaKey(state, productId),
+      metaKey: COORDINATION_CART_KEY,
       noMerge: false,
     });
+  }
+
+  function syncPromoCoordinationFromCart() {
+    if (!document.getElementById("promotion-planner")) return;
+    if (!cartHasBillablePromoLines()) {
+      removeAllCoordinationLines();
+      removeAllMiscLines();
+      return;
+    }
+    var state = getPlannerState();
+    if (state) {
+      ensureMiscInCart(state);
+      ensureCoordinationInCart(state);
+    }
   }
 
   function ensurePhotoEditInCart(state) {
@@ -535,5 +603,9 @@
 
   document.addEventListener("DOMContentLoaded", bindPlanner);
   window.addEventListener("sec-currency-changed", refreshPrices);
+  window.addEventListener("sec-cart-updated", function () {
+    syncPromoCoordinationFromCart();
+    if (document.getElementById("promotion-planner")) refreshPrices();
+  });
   window.SEC_marketingRefreshPrices = refreshPrices;
 })();
