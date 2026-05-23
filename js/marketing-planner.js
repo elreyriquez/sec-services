@@ -8,7 +8,6 @@
     portmore: "middle",
     "spanish-town": "middle",
     "st-catherine": "middle",
-    clarendon: "middle",
     other: "outside",
   };
 
@@ -18,7 +17,6 @@
     portmore: "Portmore",
     "spanish-town": "Spanish Town",
     "st-catherine": "St Catherine",
-    clarendon: "Clarendon",
     other: "Other parish",
   };
 
@@ -28,7 +26,7 @@
   window.SEC_MARKETING_RATES = {
     kingston: {
       label: "Around Town",
-      vehicle: 50000,
+      vehicle: 40000,
       speakersBase4h: 10000,
       captureBase4h: 30000,
       hostBase4h: 20000,
@@ -38,7 +36,7 @@
     },
     middle: {
       label: "Neighbouring Towns",
-      vehicle: 55000,
+      vehicle: 45000,
       speakersBase4h: 12000,
       captureBase4h: 30000,
       hostBase4h: 25000,
@@ -48,7 +46,7 @@
     },
     outside: {
       label: "Outside listed parishes",
-      vehicle: 60000,
+      vehicle: 50000,
       speakersBase4h: 15000,
       captureBase4h: 35000,
       hostBase4h: 30000,
