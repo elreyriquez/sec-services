@@ -117,6 +117,37 @@
 
   var DEFAULT_PREVIEW_HOURS = 4;
 
+  function todayDateInputValue() {
+    var d = new Date();
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, "0");
+    var day = String(d.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + day;
+  }
+
+  function isPastPromoDate(value) {
+    return Boolean(value) && value < todayDateInputValue();
+  }
+
+  function applyPromoDateMin() {
+    var dateEl = document.getElementById("promo-date");
+    if (!dateEl) return;
+    dateEl.min = todayDateInputValue();
+  }
+
+  function validatePromoDateInput() {
+    var dateEl = document.getElementById("promo-date");
+    var msg = document.getElementById("promo-planner-msg");
+    if (!dateEl || !dateEl.value) return true;
+    if (!isPastPromoDate(dateEl.value)) return true;
+    dateEl.value = "";
+    if (msg) {
+      msg.textContent = "Event date must be today or in the future.";
+      msg.hidden = false;
+    }
+    return false;
+  }
+
   function getParishContext() {
     var parishEl = document.getElementById("promo-parish");
     var dateEl = document.getElementById("promo-date");
@@ -134,7 +165,7 @@
       parishLabel: parishLabel,
       tier: tier,
       tierLabel: window.SEC_MARKETING_RATES[tier].label,
-      date: dateEl && dateEl.value ? dateEl.value : "",
+      date: dateEl && dateEl.value && !isPastPromoDate(dateEl.value) ? dateEl.value : "",
     };
   }
 
@@ -496,6 +527,7 @@
   function addPromoLine(productId, priceJmd, qty, extraNote) {
     var state = requireState();
     if (!state) return;
+    if (!validatePromoDateInput()) return;
     var p = window.SEC_findProduct(productId);
     if (!p) return;
     var q = qty != null ? qty : 1;
@@ -531,9 +563,18 @@
       refreshPrices();
     }
 
+    function onDateChange() {
+      if (!validatePromoDateInput()) return;
+      onFieldChange();
+    }
+
+    applyPromoDateMin();
     if (parishEl) parishEl.addEventListener("change", onFieldChange);
     if (durationEl) durationEl.addEventListener("change", onFieldChange);
-    if (dateEl) dateEl.addEventListener("change", onFieldChange);
+    if (dateEl) {
+      dateEl.addEventListener("change", onDateChange);
+      dateEl.addEventListener("input", onDateChange);
+    }
     if (otherEl) otherEl.addEventListener("input", onFieldChange);
 
     var photoEstEl = document.getElementById("promo-edit-photo-est-qty");

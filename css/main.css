@@ -1223,6 +1223,10 @@ details.section-block--collapsible[open] > .section-block__h2::after {
   font-weight: 400;
   color: var(--text-muted);
 }
+.promotion-planner__hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+}
 .promotion-planner__required {
   font-weight: 400;
   color: var(--regal);
