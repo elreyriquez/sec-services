@@ -2221,3 +2221,62 @@ main.cart-page {
     max-width: none;
   }
 }
+
+/* Floating WhatsApp shortcut — matches Krowned Hands */
+.whatsapp-float {
+  position: fixed;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 9999px;
+  background: #25d366;
+  color: #fff;
+  text-decoration: none;
+  box-shadow:
+    0 4px 14px rgba(37, 211, 102, 0.45),
+    0 0 0 2px rgba(255, 255, 255, 0.9);
+  bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
+  right: max(1.25rem, env(safe-area-inset-right, 0px));
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.whatsapp-float:hover {
+  background: #20bd5a;
+  box-shadow:
+    0 6px 20px rgba(37, 211, 102, 0.5),
+    0 0 0 2px rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+.whatsapp-float:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .whatsapp-float:active {
+    transform: scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-float {
+    transition: none;
+  }
+
+  .whatsapp-float:hover {
+    transform: none;
+  }
+}
+
+@media print {
+  .whatsapp-float {
+    display: none !important;
+  }
+}
