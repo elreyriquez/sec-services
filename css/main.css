@@ -1207,7 +1207,8 @@ details.section-block--collapsible[open] > .section-block__h2::after {
   .promotion-planner__fields {
     grid-template-columns: 1fr 1fr;
   }
-  .promotion-planner__field:first-child {
+  .promotion-planner__field:first-child,
+  .promotion-planner__field--full {
     grid-column: 1 / -1;
   }
 }
@@ -1233,7 +1234,8 @@ details.section-block--collapsible[open] > .section-block__h2::after {
 }
 .promotion-planner__field input[type="date"],
 .promotion-planner__field input[type="text"],
-.promotion-planner__field select {
+.promotion-planner__field select,
+.promotion-planner__field textarea {
   width: 100%;
   font-family: var(--font-ui);
   font-size: 0.9375rem;
@@ -1243,8 +1245,15 @@ details.section-block--collapsible[open] > .section-block__h2::after {
   background: var(--surface);
   color: var(--text);
 }
+.promotion-planner__field textarea {
+  resize: vertical;
+  min-height: 4.5rem;
+  line-height: 1.45;
+}
+
 .promotion-planner__field input:focus,
-.promotion-planner__field select:focus {
+.promotion-planner__field select:focus,
+.promotion-planner__field textarea:focus {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
 }

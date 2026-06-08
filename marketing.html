@@ -85,6 +85,23 @@
             <option value="6">6 hours (max)</option>
           </select>
         </div>
+        <div class="promotion-planner__field" id="promo-stops-wrap" hidden>
+          <label for="promo-stops">Number of stops <span class="promotion-planner__optional">(optional)</span></label>
+          <select id="promo-stops" name="promo-stops">
+            <option value="">Select stops…</option>
+          </select>
+          <p class="promotion-planner__hint meta" id="promo-stops-hint"></p>
+        </div>
+        <div class="promotion-planner__field promotion-planner__field--full" id="promo-stop-locations-wrap" hidden>
+          <label for="promo-stop-locations">Stop locations <span class="promotion-planner__optional">(optional)</span></label>
+          <textarea
+            id="promo-stop-locations"
+            name="promo-stop-locations"
+            rows="3"
+            placeholder="e.g. Half Way Tree, Sovereign Centre, …"
+          ></textarea>
+          <p class="promotion-planner__hint meta">List where the promotion will stop, in order if possible.</p>
+        </div>
       </div>
 
       <p id="promo-planner-msg" class="promotion-planner__msg meta" hidden aria-live="polite"></p>

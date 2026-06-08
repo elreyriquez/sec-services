@@ -71,6 +71,61 @@
     return h >= 4 && h <= 6 ? h : 0;
   }
 
+  function maxStopsForHours(hours) {
+    if (hours === 4) return 2;
+    if (hours === 5 || hours === 6) return 3;
+    return 0;
+  }
+
+  function getStopsCount() {
+    var el = document.getElementById("promo-stops");
+    if (!el || !el.value) return 0;
+    var n = parseInt(el.value, 10);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  }
+
+  function getStopLocationsText() {
+    var el = document.getElementById("promo-stop-locations");
+    return el && el.value.trim() ? el.value.trim() : "";
+  }
+
+  function syncStopsField(hours) {
+    var wrap = document.getElementById("promo-stops-wrap");
+    var locWrap = document.getElementById("promo-stop-locations-wrap");
+    var stopsEl = document.getElementById("promo-stops");
+    var hint = document.getElementById("promo-stops-hint");
+    if (!stopsEl) return;
+
+    var max = maxStopsForHours(hours);
+    if (!max) {
+      if (wrap) wrap.hidden = true;
+      if (locWrap) locWrap.hidden = true;
+      stopsEl.value = "";
+      return;
+    }
+
+    if (wrap) wrap.hidden = false;
+    if (locWrap) locWrap.hidden = false;
+
+    var prev = stopsEl.value;
+    stopsEl.innerHTML = '<option value="">Select stops…</option>';
+    for (var n = 1; n <= max; n++) {
+      var opt = document.createElement("option");
+      opt.value = String(n);
+      opt.textContent = n === 1 ? "1 stop" : n + " stops";
+      stopsEl.appendChild(opt);
+    }
+    if (prev && parseInt(prev, 10) <= max) stopsEl.value = prev;
+    else stopsEl.value = "";
+
+    if (hint) {
+      hint.textContent =
+        hours === 4
+          ? "Up to 2 stops for a 4-hour promotion."
+          : "Up to 3 stops for a " + hours + "-hour promotion.";
+    }
+  }
+
   function computeVehicle(tier) {
     return window.SEC_MARKETING_RATES[tier].vehicle;
   }
@@ -182,6 +237,8 @@
       tierLabel: ctx.tierLabel,
       hours: hours,
       date: ctx.date,
+      stops: getStopsCount(),
+      stopLocations: getStopLocationsText(),
     };
   }
 
@@ -198,13 +255,21 @@
       "Rate tier: " + state.tierLabel,
     ];
     if (state.date) parts.push("Event date: " + state.date);
+    if (state.stops) parts.push("Stops: " + state.stops);
+    if (state.stopLocations) parts.push("Stop locations: " + state.stopLocations);
     if (extra) parts.push(extra);
     return parts.join("; ");
   }
 
   function metaKey(state, productId, suffix) {
     var key =
-      productId + "-" + state.parishId + "-" + state.hours + (state.date ? "-" + state.date : "");
+      productId +
+      "-" +
+      state.parishId +
+      "-" +
+      state.hours +
+      (state.date ? "-" + state.date : "") +
+      (state.stops ? "-stops" + state.stops : "");
     return suffix ? key + "-" + suffix : key;
   }
 
@@ -560,6 +625,9 @@
       if (otherWrap && parishEl) {
         otherWrap.hidden = parishEl.value !== "other";
       }
+      if (durationEl) {
+        syncStopsField(parseDuration(durationEl.value));
+      }
       refreshPrices();
     }
 
@@ -576,6 +644,11 @@
       dateEl.addEventListener("input", onDateChange);
     }
     if (otherEl) otherEl.addEventListener("input", onFieldChange);
+
+    var stopsEl = document.getElementById("promo-stops");
+    var stopLocationsEl = document.getElementById("promo-stop-locations");
+    if (stopsEl) stopsEl.addEventListener("change", onFieldChange);
+    if (stopLocationsEl) stopLocationsEl.addEventListener("input", onFieldChange);
 
     var photoEstEl = document.getElementById("promo-edit-photo-est-qty");
     if (photoEstEl) photoEstEl.addEventListener("input", onFieldChange);
