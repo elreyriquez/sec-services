@@ -39,11 +39,19 @@
     /^Rate tier:/i,
     /^Event date:/i,
     /5-hour block/i,
+    /minimum block applies for shorter promotions/i,
     /overtime applies on 6-hour promotions/i,
     /Per hour for scheduled promotion duration/i,
     /^Per 5-hour block/i,
     /^Tiered by parish;/i,
     /^Included on every promotion quote\.?$/i,
+  ];
+
+  const PROMO_CONTEXT_NOTE_PATTERNS = [
+    /^Parish:/i,
+    /^Duration:/i,
+    /^Stops:/i,
+    /^Stop locations:/i,
   ];
 
   function displayNotes(notes) {
@@ -52,6 +60,15 @@
       .split("; ")
       .map((part) => part.trim())
       .filter((part) => part && !NOTE_STRIP_PATTERNS.some((re) => re.test(part)))
+      .join("; ");
+  }
+
+  function stripPromoContextNotes(notes) {
+    if (!notes) return "";
+    return displayNotes(notes)
+      .split("; ")
+      .map((part) => part.trim())
+      .filter((part) => part && !PROMO_CONTEXT_NOTE_PATTERNS.some((re) => re.test(part)))
       .join("; ");
   }
 
@@ -221,6 +238,9 @@
     }
     save(items);
     syncRecurringCompanions();
+    if (typeof window.SEC_marketingSyncPromoLines === "function") {
+      window.SEC_marketingSyncPromoLines();
+    }
   }
 
   function remove(lineId) {
@@ -309,6 +329,7 @@
     itemEventDate,
     formatEventDateLabel,
     displayNotes,
+    stripPromoContextNotes,
     groupOneTimeByEventDate,
   };
 })();

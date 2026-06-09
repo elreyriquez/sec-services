@@ -16,10 +16,18 @@
       window.SEC_Currency && window.SEC_Currency.formatFromJmd
         ? window.SEC_Currency.formatFromJmd(jmd, cur)
         : "$" + Number(jmd).toLocaleString();
-    const noteText = (i) =>
-      window.SECCart && window.SECCart.displayNotes
-        ? window.SECCart.displayNotes(i.notes || "")
-        : i.notes || "";
+    const noteText = (i) => {
+      if (!i) return "";
+      const raw = i.notes || "";
+      if (i.id === "mkt-promo-vehicle") {
+        return window.SECCart && window.SECCart.displayNotes
+          ? window.SECCart.displayNotes(raw)
+          : raw;
+      }
+      return window.SECCart && window.SECCart.stripPromoContextNotes
+        ? window.SECCart.stripPromoContextNotes(raw)
+        : raw;
+    };
     const formatEventDate = (iso) =>
       window.SECCart && window.SECCart.formatEventDateLabel
         ? window.SECCart.formatEventDateLabel(iso)

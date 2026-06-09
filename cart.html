@@ -299,6 +299,7 @@
   <script src="js/discount-codes.js"></script>
   <script src="js/currency.js"></script>
   <script src="js/cart.js"></script>
+  <script src="js/marketing-planner.js"></script>
   <script src="js/checkout.js"></script>
   <script src="js/app.js"></script>
   <script>
@@ -340,8 +341,13 @@
       }
 
       function displayItemNotes(i) {
-        if (window.SECCart && SECCart.displayNotes) return SECCart.displayNotes(i.notes || "");
-        return i.notes || "";
+        if (!i) return "";
+        var raw = i.notes || "";
+        if (i.id === "mkt-promo-vehicle") {
+          return window.SECCart && SECCart.displayNotes ? SECCart.displayNotes(raw) : raw;
+        }
+        if (window.SECCart && SECCart.stripPromoContextNotes) return SECCart.stripPromoContextNotes(raw);
+        return raw;
       }
 
       function appendQuoteLineRow(tbody, i) {

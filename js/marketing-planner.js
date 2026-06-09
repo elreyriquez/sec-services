@@ -257,12 +257,21 @@
     return parseDuration(durationEl.value) || DEFAULT_PREVIEW_HOURS;
   }
 
-  function contextNotes(state, extra) {
+  function vehicleContextNotes(state, extra) {
     var parts = ["Parish: " + state.parishLabel, "Duration: " + state.hours + "h"];
     if (state.stops) parts.push("Stops: " + state.stops);
     if (state.stopLocations) parts.push("Stop locations: " + state.stopLocations);
     if (extra) parts.push(extra);
     return parts.join("; ");
+  }
+
+  function optionalNote(extra) {
+    return extra || "";
+  }
+
+  function promoLineNotes(productId, state, extra) {
+    if (productId === "mkt-promo-vehicle") return vehicleContextNotes(state, extra);
+    return optionalNote(extra);
   }
 
   function promoStateSnapshot(state) {
@@ -306,6 +315,34 @@
     return null;
   }
 
+  function parseStateFromLineId(item) {
+    if (!item || !item.lineId) return null;
+    var id = item.id;
+    var rest = String(item.lineId).slice(id.length);
+    if (rest.indexOf(id + "-") === 0) rest = rest.slice(id.length + 1);
+    var dateMatch = rest.match(/(\d{4}-\d{2}-\d{2})/);
+    var date = dateMatch ? dateMatch[1] : "";
+    var stopsMatch = rest.match(/-stops(\d+)/);
+    var beforeDate = date ? rest.split("-" + date)[0] : rest.replace(/-stops\d+.*$/, "");
+    var parts = beforeDate.split("-").filter(Boolean);
+    if (parts.length < 2) return null;
+    var hours = parseInt(parts[parts.length - 1], 10);
+    var parishId = parts.slice(0, parts.length - 1).join("-");
+    if (!parishId || !hours) return null;
+    var parishLabel = PARISH_LABELS[parishId] || parishId;
+    var tier = tierForParish(parishId);
+    return {
+      parishId: parishId,
+      parishLabel: parishLabel,
+      tier: tier,
+      tierLabel: window.SEC_MARKETING_RATES[tier].label,
+      hours: hours,
+      stops: stopsMatch ? parseInt(stopsMatch[1], 10) : 0,
+      stopLocations: "",
+      date: date,
+    };
+  }
+
   function promoStatesByDateFromCart() {
     var map = {};
     window.SECCart.load().forEach(function (i) {
@@ -315,19 +352,23 @@
         (window.SECCart.itemEventDate && window.SECCart.itemEventDate(i)) ||
         "";
       if (!d) return;
-      if (!map[d]) {
-        var st = stateFromCartItem(i);
-        if (st) map[d] = st;
-      }
+      var st = stateFromCartItem(i) || parseStateFromLineId(i);
+      if (!st) return;
+      st.date = d;
+      if (!map[d] || i.id === "mkt-promo-vehicle") map[d] = st;
     });
     return map;
   }
 
   function activePromoOnceKeys() {
     var keys = {};
-    var byDate = promoStatesByDateFromCart();
-    Object.keys(byDate).forEach(function (d) {
-      keys[promoOnceMetaKey(byDate[d])] = true;
+    window.SECCart.load().forEach(function (i) {
+      if (BILLABLE_PROMO_PRODUCT_IDS.indexOf(i.id) < 0) return;
+      var d =
+        i.eventDate ||
+        (window.SECCart.itemEventDate && window.SECCart.itemEventDate(i)) ||
+        "";
+      if (d) keys[promoOnceMetaKey({ date: d })] = true;
     });
     return keys;
   }
@@ -421,11 +462,13 @@
       var coordStatus = document.getElementById("promo-coordination-status");
       if (coordinationIsWaived()) {
         coordPrice = 0;
-        if (coordStatus) coordStatus.textContent = "Waived on your quote.";
+        if (coordStatus) coordStatus.textContent = "Waived for this promotion date.";
+      } else if (cartHasBillablePromoLinesForDate(ctx && ctx.date)) {
+        if (coordStatus) coordStatus.textContent = "Included once per promotion date.";
       } else if (cartHasBillablePromoLines()) {
-        if (coordStatus) coordStatus.textContent = "Included once on your quote.";
+        if (coordStatus) coordStatus.textContent = "Included once per promotion date on your quote.";
       } else if (coordStatus) {
-        coordStatus.textContent = "Added once per quote when you add promotion services.";
+        coordStatus.textContent = "Added once per promotion date when you add promotion services.";
       }
       updatePriceEl(coordEl, coordPrice);
       if (coordPrice === 0) coordEl.textContent = "Free";
@@ -512,13 +555,42 @@
     });
   }
 
-  /** Waived only when both vehicle and capturing content are on the quote. */
+  function cartHasBillablePromoLinesForDate(date) {
+    if (!window.SECCart || typeof window.SECCart.load !== "function" || !date) return false;
+    return window.SECCart.load().some(function (i) {
+      if (BILLABLE_PROMO_PRODUCT_IDS.indexOf(i.id) < 0) return false;
+      var d =
+        i.eventDate ||
+        (window.SECCart.itemEventDate && window.SECCart.itemEventDate(i)) ||
+        "";
+      return d === date;
+    });
+  }
+
+  /** Waived per promotion date when vehicle and capture are both on that date. */
+  function coordinationIsWaivedForDate(date) {
+    if (!window.SECCart || typeof window.SECCart.load !== "function" || !date) return false;
+    var hasVehicle = false;
+    var hasCapture = false;
+    window.SECCart.load().forEach(function (i) {
+      var d =
+        i.eventDate ||
+        (window.SECCart.itemEventDate && window.SECCart.itemEventDate(i)) ||
+        "";
+      if (d !== date) return;
+      if (i.id === "mkt-promo-vehicle") hasVehicle = true;
+      if (i.id === "mkt-promo-capture") hasCapture = true;
+    });
+    return hasVehicle && hasCapture;
+  }
+
   function coordinationIsWaived() {
-    return cartHasPromoProduct("mkt-promo-vehicle") && cartHasPromoProduct("mkt-promo-capture");
+    var state = getPlannerState();
+    return state && state.date ? coordinationIsWaivedForDate(state.date) : false;
   }
 
   function coordinationPriceForState(state) {
-    if (coordinationIsWaived()) return 0;
+    if (coordinationIsWaivedForDate(state.date)) return 0;
     return computeCoordination(state.tier);
   }
 
@@ -548,18 +620,22 @@
   }
 
   function ensureMiscInCart(state) {
-    if (!cartHasBillablePromoLines()) {
-      removeAllMiscLines();
-      return;
-    }
+    if (!state || !state.date) return;
     var productId = "mkt-promo-misc";
-    var price = computeMisc(state.tier);
     var onceKey = promoOnceMetaKey(state);
     var lineKey = productId + onceKey;
+    if (!cartHasBillablePromoLinesForDate(state.date)) {
+      var staleMisc = window.SECCart.load().find(function (i) {
+        return i.id === productId && i.lineId === lineKey;
+      });
+      if (staleMisc) window.SECCart.remove(lineKey);
+      return;
+    }
+    var price = computeMisc(state.tier);
     var existing = window.SECCart.load().find(function (i) {
       return i.id === productId && i.lineId === lineKey;
     });
-    if (existing && existing.price === price) return;
+    if (existing && existing.price === price && existing.eventDate === state.date) return;
     if (existing) window.SECCart.remove(lineKey);
     var p = window.SEC_findProduct(productId);
     if (!p) return;
@@ -571,7 +647,7 @@
           price: price,
           qty: 1,
           inquire: false,
-          notes: contextNotes(state),
+          notes: "",
           metaKey: onceKey,
           noMerge: false,
         },
@@ -581,23 +657,31 @@
   }
 
   function ensureCoordinationInCart(state) {
-    if (!cartHasBillablePromoLines()) {
-      removeAllCoordinationLines();
-      return;
-    }
+    if (!state || !state.date) return;
     var productId = "mkt-promo-coordination";
-    var price = coordinationPriceForState(state);
     var onceKey = promoOnceMetaKey(state);
     var lineKey = productId + onceKey;
+    if (!cartHasBillablePromoLinesForDate(state.date)) {
+      var staleCoord = window.SECCart.load().find(function (i) {
+        return i.id === productId && i.lineId === lineKey;
+      });
+      if (staleCoord) window.SECCart.remove(lineKey);
+      return;
+    }
+    var price = coordinationPriceForState(state);
     var existing = window.SECCart.load().find(function (i) {
       return i.id === productId && i.lineId === lineKey;
     });
-    if (existing && existing.price === price) return;
+    var extra =
+      price === 0
+        ? "Waived — promotional vehicle and capturing content on this promotion date."
+        : "";
+    if (existing && existing.price === price && existing.notes === extra && existing.eventDate === state.date) {
+      return;
+    }
     if (existing) window.SECCart.remove(lineKey);
     var p = window.SEC_findProduct(productId);
     if (!p) return;
-    var extra =
-      price === 0 ? "Waived — promotional vehicle and capturing content on this quote." : "";
     window.SECCart.add(
       Object.assign(
         {
@@ -606,7 +690,7 @@
           price: price,
           qty: 1,
           inquire: false,
-          notes: contextNotes(state, extra),
+          notes: extra,
           metaKey: onceKey,
           noMerge: false,
         },
@@ -616,7 +700,7 @@
   }
 
   function syncPromoCoordinationFromCart() {
-    if (!document.getElementById("promotion-planner")) return;
+    if (!window.SECCart || typeof window.SECCart.load !== "function") return;
     if (!cartHasBillablePromoLines()) {
       removeAllCoordinationLines();
       removeAllMiscLines();
@@ -650,10 +734,7 @@
             price: 0,
             qty: freeQty,
             inquire: false,
-            notes: contextNotes(
-              state,
-              "First " + freeQty + " photo edit(s) included with capturing content."
-            ),
+            notes: optionalNote("First " + freeQty + " photo edit(s) included with capturing content."),
             metaKey: metaKey(state, productId, "free"),
             noMerge: false,
           },
@@ -673,7 +754,7 @@
             price: EDIT_PHOTO,
             qty: paidQty,
             inquire: false,
-            notes: contextNotes(state, paidNote),
+            notes: optionalNote(paidNote),
             metaKey: metaKey(state, productId, "paid"),
             noMerge: false,
           },
@@ -706,7 +787,7 @@
           price: priceJmd,
           qty: q,
           inquire: false,
-          notes: contextNotes(state, extraNote),
+          notes: promoLineNotes(productId, state, extraNote),
           metaKey: metaKey(state, productId),
           noMerge: false,
         },
