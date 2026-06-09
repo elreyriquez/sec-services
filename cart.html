@@ -109,9 +109,40 @@
                 <label for="cust-phone">Phone / WhatsApp *</label>
                 <input id="cust-phone" name="phone" type="tel" required autocomplete="tel" />
               </div>
+              <p class="meta form-grid__full" style="margin: 0">
+                Email and phone are for SEC follow-up only — they do not appear on your quotation PDF.
+              </p>
               <div>
                 <label for="cust-co">Company (optional)</label>
                 <input id="cust-co" name="company" type="text" autocomplete="organization" />
+              </div>
+              <div class="form-grid__full">
+                <label for="cust-address">Address *</label>
+                <textarea id="cust-address" name="address" rows="2" required autocomplete="street-address" placeholder="Street, community, or P.O. box"></textarea>
+              </div>
+              <div>
+                <label for="cust-parish">Parish *</label>
+                <select id="cust-parish" name="parish" required autocomplete="address-level2">
+                  <option value="">Select parish…</option>
+                  <option value="Clarendon">Clarendon</option>
+                  <option value="Hanover">Hanover</option>
+                  <option value="Kingston">Kingston</option>
+                  <option value="Manchester">Manchester</option>
+                  <option value="Portland">Portland</option>
+                  <option value="St Andrew">St Andrew</option>
+                  <option value="St Ann">St Ann</option>
+                  <option value="St Catherine">St Catherine</option>
+                  <option value="St Elizabeth">St Elizabeth</option>
+                  <option value="St James">St James</option>
+                  <option value="St Mary">St Mary</option>
+                  <option value="St Thomas">St Thomas</option>
+                  <option value="Trelawny">Trelawny</option>
+                  <option value="Westmoreland">Westmoreland</option>
+                </select>
+              </div>
+              <div>
+                <label for="cust-country">Country *</label>
+                <input id="cust-country" name="country" type="text" required autocomplete="country-name" value="Jamaica" />
               </div>
               <input type="hidden" name="invoice_text" id="f-invoice-text" value="" />
               <input type="hidden" name="discount_code" id="f-discount-code" value="" />
@@ -308,16 +339,84 @@
         return { oneTime: oneTime, recurring: recurring };
       }
 
+      function displayItemNotes(i) {
+        if (window.SECCart && SECCart.displayNotes) return SECCart.displayNotes(i.notes || "");
+        return i.notes || "";
+      }
+
+      function appendQuoteLineRow(tbody, i) {
+        var tr = document.createElement("tr");
+        var q2 = i.qty || 1;
+        var desc = esc(i.name || "");
+        if (q2 > 1) desc += " \xD7 " + q2;
+        var noteText = displayItemNotes(i);
+        if (noteText) desc += '<br><span class="sec-quotation__item-note">' + esc(noteText) + "</span>";
+        var price = i.inquire ? "TBD" : fmt((i.price || 0) * q2);
+        tr.innerHTML = "<td>" + desc + '</td><td class="sec-quotation__price">' + esc(price) + "</td>";
+        tbody.appendChild(tr);
+      }
+
+      function renderQuoteLinesGrouped(tbody, items) {
+        if (!tbody) return;
+        tbody.innerHTML = "";
+        if (window.SECCart && SECCart.groupOneTimeByEventDate) {
+          var groups = SECCart.groupOneTimeByEventDate(items);
+          groups.dated.forEach(function (entry) {
+            var header = document.createElement("tr");
+            header.className = "sec-quotation__date-row";
+            header.innerHTML =
+              '<td colspan="2">Event date: ' +
+              esc(SECCart.formatEventDateLabel(entry[0])) +
+              "</td>";
+            tbody.appendChild(header);
+            entry[1].forEach(function (i) {
+              appendQuoteLineRow(tbody, i);
+            });
+          });
+          groups.undated.forEach(function (i) {
+            appendQuoteLineRow(tbody, i);
+          });
+          return;
+        }
+        items.forEach(function (i) {
+          appendQuoteLineRow(tbody, i);
+        });
+      }
+
+      function renderCartLinesGrouped(container, items, priceSuffix) {
+        if (!container) return;
+        container.innerHTML = "";
+        function addLine(i) {
+          container.insertAdjacentHTML("beforeend", buildCartLine(i, priceSuffix));
+        }
+        if (window.SECCart && SECCart.groupOneTimeByEventDate) {
+          var groups = SECCart.groupOneTimeByEventDate(items);
+          groups.dated.forEach(function (entry) {
+            container.insertAdjacentHTML(
+              "beforeend",
+              '<div class="cart-date-group__heading" role="presentation">Event date: ' +
+                esc(SECCart.formatEventDateLabel(entry[0])) +
+                "</div>"
+            );
+            entry[1].forEach(addLine);
+          });
+          groups.undated.forEach(addLine);
+          return;
+        }
+        items.forEach(addLine);
+      }
+
       function buildCartLine(i, priceSuffix) {
         var q = Number(i.qty);
         q = (Number.isFinite(q) && q > 0) ? q : 1;
         var lineJmd = i.inquire ? 0 : Number(i.price || 0) * q;
         var recurringClass = priceSuffix ? " cart-line--recurring" : "";
+        var noteText = displayItemNotes(i);
         return (
           '<article class="cart-line' + recurringClass + '" role="listitem">' +
             '<div class="cart-line__body">' +
               '<h3 class="cart-line__title">' + esc(i.name) + '</h3>' +
-              (i.notes ? '<p class="cart-line__note">' + esc(i.notes) + '</p>' : '') +
+              (noteText ? '<p class="cart-line__note">' + esc(noteText) + '</p>' : '') +
             '</div>' +
             '<div class="cart-line__aside">' +
               '<span class="cart-line__qty">Qty ' + q + '</span>' +
@@ -470,10 +569,13 @@
           var grand = SECCart.subtotalAfterDiscount();
           var cfg   = window.SEC_CONFIG || {};
           var c = {
-            name:    (document.getElementById("cust-name")  || {value:""}).value,
-            email:   (document.getElementById("cust-email") || {value:""}).value,
-            phone:   (document.getElementById("cust-phone") || {value:""}).value,
-            company: (document.getElementById("cust-co")    || {value:""}).value,
+            name:    (document.getElementById("cust-name")    || {value:""}).value,
+            email:   (document.getElementById("cust-email")   || {value:""}).value,
+            phone:   (document.getElementById("cust-phone")   || {value:""}).value,
+            company: (document.getElementById("cust-co")      || {value:""}).value,
+            address: (document.getElementById("cust-address") || {value:""}).value,
+            parish:  (document.getElementById("cust-parish")  || {value:""}).value,
+            country: (document.getElementById("cust-country") || {value:""}).value,
           };
 
           var text = (window.SECCheckout && window.SECCheckout.buildInvoiceText)
@@ -495,8 +597,9 @@
             var bits = [];
             if (c.name)    bits.push("<strong>" + esc(c.name) + "</strong>");
             if (c.company) bits.push(esc(c.company));
-            if (c.email)   bits.push(esc(c.email));
-            if (c.phone)   bits.push(esc(c.phone));
+            if (c.address) bits.push(esc(c.address));
+            if (c.parish)  bits.push(esc(c.parish));
+            if (c.country) bits.push(esc(c.country));
             quotedTo.innerHTML = bits.length ? bits.join("<br>") : '<span class="sec-quotation__placeholder">\u2014</span>';
           }
 
@@ -513,19 +616,7 @@
           var split = splitCartItems(items);
           var recSub = SECCart.recurringSubtotal ? SECCart.recurringSubtotal() : 0;
           var qBody = document.getElementById("q-items-body");
-          if (qBody) {
-            qBody.innerHTML = "";
-            split.oneTime.forEach(function (i) {
-              var tr = document.createElement("tr");
-              var q2 = i.qty || 1;
-              var desc = esc(i.name || "");
-              if (q2 > 1) desc += " \xD7 " + q2;
-              if (i.notes) desc += '<br><span class="sec-quotation__item-note">' + esc(i.notes) + "</span>";
-              var price = i.inquire ? "TBD" : fmt((i.price || 0) * q2);
-              tr.innerHTML = "<td>" + desc + '</td><td class="sec-quotation__price">' + esc(price) + "</td>";
-              qBody.appendChild(tr);
-            });
-          }
+          renderQuoteLinesGrouped(qBody, split.oneTime);
 
           var qRecBlock = document.getElementById("q-recurring-block");
           var qRecBody = document.getElementById("q-recurring-body");
@@ -538,7 +629,8 @@
               var q2 = i.qty || 1;
               var desc = esc(i.name || "");
               if (q2 > 1) desc += " \xD7 " + q2;
-              if (i.notes) desc += '<br><span class="sec-quotation__item-note">' + esc(i.notes) + "</span>";
+              var noteText = displayItemNotes(i);
+              if (noteText) desc += '<br><span class="sec-quotation__item-note">' + esc(noteText) + "</span>";
               var price = i.inquire ? "TBD" : fmt((i.price || 0) * q2) + " / mo";
               tr.innerHTML = "<td>" + desc + '</td><td class="sec-quotation__price">' + esc(price) + "</td>";
               qRecBody.appendChild(tr);
@@ -572,10 +664,13 @@
         /* ── customer details validation ──────────────────── */
         function customer() {
           return {
-            name:    (document.getElementById("cust-name")  || {value:""}).value.trim(),
-            email:   (document.getElementById("cust-email") || {value:""}).value.trim(),
-            phone:   (document.getElementById("cust-phone") || {value:""}).value.trim(),
-            company: (document.getElementById("cust-co")    || {value:""}).value.trim(),
+            name:    (document.getElementById("cust-name")    || {value:""}).value.trim(),
+            email:   (document.getElementById("cust-email")   || {value:""}).value.trim(),
+            phone:   (document.getElementById("cust-phone")   || {value:""}).value.trim(),
+            company: (document.getElementById("cust-co")      || {value:""}).value.trim(),
+            address: (document.getElementById("cust-address") || {value:""}).value.trim(),
+            parish:  (document.getElementById("cust-parish")  || {value:""}).value.trim(),
+            country: (document.getElementById("cust-country") || {value:""}).value.trim(),
           };
         }
 
@@ -583,7 +678,7 @@
           statusEl.textContent = "";
           if (!form.checkValidity()) {
             form.reportValidity();
-            statusEl.textContent = "Add your full name, email, and phone number before you print, download a PDF, or submit.";
+            statusEl.textContent = "Add your contact details and quoted-to address before you print, download a PDF, or submit.";
             return false;
           }
           return true;
@@ -599,6 +694,9 @@
                 email: c.email,
                 phone: c.phone,
                 company: c.company,
+                address: c.address,
+                parish: c.parish,
+                country: c.country,
               })
             );
           } catch (e) {
@@ -616,10 +714,16 @@
             var e = document.getElementById("cust-email");
             var p = document.getElementById("cust-phone");
             var co = document.getElementById("cust-co");
+            var ad = document.getElementById("cust-address");
+            var pa = document.getElementById("cust-parish");
+            var cy = document.getElementById("cust-country");
             if (n && typeof o.name === "string") n.value = o.name;
             if (e && typeof o.email === "string") e.value = o.email;
             if (p && typeof o.phone === "string") p.value = o.phone;
             if (co && typeof o.company === "string") co.value = o.company;
+            if (ad && typeof o.address === "string") ad.value = o.address;
+            if (pa && typeof o.parish === "string") pa.value = o.parish;
+            if (cy && typeof o.country === "string") cy.value = o.country;
           } catch (err) {
             /* corrupt or unavailable */
           }
@@ -650,10 +754,7 @@
           var split = splitCartItems(items);
           var recBody = document.getElementById("cart-recurring-body");
           if (cartBody) {
-            cartBody.innerHTML = "";
-            split.oneTime.forEach(function (i) {
-              cartBody.insertAdjacentHTML("beforeend", buildCartLine(i, ""));
-            });
+            renderCartLinesGrouped(cartBody, split.oneTime, "");
             cartBody.querySelectorAll("[data-remove]").forEach(function (b) {
               b.addEventListener("click", function () {
                 SECCart.remove(b.getAttribute("data-remove"));
@@ -696,6 +797,7 @@
         });
         form.addEventListener("change", function () {
           saveContactDraft();
+          updatePreview();
         });
 
         /* discount apply */

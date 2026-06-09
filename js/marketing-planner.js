@@ -238,6 +238,7 @@
     if (!ctx || !durationEl) return null;
     var hours = parseDuration(durationEl.value);
     if (!hours) return null;
+    if (!ctx.date) return null;
     return {
       parishId: ctx.parishId,
       parishLabel: ctx.parishLabel,
@@ -257,16 +258,94 @@
   }
 
   function contextNotes(state, extra) {
-    var parts = [
-      "Parish: " + state.parishLabel,
-      "Duration: " + state.hours + "h",
-      "Rate tier: " + state.tierLabel,
-    ];
-    if (state.date) parts.push("Event date: " + state.date);
+    var parts = ["Parish: " + state.parishLabel, "Duration: " + state.hours + "h"];
     if (state.stops) parts.push("Stops: " + state.stops);
     if (state.stopLocations) parts.push("Stop locations: " + state.stopLocations);
     if (extra) parts.push(extra);
     return parts.join("; ");
+  }
+
+  function promoStateSnapshot(state) {
+    return {
+      parishId: state.parishId,
+      parishLabel: state.parishLabel,
+      tier: state.tier,
+      tierLabel: state.tierLabel,
+      hours: state.hours,
+      stops: state.stops || 0,
+      stopLocations: state.stopLocations || "",
+    };
+  }
+
+  function promoCartExtras(state) {
+    return {
+      eventDate: state.date || "",
+      promoState: promoStateSnapshot(state),
+    };
+  }
+
+  function promoOnceMetaKey(state) {
+    return "promo-once-" + (state.date || "undated");
+  }
+
+  function stateFromCartItem(item) {
+    if (!item) return null;
+    var ps = item.promoState;
+    if (ps && typeof ps === "object") {
+      return {
+        parishId: ps.parishId,
+        parishLabel: ps.parishLabel,
+        tier: ps.tier,
+        tierLabel: ps.tierLabel,
+        hours: ps.hours,
+        stops: ps.stops || 0,
+        stopLocations: ps.stopLocations || "",
+        date: item.eventDate || "",
+      };
+    }
+    return null;
+  }
+
+  function promoStatesByDateFromCart() {
+    var map = {};
+    window.SECCart.load().forEach(function (i) {
+      if (BILLABLE_PROMO_PRODUCT_IDS.indexOf(i.id) < 0) return;
+      var d =
+        i.eventDate ||
+        (window.SECCart.itemEventDate && window.SECCart.itemEventDate(i)) ||
+        "";
+      if (!d) return;
+      if (!map[d]) {
+        var st = stateFromCartItem(i);
+        if (st) map[d] = st;
+      }
+    });
+    return map;
+  }
+
+  function activePromoOnceKeys() {
+    var keys = {};
+    var byDate = promoStatesByDateFromCart();
+    Object.keys(byDate).forEach(function (d) {
+      keys[promoOnceMetaKey(byDate[d])] = true;
+    });
+    return keys;
+  }
+
+  function prunePromoOnceLines() {
+    var allowed = activePromoOnceKeys();
+    var hasDated = Object.keys(allowed).length > 0;
+    window.SECCart.load().slice().forEach(function (i) {
+      if (i.id !== "mkt-promo-misc" && i.id !== "mkt-promo-coordination") return;
+      var suffix = String(i.lineId || "").slice(i.id.length);
+      if (suffix === "promo-quote-once" && hasDated) {
+        window.SECCart.remove(i.lineId);
+        return;
+      }
+      if (suffix.indexOf("promo-once-") === 0 && !allowed[suffix]) {
+        window.SECCart.remove(i.lineId);
+      }
+    });
   }
 
   function metaKey(state, productId, suffix) {
@@ -375,7 +454,11 @@
 
     if (msg) {
       if (!ready) {
-        msg.textContent = "Select promotional duration to add lines to your cart.";
+        var dateEl = document.getElementById("promo-date");
+        var hasDate = dateEl && dateEl.value;
+        msg.textContent = hasDate
+          ? "Select promotional duration to add lines to your cart."
+          : "Select an event date and promotional duration to add lines to your cart.";
         msg.hidden = false;
       } else {
         msg.hidden = true;
@@ -388,14 +471,13 @@
     if (state) return state;
     var msg = document.getElementById("promo-planner-msg");
     if (msg) {
-      msg.textContent = "Select promotional duration to add lines to your cart.";
+      msg.textContent = "Select an event date and promotional duration to add lines to your cart.";
       msg.hidden = false;
     }
     return null;
   }
 
-  var COORDINATION_CART_KEY = "promo-quote-once";
-  var PROMO_MISC_CART_KEY = "promo-quote-once";
+
   var BILLABLE_PROMO_PRODUCT_IDS = [
     "mkt-promo-vehicle",
     "mkt-promo-speakers",
@@ -470,12 +552,8 @@
     }
     var productId = "mkt-promo-misc";
     var price = computeMisc(state.tier);
-    var lineKey = productId + PROMO_MISC_CART_KEY;
-    window.SECCart.load().slice().forEach(function (i) {
-      if (i.id === productId && i.lineId !== lineKey) {
-        window.SECCart.remove(i.lineId);
-      }
-    });
+    var onceKey = promoOnceMetaKey(state);
+    var lineKey = productId + onceKey;
     var existing = window.SECCart.load().find(function (i) {
       return i.id === productId && i.lineId === lineKey;
     });
@@ -483,16 +561,21 @@
     if (existing) window.SECCart.remove(lineKey);
     var p = window.SEC_findProduct(productId);
     if (!p) return;
-    window.SECCart.add({
-      id: p.id,
-      name: p.name,
-      price: price,
-      qty: 1,
-      inquire: false,
-      notes: contextNotes(state, p.note),
-      metaKey: PROMO_MISC_CART_KEY,
-      noMerge: false,
-    });
+    window.SECCart.add(
+      Object.assign(
+        {
+          id: p.id,
+          name: p.name,
+          price: price,
+          qty: 1,
+          inquire: false,
+          notes: contextNotes(state),
+          metaKey: onceKey,
+          noMerge: false,
+        },
+        promoCartExtras(state)
+      )
+    );
   }
 
   function ensureCoordinationInCart(state) {
@@ -502,12 +585,8 @@
     }
     var productId = "mkt-promo-coordination";
     var price = coordinationPriceForState(state);
-    var lineKey = productId + COORDINATION_CART_KEY;
-    window.SECCart.load().slice().forEach(function (i) {
-      if (i.id === productId && i.lineId !== lineKey) {
-        window.SECCart.remove(i.lineId);
-      }
-    });
+    var onceKey = promoOnceMetaKey(state);
+    var lineKey = productId + onceKey;
     var existing = window.SECCart.load().find(function (i) {
       return i.id === productId && i.lineId === lineKey;
     });
@@ -516,19 +595,22 @@
     var p = window.SEC_findProduct(productId);
     if (!p) return;
     var extra =
-      price === 0
-        ? "Waived — promotional vehicle and capturing content on this quote."
-        : p.note;
-    window.SECCart.add({
-      id: p.id,
-      name: p.name,
-      price: price,
-      qty: 1,
-      inquire: false,
-      notes: contextNotes(state, extra),
-      metaKey: COORDINATION_CART_KEY,
-      noMerge: false,
-    });
+      price === 0 ? "Waived — promotional vehicle and capturing content on this quote." : "";
+    window.SECCart.add(
+      Object.assign(
+        {
+          id: p.id,
+          name: p.name,
+          price: price,
+          qty: 1,
+          inquire: false,
+          notes: contextNotes(state, extra),
+          metaKey: onceKey,
+          noMerge: false,
+        },
+        promoCartExtras(state)
+      )
+    );
   }
 
   function syncPromoCoordinationFromCart() {
@@ -538,11 +620,12 @@
       removeAllMiscLines();
       return;
     }
-    var state = getPlannerState();
-    if (state) {
-      ensureMiscInCart(state);
-      ensureCoordinationInCart(state);
-    }
+    prunePromoOnceLines();
+    var byDate = promoStatesByDateFromCart();
+    Object.keys(byDate).forEach(function (d) {
+      ensureMiscInCart(byDate[d]);
+      ensureCoordinationInCart(byDate[d]);
+    });
   }
 
   function ensurePhotoEditInCart(state) {
@@ -557,67 +640,81 @@
     var paidQty = hasCapture ? Math.max(0, estQty - FREE_PHOTOS_WITH_CAPTURE) : estQty;
 
     if (freeQty > 0) {
-      window.SECCart.add({
-        id: p.id,
-        name: p.name + " (included)",
-        price: 0,
-        qty: freeQty,
-        inquire: false,
-        notes: contextNotes(
-          state,
-          "Estimated qty: " +
-            estQty +
-            "; first " +
-            freeQty +
-            " photo edit(s) free with capturing content."
-        ),
-        metaKey: metaKey(state, productId, "free"),
-        noMerge: false,
-      });
+      window.SECCart.add(
+        Object.assign(
+          {
+            id: p.id,
+            name: p.name + " (included)",
+            price: 0,
+            qty: freeQty,
+            inquire: false,
+            notes: contextNotes(
+              state,
+              "First " + freeQty + " photo edit(s) included with capturing content."
+            ),
+            metaKey: metaKey(state, productId, "free"),
+            noMerge: false,
+          },
+          promoCartExtras(state)
+        )
+      );
     }
     if (paidQty > 0) {
-      window.SECCart.add({
-        id: p.id,
-        name: p.name,
-        price: EDIT_PHOTO,
-        qty: paidQty,
-        inquire: false,
-        notes: contextNotes(
-          state,
-          [
-            "Estimated qty: " + estQty,
-            hasCapture
-              ? "Billable after " + FREE_PHOTOS_WITH_CAPTURE + " free photos with capture."
-              : p.note,
-          ].join("; ")
-        ),
-        metaKey: metaKey(state, productId, "paid"),
-        noMerge: false,
-      });
+      var paidNote = hasCapture
+        ? "Billable after " + FREE_PHOTOS_WITH_CAPTURE + " free photos with capture."
+        : "Estimated qty: " + estQty;
+      window.SECCart.add(
+        Object.assign(
+          {
+            id: p.id,
+            name: p.name,
+            price: EDIT_PHOTO,
+            qty: paidQty,
+            inquire: false,
+            notes: contextNotes(state, paidNote),
+            metaKey: metaKey(state, productId, "paid"),
+            noMerge: false,
+          },
+          promoCartExtras(state)
+        )
+      );
     }
   }
 
   function addPromoLine(productId, priceJmd, qty, extraNote) {
     var state = requireState();
     if (!state) return;
+    if (!state.date) {
+      var msg = document.getElementById("promo-planner-msg");
+      if (msg) {
+        msg.textContent = "Select an event date before adding promotion services.";
+        msg.hidden = false;
+      }
+      return;
+    }
     if (!validatePromoDateInput()) return;
     var p = window.SEC_findProduct(productId);
     if (!p) return;
     var q = qty != null ? qty : 1;
-    var notes = contextNotes(state, [p.note, extraNote].filter(Boolean).join(" "));
-    window.SECCart.add({
-      id: p.id,
-      name: p.name,
-      price: priceJmd,
-      qty: q,
-      inquire: false,
-      notes: notes,
-      metaKey: metaKey(state, productId),
-      noMerge: false,
-    });
+    window.SECCart.add(
+      Object.assign(
+        {
+          id: p.id,
+          name: p.name,
+          price: priceJmd,
+          qty: q,
+          inquire: false,
+          notes: contextNotes(state, extraNote),
+          metaKey: metaKey(state, productId),
+          noMerge: false,
+        },
+        promoCartExtras(state)
+      )
+    );
     ensureMiscInCart(state);
     ensureCoordinationInCart(state);
     ensurePhotoEditInCart(state);
+    prunePromoOnceLines();
     var msg = document.getElementById("promo-planner-msg");
     if (msg) msg.hidden = true;
   }
@@ -731,4 +828,5 @@
     if (document.getElementById("promotion-planner")) refreshPrices();
   });
   window.SEC_marketingRefreshPrices = refreshPrices;
+  window.SEC_marketingSyncPromoLines = syncPromoCoordinationFromCart;
 })();

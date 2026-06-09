@@ -16,6 +16,14 @@
       window.SEC_Currency && window.SEC_Currency.formatFromJmd
         ? window.SEC_Currency.formatFromJmd(jmd, cur)
         : "$" + Number(jmd).toLocaleString();
+    const noteText = (i) =>
+      window.SECCart && window.SECCart.displayNotes
+        ? window.SECCart.displayNotes(i.notes || "")
+        : i.notes || "";
+    const formatEventDate = (iso) =>
+      window.SECCart && window.SECCart.formatEventDateLabel
+        ? window.SECCart.formatEventDateLabel(iso)
+        : iso;
     const lines = [];
     lines.push(cfg.BUSINESS_NAME || "SEC Services");
     lines.push("QUOTATION REQUEST");
@@ -27,6 +35,9 @@
       lines.push(`Email: ${customer.email || "—"}`);
       lines.push(`Phone: ${customer.phone || "—"}`);
       lines.push(`Company: ${customer.company || "—"}`);
+      lines.push(`Address: ${customer.address || "—"}`);
+      lines.push(`Parish: ${customer.parish || "—"}`);
+      lines.push(`Country: ${customer.country || "—"}`);
       lines.push("-".repeat(44));
     }
     let sub = 0;
@@ -36,14 +47,34 @@
       if (i.recurring) recurring.push(i);
       else oneTime.push(i);
     });
-    oneTime.forEach((i, n) => {
-      const lineTotal = lineJmdTotal(i);
-      sub += lineTotal;
-      lines.push(`${n + 1}. ${i.name} × ${i.qty || 1}`);
-      if (i.inquire) lines.push(`   [Inquire — price TBD]`);
-      else lines.push(`   ${fmt(lineTotal)}`);
-      if (i.notes) lines.push(`   Note: ${i.notes}`);
-    });
+
+    function appendItemLines(list, startIndex) {
+      let n = startIndex;
+      list.forEach((i) => {
+        const lineTotal = lineJmdTotal(i);
+        sub += lineTotal;
+        lines.push(`${n + 1}. ${i.name} × ${i.qty || 1}`);
+        if (i.inquire) lines.push(`   [Inquire — price TBD]`);
+        else lines.push(`   ${fmt(lineTotal)}`);
+        const notes = noteText(i);
+        if (notes) lines.push(`   Note: ${notes}`);
+        n += 1;
+      });
+      return n;
+    }
+
+    let lineNum = 0;
+    if (window.SECCart && typeof window.SECCart.groupOneTimeByEventDate === "function") {
+      const groups = window.SECCart.groupOneTimeByEventDate(oneTime);
+      groups.dated.forEach(([date, groupItems]) => {
+        lines.push(`Event date: ${formatEventDate(date)}`);
+        lineNum = appendItemLines(groupItems, lineNum);
+        lines.push("");
+      });
+      lineNum = appendItemLines(groups.undated, lineNum);
+    } else {
+      lineNum = appendItemLines(oneTime, lineNum);
+    }
     lines.push("-".repeat(44));
     lines.push(`Subtotal (one-time priced items): ${fmt(sub)}`);
     if (recurring.length) {
@@ -55,7 +86,8 @@
         recSub += lineTotal;
         lines.push(`${n + 1}. ${i.name} × ${i.qty || 1}`);
         lines.push(`   ${fmt(lineTotal)} / mo`);
-        if (i.notes) lines.push(`   Note: ${i.notes}`);
+        const notes = noteText(i);
+        if (notes) lines.push(`   Note: ${notes}`);
       });
       lines.push(`Recurring subtotal: ${fmt(recSub)} / mo`);
     }

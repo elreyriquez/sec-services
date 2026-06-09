@@ -151,13 +151,11 @@ window.SEC_CATALOG = {
       id: "mkt-promo-vehicle",
       name: "Promotional vehicle and grip",
       price: 0,
-      note: "5-hour block; minimum block applies for shorter promotions.",
     },
     {
       id: "mkt-promo-speakers",
       name: "Speakers",
       price: 0,
-      note: "Per 5-hour block; overtime applies on 6-hour promotions.",
     },
     {
       id: "mkt-promo-capture",
@@ -169,7 +167,6 @@ window.SEC_CATALOG = {
       id: "mkt-promo-coordination",
       name: "Promotion coordination fee",
       price: 0,
-      note: "Tiered by parish; waived when promotional vehicle and capturing content are both on your quote.",
     },
     {
       id: "mkt-promo-edit-photo",
@@ -183,12 +180,11 @@ window.SEC_CATALOG = {
       price: 10000,
       note: "Video concept must be agreed before the promotion activity.",
     },
-    { id: "mkt-promo-host", name: "Host/DJ", price: 0, note: "Per hour for scheduled promotion duration." },
+    { id: "mkt-promo-host", name: "Host/DJ", price: 0 },
     {
       id: "mkt-promo-misc",
       name: "Miscellaneous (promotion support)",
       price: 0,
-      note: "Included on every promotion quote.",
     },
     { id: "mkt-promo-models", name: "Promotional models", price: 0, note: "Per model / brand ambassador." },
   ],

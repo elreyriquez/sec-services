@@ -72,10 +72,14 @@ app.post(
       var email = typeof meta.email === "string" ? meta.email : "—";
       var phone = typeof meta.phone === "string" ? meta.phone : "—";
       var company = typeof meta.company === "string" ? meta.company : "";
+      var address = typeof meta.address === "string" ? meta.address : "—";
+      var parish = typeof meta.parish === "string" ? meta.parish : "—";
+      var country = typeof meta.country === "string" ? meta.country : "—";
 
       var subject = "SEC job request — " + name;
       var lines = [
         "<p><strong>New quotation PDF</strong> (submitted via sec-services cart).</p>",
+        "<p><strong>Contact (not on PDF):</strong></p>",
         "<ul>",
         "<li><strong>Name:</strong> " + escapeHtml(name) + "</li>",
         "<li><strong>Email:</strong> " + escapeHtml(email) + "</li>",
@@ -84,6 +88,12 @@ app.post(
       if (company) {
         lines.push("<li><strong>Company:</strong> " + escapeHtml(company) + "</li>");
       }
+      lines.push("</ul>");
+      lines.push("<p><strong>Quoted to (on PDF):</strong></p>");
+      lines.push("<ul>");
+      lines.push("<li><strong>Address:</strong> " + escapeHtml(address) + "</li>");
+      lines.push("<li><strong>Parish:</strong> " + escapeHtml(parish) + "</li>");
+      lines.push("<li><strong>Country:</strong> " + escapeHtml(country) + "</li>");
       lines.push("</ul>");
       lines.push("<p>The job request was also sent through Formspree.</p>");
 
