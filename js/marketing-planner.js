@@ -7,6 +7,7 @@
     "st-andrew": "kingston",
     portmore: "middle",
     "spanish-town": "middle",
+    linstead: "middle",
     other: "outside",
   };
 
@@ -15,11 +16,13 @@
     "st-andrew": "St Andrew",
     portmore: "Portmore",
     "spanish-town": "Spanish Town",
+    linstead: "Linstead",
     other: "Other parish",
   };
 
   var BASE_PROMO_HOURS = 4;
   var EXTRA_HOUR_FLAT_JMD = 5000;
+  var SPEAKERS_EXTRA_HOUR_JMD = 1500;
 
   window.SEC_MARKETING_RATES = {
     kingston: {
@@ -29,27 +32,27 @@
       captureBase4h: 30000,
       hostBase4h: 20000,
       miscBlock: 10000,
-      coordination: 10000,
+      coordination: 8000,
       models: 9000,
     },
     middle: {
       label: "Neighbouring Towns",
-      vehicle: 45000,
+      vehicle: 40000,
       speakersBase4h: 12000,
       captureBase4h: 30000,
       hostBase4h: 25000,
-      miscBlock: 20000,
-      coordination: 15000,
+      miscBlock: 12000,
+      coordination: 10000,
       models: 10000,
     },
     outside: {
       label: "Outside listed parishes",
-      vehicle: 50000,
-      speakersBase4h: 15000,
+      vehicle: 45000,
+      speakersBase4h: 12000,
       captureBase4h: 35000,
-      hostBase4h: 30000,
-      miscBlock: 25000,
-      coordination: 18000,
+      hostBase4h: 25000,
+      miscBlock: 15000,
+      coordination: 12000,
       models: 10000,
     },
   };
@@ -130,18 +133,23 @@
     return window.SEC_MARKETING_RATES[tier].vehicle;
   }
 
-  /** 4h base; each additional hour +$5,000 (JMD). */
-  function applyDurationToBase4h(base4h, hours) {
+  /** 4h base; each additional hour adds extraPerHour (default $5,000 JMD). */
+  function applyDurationToBase4h(base4h, hours, extraPerHour) {
     var h = hours >= 4 && hours <= 6 ? hours : BASE_PROMO_HOURS;
     if (h <= BASE_PROMO_HOURS) return base4h;
+    var extra = extraPerHour != null ? extraPerHour : EXTRA_HOUR_FLAT_JMD;
     var total = base4h;
-    if (h >= 5) total += EXTRA_HOUR_FLAT_JMD;
-    if (h >= 6) total += EXTRA_HOUR_FLAT_JMD;
+    if (h >= 5) total += extra;
+    if (h >= 6) total += extra;
     return total;
   }
 
   function computeSpeakers(tier, hours) {
-    return applyDurationToBase4h(window.SEC_MARKETING_RATES[tier].speakersBase4h, hours);
+    return applyDurationToBase4h(
+      window.SEC_MARKETING_RATES[tier].speakersBase4h,
+      hours,
+      SPEAKERS_EXTRA_HOUR_JMD
+    );
   }
 
   function computeCapture(tier, hours) {
@@ -654,7 +662,8 @@
     if (photoEstEl) photoEstEl.addEventListener("input", onFieldChange);
 
     document.querySelectorAll(".pick-add[data-promo-line]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
         var state = requireState();
         if (!state) return;
         var line = btn.getAttribute("data-promo-line");

@@ -156,6 +156,7 @@
     }
     document.querySelectorAll("[data-add-product]").forEach((btn) => {
       btn.addEventListener("click", () => {
+        if (btn.hasAttribute("data-promo-line")) return;
         const id = btn.getAttribute("data-add-product");
         const qtyInput = btn.closest(".pick-row, .product-card, .product-row, li")?.querySelector("[data-qty-for]");
         let qty = 1;

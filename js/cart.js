@@ -39,6 +39,22 @@
     if (next.length !== items.length) save(next);
   }
 
+  /** Drop legacy promo lines added without planner metaKey (duplicate of priced line). */
+  function dedupePromoPlannerLines(items) {
+    const promoIds = new Set([...BILLABLE_PROMO_IDS, PROMO_COORDINATION_ID, PROMO_MISC_ID, "mkt-promo-edit-photo"]);
+    const hasContextLine = new Set();
+    items.forEach((i) => {
+      if (promoIds.has(i.id) && i.lineId && i.lineId.length > i.id.length) {
+        hasContextLine.add(i.id);
+      }
+    });
+    return items.filter((i) => {
+      if (!promoIds.has(i.id)) return true;
+      if (i.lineId === i.id) return !hasContextLine.has(i.id);
+      return true;
+    });
+  }
+
   function syncRecurringCompanions() {
     let items = load();
     let changed = false;
@@ -100,7 +116,7 @@
   }
 
   function save(items) {
-    localStorage.setItem(KEY, JSON.stringify(items));
+    localStorage.setItem(KEY, JSON.stringify(dedupePromoPlannerLines(items)));
     window.dispatchEvent(new CustomEvent("sec-cart-updated"));
   }
 
