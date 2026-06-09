@@ -19,6 +19,10 @@
     "sec-payment-setup": { productId: "sec-payment-maint", metaKey: "recurring-for-sec-payment-setup" },
   };
 
+  function isRecurringItem(item) {
+    return Boolean(item && item.recurring);
+  }
+
   function itemEventDate(item) {
     if (item && item.eventDate) return String(item.eventDate);
     const m = String(item && item.lineId ? item.lineId : "").match(/(\d{4}-\d{2}-\d{2})/);

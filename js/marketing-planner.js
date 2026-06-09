@@ -499,12 +499,14 @@
   }
 
   function cartHasBillablePromoLines() {
+    if (!window.SECCart || typeof window.SECCart.load !== "function") return false;
     return window.SECCart.load().some(function (i) {
       return BILLABLE_PROMO_PRODUCT_IDS.indexOf(i.id) >= 0;
     });
   }
 
   function cartHasPromoProduct(productId) {
+    if (!window.SECCart || typeof window.SECCart.load !== "function") return false;
     return window.SECCart.load().some(function (i) {
       return i.id === productId;
     });
@@ -747,6 +749,7 @@
     if (dateEl) {
       dateEl.addEventListener("change", onDateChange);
       dateEl.addEventListener("input", onDateChange);
+      dateEl.addEventListener("blur", onDateChange);
     }
     if (otherEl) otherEl.addEventListener("input", onFieldChange);
 
