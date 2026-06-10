@@ -44,7 +44,7 @@
       lines.push(`Phone: ${customer.phone || "—"}`);
       lines.push(`Company: ${customer.company || "—"}`);
       lines.push(`Address: ${customer.address || "—"}`);
-      lines.push(`Parish: ${customer.parish || "—"}`);
+      lines.push(`Location: ${customer.parish || "—"}`);
       lines.push(`Country: ${customer.country || "—"}`);
       lines.push("-".repeat(44));
     }

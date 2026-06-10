@@ -16,8 +16,8 @@
     "st-andrew": "St Andrew",
     portmore: "Portmore",
     "spanish-town": "Spanish Town",
-    linstead: "Linstead",
-    other: "Other parish",
+    linstead: "Linstead *Discount*",
+    other: "Other location",
   };
 
   var BASE_PROMO_HOURS = 4;
@@ -258,7 +258,7 @@
   }
 
   function vehicleContextNotes(state, extra) {
-    var parts = ["Parish: " + state.parishLabel, "Duration: " + state.hours + "h"];
+    var parts = ["Location: " + state.parishLabel, "Duration: " + state.hours + "h"];
     if (state.stops) parts.push("Stops: " + state.stops);
     if (state.stopLocations) parts.push("Stop locations: " + state.stopLocations);
     if (extra) parts.push(extra);

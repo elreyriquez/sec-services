@@ -92,7 +92,7 @@ app.post(
       lines.push("<p><strong>Quoted to (on PDF):</strong></p>");
       lines.push("<ul>");
       lines.push("<li><strong>Address:</strong> " + escapeHtml(address) + "</li>");
-      lines.push("<li><strong>Parish:</strong> " + escapeHtml(parish) + "</li>");
+      lines.push("<li><strong>Location:</strong> " + escapeHtml(parish) + "</li>");
       lines.push("<li><strong>Country:</strong> " + escapeHtml(country) + "</li>");
       lines.push("</ul>");
       lines.push("<p>The job request was also sent through Formspree.</p>");

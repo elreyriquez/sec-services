@@ -49,6 +49,7 @@
 
   const PROMO_CONTEXT_NOTE_PATTERNS = [
     /^Parish:/i,
+    /^Location:/i,
     /^Duration:/i,
     /^Stops:/i,
     /^Stop locations:/i,

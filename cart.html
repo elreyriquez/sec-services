@@ -121,9 +121,9 @@
                 <textarea id="cust-address" name="address" rows="2" required autocomplete="street-address" placeholder="Street, community, or P.O. box"></textarea>
               </div>
               <div>
-                <label for="cust-parish">Parish *</label>
+                <label for="cust-parish">Location *</label>
                 <select id="cust-parish" name="parish" required autocomplete="address-level2">
-                  <option value="">Select parish…</option>
+                  <option value="">Select location…</option>
                   <option value="Clarendon">Clarendon</option>
                   <option value="Hanover">Hanover</option>
                   <option value="Kingston">Kingston</option>
@@ -344,7 +344,8 @@
         if (!i) return "";
         var raw = i.notes || "";
         if (i.id === "mkt-promo-vehicle") {
-          return window.SECCart && SECCart.displayNotes ? SECCart.displayNotes(raw) : raw;
+          var vehicleNotes = window.SECCart && SECCart.displayNotes ? SECCart.displayNotes(raw) : raw;
+          return vehicleNotes.replace(/^Parish:/i, "Location:");
         }
         if (window.SECCart && SECCart.stripPromoContextNotes) return SECCart.stripPromoContextNotes(raw);
         return raw;
