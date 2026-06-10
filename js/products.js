@@ -186,7 +186,7 @@ window.SEC_CATALOG = {
       name: "Miscellaneous (promotion support)",
       price: 0,
     },
-    { id: "mkt-promo-models", name: "Promotional models", price: 0, note: "Per model / brand ambassador." },
+    { id: "mkt-promo-models", name: "Promotion Ambassadors", price: 0, note: "Per promotion ambassador." },
   ],
   marketing: [
     { id: "mkt-advocacy", name: "Brand advocacy (event / presence)", price: 0, inquire: true, note: "Scoped quote after brief." },
