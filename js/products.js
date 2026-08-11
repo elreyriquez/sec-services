@@ -11,15 +11,27 @@ function SEC_usdToJmd(usd) {
 
 window.SEC_CATALOG = {
   production: [
-    { id: "gfx-static", name: "Static graphic design (each)", price: 10000, note: "First 2 revision rounds included; extra rounds $2,000 each (JMD)." },
-    { id: "gfx-motion-15", name: "Motion graphic (15 seconds)", price: 15000, note: "Includes 2 revision rounds; extra $3,000 each (JMD)." },
-    { id: "gfx-motion-30", name: "Motion graphic (30 seconds)", price: 20000, note: "Includes 2 revision rounds; extra $3,000 each (JMD)." },
-    { id: "vid-30", name: "Video editing — finished 0:30 (social, max 3:00 policy)", price: 18000, note: "Social use; longer lengths available below." },
-    { id: "vid-60", name: "Video editing — finished 1:00", price: 34000 },
-    { id: "vid-90", name: "Video editing — finished 1:30", price: 50000 },
-    { id: "vid-120", name: "Video editing — finished 2:00", price: 66000 },
-    { id: "vid-150", name: "Video editing — finished 2:30", price: 82000 },
-    { id: "vid-180", name: "Video editing — finished 3:00", price: 98000 },
+    { id: "gfx-static", name: "Static graphic design (each)", price: 15000, note: "First 2 revision rounds included; extra rounds $2,000 each (JMD)." },
+    { id: "gfx-motion-15", name: "Motion graphic (15 seconds)", price: 22000, note: "Includes 2 revision rounds; extra $3,000 each (JMD)." },
+    { id: "gfx-motion-30", name: "Motion graphic (30 seconds)", price: 30000, note: "Includes 2 revision rounds; extra $3,000 each (JMD)." },
+    { id: "vid-30", name: "Social video edit — Basic (finished 0:30)", price: 28000, note: "Basic tier: cuts, music sync, basic transitions, simple text. Two revision rounds included; extra $3,000 each (JMD)." },
+    { id: "vid-60", name: "Social video edit — Basic (finished 1:00)", price: 40000, note: "Basic tier: cuts, music sync, basic transitions, simple text. Two revision rounds included; extra $3,000 each (JMD)." },
+    { id: "vid-90", name: "Social video edit — Basic (finished 1:30)", price: 52000, note: "Basic tier: cuts, music sync, basic transitions, simple text. Two revision rounds included; extra $3,000 each (JMD)." },
+    { id: "vid-120", name: "Social video edit — Basic (finished 2:00)", price: 70000, note: "Basic tier: cuts, music sync, basic transitions, simple text. Two revision rounds included; extra $3,000 each (JMD)." },
+    { id: "vid-150", name: "Social video edit — Basic (finished 2:30)", price: 85000, note: "Basic tier: cuts, music sync, basic transitions, simple text. Two revision rounds included; extra $3,000 each (JMD)." },
+    { id: "vid-180", name: "Social video edit — Basic (finished 3:00)", price: 100000, note: "Basic tier: cuts, music sync, basic transitions, simple text. Two revision rounds included; extra $3,000 each (JMD)." },
+    {
+      id: "vid-enhanced",
+      name: "Social video edit — Enhanced",
+      price: 35000,
+      note: "Basic scope plus captions/subtitles, sound design, b-roll integration, branded lower thirds, simple motion inserts. Typical finished length up to 1:00; longer scoped on brief. Two revision rounds included; extra $3,000 each (JMD).",
+    },
+    {
+      id: "vid-premium",
+      name: "Social video edit — Premium",
+      price: 50000,
+      note: "Enhanced scope plus advanced motion/VFX, ad-style pacing, multiple export ratios or versions. Typical finished length up to 1:00; longer or campaign packages scoped on brief. Two revision rounds included; extra $3,000 each (JMD).",
+    },
     { id: "vid-shoot-hr", name: "Videography — per hour (on location)", price: 15000, unit: "hour", maxQty: 4, note: "Half-day max 4 hrs ($60,000 cap, JMD). Outside Kingston & St Andrew, Portmore, Spanish Town: +15% on shoot fees only." },
   ],
   webBrandSec: [

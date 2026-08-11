@@ -55,21 +55,21 @@
               <span class="pick-row__title">Static graphic design</span>
               <span class="pick-row__meta">Per deliverable (e.g. post, cover).</span>
             </div>
-            <span class="pick-row__price">10,000</span>
+            <span class="pick-row__price">15,000</span>
             <button type="button" class="pick-add" data-add-product="gfx-static">Add</button>
           </div>
           <div class="pick-row">
             <div class="pick-row__main">
               <span class="pick-row__title">Motion graphic — 15s</span>
             </div>
-            <span class="pick-row__price">15,000</span>
+            <span class="pick-row__price">22,000</span>
             <button type="button" class="pick-add" data-add-product="gfx-motion-15">Add</button>
           </div>
           <div class="pick-row">
             <div class="pick-row__main">
               <span class="pick-row__title">Motion graphic — 30s</span>
             </div>
-            <span class="pick-row__price">20,000</span>
+            <span class="pick-row__price">30,000</span>
             <button type="button" class="pick-add" data-add-product="gfx-motion-30">Add</button>
           </div>
         </div>
@@ -78,18 +78,20 @@
 
     <details class="section-block section-block--collapsible production-collapsible">
       <summary class="section-block__h2">Video editing</summary>
-      <p class="meta" style="margin: 0.35rem 0 0.75rem; max-width: 42rem">Social deliverables, finished length up to <strong>3:00</strong>.</p>
+      <p class="meta" style="margin: 0.35rem 0 0.75rem; max-width: 42rem">
+        Social deliverables priced by <strong>complexity tier</strong>. Basic is priced by finished length (up to <strong>3:00</strong>); Enhanced and Premium are fixed-scope packages (typical length up to <strong>1:00</strong>).
+      </p>
       <div class="service-panel">
         <div class="pick-list">
           <div class="pick-row pick-row--vid-edit">
             <div class="pick-row__main">
-              <span class="pick-row__title">Social video edit</span>
-              <span class="pick-row__meta">Choose finished length; two revision rounds included (per rate card).</span>
+              <span class="pick-row__title">Social video edit — Basic</span>
+              <span class="pick-row__meta">Cuts, music sync, basic transitions, simple text. Choose finished length; two revision rounds included.</span>
             </div>
             <select
               id="vid-edit-select"
               class="pick-select"
-              aria-label="Finished video length (social edit, max 3 minutes)"
+              aria-label="Finished video length (Basic social edit, max 3 minutes)"
               title="Finished length"
             >
               <option value="vid-30">0:30</option>
@@ -99,8 +101,24 @@
               <option value="vid-150">2:30</option>
               <option value="vid-180">3:00</option>
             </select>
-            <span class="pick-row__price" id="vid-edit-price">18,000</span>
+            <span class="pick-row__price" id="vid-edit-price">28,000</span>
             <button type="button" class="pick-add" id="vid-edit-add" data-add-product="vid-30">Add</button>
+          </div>
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Social video edit — Enhanced</span>
+              <span class="pick-row__meta">Basic plus captions/subtitles, sound design, b-roll, branded lower thirds, simple motion inserts. Typical length up to 1:00.</span>
+            </div>
+            <span class="pick-row__price">35,000</span>
+            <button type="button" class="pick-add" data-add-product="vid-enhanced">Add</button>
+          </div>
+          <div class="pick-row">
+            <div class="pick-row__main">
+              <span class="pick-row__title">Social video edit — Premium</span>
+              <span class="pick-row__meta">Enhanced plus advanced motion/VFX, ad-style pacing, multiple export ratios or versions. Typical length up to 1:00.</span>
+            </div>
+            <span class="pick-row__price">50,000</span>
+            <button type="button" class="pick-add" data-add-product="vid-premium">Add</button>
           </div>
         </div>
       </div>
@@ -130,6 +148,7 @@
     </details>
 
     <div class="callout production-footnotes" style="margin-top: 2rem">
+      <p>Final price may vary with raw footage volume, number of takes, and turnaround. Scope is confirmed on brief before work starts.</p>
       <p>Two revision rounds included on graphics / motion / edits.</p>
       <p>
         Additional rounds: <strong data-jmd-amount="2000">$2,000</strong> per iteration (static graphics);
