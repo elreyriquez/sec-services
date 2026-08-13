@@ -117,8 +117,8 @@
                 <input id="cust-co" name="company" type="text" autocomplete="organization" />
               </div>
               <div class="form-grid__full">
-                <label for="cust-address">Address *</label>
-                <textarea id="cust-address" name="address" rows="2" required autocomplete="street-address" placeholder="Street, community, or P.O. box"></textarea>
+                <label for="cust-address">Address (optional)</label>
+                <textarea id="cust-address" name="address" rows="2" autocomplete="street-address" placeholder="Street, community, or P.O. box"></textarea>
               </div>
               <div>
                 <label for="cust-parish">Location *</label>
@@ -685,7 +685,7 @@
           statusEl.textContent = "";
           if (!form.checkValidity()) {
             form.reportValidity();
-            statusEl.textContent = "Add your contact details and quoted-to address before you print, download a PDF, or submit.";
+            statusEl.textContent = "Add your contact details before you print, download a PDF, or submit.";
             return false;
           }
           return true;

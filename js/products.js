@@ -12,7 +12,8 @@ function SEC_usdToJmd(usd) {
 window.SEC_CATALOG = {
   production: [
     { id: "gfx-static", name: "Static graphic design (each)", price: 15000, note: "First 2 revision rounds included; extra rounds $2,000 each (JMD)." },
-    { id: "gfx-motion-15", name: "Motion graphic (15 seconds)", price: 22000, note: "Includes 2 revision rounds; extra $3,000 each (JMD)." },
+    { id: "gfx-motion-10", name: "Motion graphic (10 seconds)", price: 20000, note: "Includes 2 revision rounds; extra $3,000 each (JMD)." },
+    { id: "gfx-motion-15", name: "Motion graphic (15 seconds)", price: 25000, note: "Includes 2 revision rounds; extra $3,000 each (JMD)." },
     { id: "gfx-motion-30", name: "Motion graphic (30 seconds)", price: 30000, note: "Includes 2 revision rounds; extra $3,000 each (JMD)." },
     { id: "vid-30", name: "Social video edit — Basic (finished 0:30)", price: 28000, note: "Basic tier: cuts, music sync, basic transitions, simple text. Two revision rounds included; extra $3,000 each (JMD)." },
     { id: "vid-60", name: "Social video edit — Basic (finished 1:00)", price: 40000, note: "Basic tier: cuts, music sync, basic transitions, simple text. Two revision rounds included; extra $3,000 each (JMD)." },
