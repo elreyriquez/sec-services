@@ -208,9 +208,10 @@
           <h3 class="promo-category__title" id="promo-cat-conditional">Conditional charges</h3>
           <p class="promo-category__desc">
             This is the cost incurred to organize the team and ensure optimization with location, timing and effective
-            communication among stakeholders and general organizational foresight for the day. This fee is waived when
-            both promotional transport (vehicle or Town Cryer) and capturing content are requested as a discount to our
-            clients.
+            communication among stakeholders and general organizational foresight for the day. The base fee is waived when
+            both promotional transport (vehicle or Town Cryer) and capturing content are requested. On quotes without
+            promotional vehicle and grip (non-regular), each Host/DJ, ambassador, speakers, capturing content, cooler, and
+            bag of ice adds +$1,000 to coordination — even when the base fee is waived.
           </p>
           <div class="pick-list">
             <div class="pick-row pick-row--no-add" data-promo-row="coordination">
@@ -223,11 +224,57 @@
           </div>
         </section>
 
+        <section class="promo-category" aria-labelledby="promo-cat-rentals">
+          <h3 class="promo-category__title" id="promo-cat-rentals">Rentals &amp; supplies</h3>
+          <p class="promo-category__desc">
+            Cooler day rentals and ice for the activation. On non-regular promotions (no promotional vehicle and grip),
+            each cooler and each bag of ice also adds +$1,000 to the coordination fee.
+          </p>
+          <div class="pick-list">
+            <div class="pick-row pick-row--promo-qty" data-promo-row="cooler-rect">
+              <div class="pick-row__main">
+                <span class="pick-row__title">Medium rectangular cooler</span>
+                <span class="pick-row__meta">Day rental; one available.</span>
+              </div>
+              <span class="pick-row__price inquire" data-promo-price="cooler-rect">—</span>
+              <div class="qty-inline">
+                <label for="promo-cooler-rect-qty">Qty</label>
+                <input id="promo-cooler-rect-qty" type="number" min="1" max="1" value="1" data-qty-for />
+              </div>
+              <button type="button" class="pick-add" data-add-product="mkt-promo-cooler-rect" data-promo-line="cooler-rect" disabled>Add</button>
+            </div>
+            <div class="pick-row pick-row--promo-qty" data-promo-row="cooler-round">
+              <div class="pick-row__main">
+                <span class="pick-row__title">Medium round cooler</span>
+                <span class="pick-row__meta">Day rental; one available.</span>
+              </div>
+              <span class="pick-row__price inquire" data-promo-price="cooler-round">—</span>
+              <div class="qty-inline">
+                <label for="promo-cooler-round-qty">Qty</label>
+                <input id="promo-cooler-round-qty" type="number" min="1" max="1" value="1" data-qty-for />
+              </div>
+              <button type="button" class="pick-add" data-add-product="mkt-promo-cooler-round" data-promo-line="cooler-round" disabled>Add</button>
+            </div>
+            <div class="pick-row pick-row--promo-qty" data-promo-row="ice">
+              <div class="pick-row__main">
+                <span class="pick-row__title">Bag of ice</span>
+                <span class="pick-row__meta">Per bag.</span>
+              </div>
+              <span class="pick-row__price inquire" data-promo-price="ice">—</span>
+              <div class="qty-inline">
+                <label for="promo-ice-qty">Qty</label>
+                <input id="promo-ice-qty" type="number" min="1" max="99" value="1" data-qty-for />
+              </div>
+              <button type="button" class="pick-add" data-add-product="mkt-promo-ice" data-promo-line="ice" disabled>Add</button>
+            </div>
+          </div>
+        </section>
+
         <section class="promo-category" aria-labelledby="promo-cat-misc">
           <h3 class="promo-category__title" id="promo-cat-misc">Miscellaneous</h3>
           <p class="promo-category__desc">
-            This charge covers additional expenses such as toll, ice, table, table cloths, refreshments and any other
-            untimely expense.
+            This charge covers additional expenses such as toll, table, table cloths, refreshments and any other
+            untimely expense. Coolers and bagged ice are listed separately under Rentals &amp; supplies.
           </p>
           <div class="pick-list">
             <div class="pick-row pick-row--no-add" data-promo-row="misc">

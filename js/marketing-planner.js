@@ -23,6 +23,9 @@
   var BASE_PROMO_HOURS = 4;
   var EXTRA_HOUR_FLAT_JMD = 5000;
   var SPEAKERS_EXTRA_HOUR_JMD = 1500;
+  var COOLER_RENTAL_JMD = 3000;
+  var ICE_BAG_JMD = 1000;
+  var COORD_SURCHARGE_PER_UNIT_JMD = 1000;
 
   window.SEC_MARKETING_RATES = {
     kingston: {
@@ -470,20 +473,44 @@
     updatePriceEl(document.querySelector('[data-promo-price="speakers"]'), computeSpeakers(tier, h));
     updatePriceEl(document.querySelector('[data-promo-price="capture"]'), computeCapture(tier, h));
     updatePriceEl(document.querySelector('[data-promo-price="host"]'), computeHost(tier, h));
+    updatePriceEl(document.querySelector('[data-promo-price="cooler-rect"]'), COOLER_RENTAL_JMD);
+    updatePriceEl(document.querySelector('[data-promo-price="cooler-round"]'), COOLER_RENTAL_JMD);
+    updatePriceEl(document.querySelector('[data-promo-price="ice"]'), ICE_BAG_JMD);
     updatePriceEl(document.querySelector('[data-promo-price="misc"]'), computeMisc(tier));
     var coordEl = document.querySelector('[data-promo-price="coordination"]');
     if (coordEl) {
-      var coordPrice = computeCoordination(tier);
+      var dateForCoord = ctx.date || "";
+      var coordPrice = coordinationPriceForDate(tier, dateForCoord);
       var coordStatus = document.getElementById("promo-coordination-status");
-      if (coordinationIsWaived()) {
-        coordPrice = 0;
-        if (coordStatus) coordStatus.textContent = "Waived for this promotion date.";
-      } else if (cartHasBillablePromoLinesForDate(ctx && ctx.date)) {
-        if (coordStatus) coordStatus.textContent = "Included once per promotion date.";
-      } else if (cartHasBillablePromoLines()) {
-        if (coordStatus) coordStatus.textContent = "Included once per promotion date on your quote.";
-      } else if (coordStatus) {
-        coordStatus.textContent = "Added once per promotion date when you add promotion services.";
+      var waivedBase = dateForCoord && coordinationIsWaivedForDate(dateForCoord);
+      var surchargeAmt = coordinationSurchargeForDate(dateForCoord);
+      var surchargeUnits = coordinationSurchargeUnitsForDate(dateForCoord);
+      if (coordStatus) {
+        if (waivedBase && surchargeAmt === 0) {
+          coordStatus.textContent = "Waived for this promotion date.";
+        } else if (waivedBase && surchargeAmt > 0) {
+          coordStatus.textContent =
+            "Base waived; includes " +
+            formatPrice(surchargeAmt) +
+            " non-regular extras (" +
+            surchargeUnits +
+            ").";
+        } else if (surchargeAmt > 0) {
+          coordStatus.textContent =
+            "Includes " +
+            formatPrice(surchargeAmt) +
+            " non-regular extras (" +
+            surchargeUnits +
+            " × " +
+            formatPrice(COORD_SURCHARGE_PER_UNIT_JMD) +
+            ").";
+        } else if (cartHasBillablePromoLinesForDate(dateForCoord)) {
+          coordStatus.textContent = "Included once per promotion date.";
+        } else if (cartHasBillablePromoLines()) {
+          coordStatus.textContent = "Included once per promotion date on your quote.";
+        } else {
+          coordStatus.textContent = "Added once per promotion date when you add promotion services.";
+        }
       }
       updatePriceEl(coordEl, coordPrice);
       if (coordPrice === 0) coordEl.textContent = "Free";
@@ -545,6 +572,19 @@
     "mkt-promo-host",
     "mkt-promo-edit-video",
     "mkt-promo-models",
+    "mkt-promo-cooler-rect",
+    "mkt-promo-cooler-round",
+    "mkt-promo-ice",
+  ];
+
+  var SURCHARGE_PRODUCT_IDS = [
+    "mkt-promo-host",
+    "mkt-promo-models",
+    "mkt-promo-speakers",
+    "mkt-promo-capture",
+    "mkt-promo-cooler-rect",
+    "mkt-promo-cooler-round",
+    "mkt-promo-ice",
   ];
 
   function cartItemEventDate(item) {
@@ -680,14 +720,62 @@
     return hasTransport && hasCapture;
   }
 
-  function coordinationIsWaived() {
-    var state = getPlannerState();
-    return state && state.date ? coordinationIsWaivedForDate(state.date) : false;
+  /** Regular = promotional vehicle and grip on that date (Town Cryer does not count). */
+  function isRegularPromotionForDate(date) {
+    return cartHasProductForDate("mkt-promo-vehicle", date);
+  }
+
+  function coordinationSurchargeUnitsForDate(date) {
+    if (!window.SECCart || typeof window.SECCart.load !== "function" || !date) return 0;
+    var units = 0;
+    window.SECCart.load().forEach(function (i) {
+      if (SURCHARGE_PRODUCT_IDS.indexOf(i.id) < 0) return;
+      if (cartItemEventDate(i) !== date) return;
+      var q = parseInt(i.qty, 10);
+      units += Number.isFinite(q) && q > 0 ? q : 1;
+    });
+    return units;
+  }
+
+  function coordinationSurchargeForDate(date) {
+    if (!date || isRegularPromotionForDate(date)) return 0;
+    return coordinationSurchargeUnitsForDate(date) * COORD_SURCHARGE_PER_UNIT_JMD;
+  }
+
+  /** Base waived when transport + capture; non-regular per-unit surcharge still applies. */
+  function coordinationPriceForDate(tier, date) {
+    var base = coordinationIsWaivedForDate(date) ? 0 : computeCoordination(tier);
+    return base + coordinationSurchargeForDate(date);
+  }
+
+  function coordinationNotesForState(state, price) {
+    if (!state || !state.date) return "";
+    var waived = coordinationIsWaivedForDate(state.date);
+    var surcharge = coordinationSurchargeForDate(state.date);
+    var units = coordinationSurchargeUnitsForDate(state.date);
+    if (price === 0 && waived) {
+      return "Waived — promotional transport and capturing content on this promotion date.";
+    }
+    var parts = [];
+    if (waived && surcharge > 0) {
+      parts.push("Base fee waived — promotional transport and capturing content");
+    }
+    if (surcharge > 0) {
+      parts.push(
+        "Includes " +
+          formatPrice(surcharge) +
+          " non-regular extras (" +
+          units +
+          " × " +
+          formatPrice(COORD_SURCHARGE_PER_UNIT_JMD) +
+          ")"
+      );
+    }
+    return parts.join("; ");
   }
 
   function coordinationPriceForState(state) {
-    if (coordinationIsWaivedForDate(state.date)) return 0;
-    return computeCoordination(state.tier);
+    return coordinationPriceForDate(state.tier, state.date);
   }
 
   function removeAllCoordinationLines() {
@@ -768,10 +856,7 @@
     var existing = window.SECCart.load().find(function (i) {
       return i.id === productId && i.lineId === lineKey;
     });
-    var extra =
-      price === 0
-        ? "Waived — promotional transport and capturing content on this promotion date."
-        : "";
+    var extra = coordinationNotesForState(state, price);
     if (existing && existing.price === price && existing.notes === extra && existing.eventDate === state.date) {
       return;
     }
@@ -991,6 +1076,15 @@
             break;
           case "models":
             price = window.SEC_MARKETING_RATES[tier].models;
+            break;
+          case "cooler-rect":
+          case "cooler-round":
+            price = COOLER_RENTAL_JMD;
+            qty = 1;
+            removeCartLinesForState(state, productId);
+            break;
+          case "ice":
+            price = ICE_BAG_JMD;
             break;
           default:
             return;

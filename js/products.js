@@ -201,6 +201,24 @@ window.SEC_CATALOG = {
     },
     { id: "mkt-promo-host", name: "Host/DJ", price: 0 },
     {
+      id: "mkt-promo-cooler-rect",
+      name: "Medium rectangular cooler (day rental)",
+      price: 0,
+      note: "Day rental; one available.",
+    },
+    {
+      id: "mkt-promo-cooler-round",
+      name: "Medium round cooler (day rental)",
+      price: 0,
+      note: "Day rental; one available.",
+    },
+    {
+      id: "mkt-promo-ice",
+      name: "Bag of ice",
+      price: 0,
+      note: "Per bag.",
+    },
+    {
       id: "mkt-promo-misc",
       name: "Miscellaneous (promotion support)",
       price: 0,

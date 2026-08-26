@@ -12,6 +12,9 @@
     "mkt-promo-host",
     "mkt-promo-edit-video",
     "mkt-promo-models",
+    "mkt-promo-cooler-rect",
+    "mkt-promo-cooler-round",
+    "mkt-promo-ice",
   ]);
 
   /** One recurring companion line per parent setup item (once per quote). */
