@@ -6,6 +6,7 @@
   const PROMO_MISC_ID = "mkt-promo-misc";
   const BILLABLE_PROMO_IDS = new Set([
     "mkt-promo-vehicle",
+    "mkt-promo-town-cryer",
     "mkt-promo-speakers",
     "mkt-promo-capture",
     "mkt-promo-host",

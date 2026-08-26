@@ -19,7 +19,7 @@
     const noteText = (i) => {
       if (!i) return "";
       const raw = i.notes || "";
-      if (i.id === "mkt-promo-vehicle") {
+      if (i.id === "mkt-promo-vehicle" || i.id === "mkt-promo-town-cryer") {
         return window.SECCart && window.SECCart.displayNotes
           ? window.SECCart.displayNotes(raw)
           : raw;

@@ -343,7 +343,7 @@
       function displayItemNotes(i) {
         if (!i) return "";
         var raw = i.notes || "";
-        if (i.id === "mkt-promo-vehicle") {
+        if (i.id === "mkt-promo-vehicle" || i.id === "mkt-promo-town-cryer") {
           var vehicleNotes = window.SECCart && SECCart.displayNotes ? SECCart.displayNotes(raw) : raw;
           return vehicleNotes.replace(/^Parish:/i, "Location:");
         }

@@ -166,6 +166,12 @@ window.SEC_CATALOG = {
       price: 0,
     },
     {
+      id: "mkt-promo-town-cryer",
+      name: "Town Cryer Service",
+      price: 0,
+      note: "Includes the promotional vehicle, driver/grip, and a town cryer to announce along the route.",
+    },
+    {
       id: "mkt-promo-speakers",
       name: "Speakers",
       price: 0,

@@ -28,6 +28,7 @@
     kingston: {
       label: "Around Town",
       vehicle: 40000,
+      townCryer: 50000,
       speakersBase4h: 10000,
       captureBase4h: 30000,
       hostBase4h: 20000,
@@ -37,7 +38,8 @@
     },
     middle: {
       label: "Neighbouring Towns",
-      vehicle: 40000,
+      vehicle: 42500,
+      townCryer: 52500,
       speakersBase4h: 12000,
       captureBase4h: 30000,
       hostBase4h: 25000,
@@ -48,6 +50,7 @@
     outside: {
       label: "Outside listed parishes",
       vehicle: 45000,
+      townCryer: 55000,
       speakersBase4h: 12000,
       captureBase4h: 35000,
       hostBase4h: 25000,
@@ -56,6 +59,8 @@
       models: 10000,
     },
   };
+
+  var TRANSPORT_PRODUCT_IDS = ["mkt-promo-vehicle", "mkt-promo-town-cryer"];
 
   var EDIT_PHOTO = 1250;
   var EDIT_VIDEO = 10000;
@@ -131,6 +136,14 @@
 
   function computeVehicle(tier) {
     return window.SEC_MARKETING_RATES[tier].vehicle;
+  }
+
+  function computeTownCryer(tier) {
+    return window.SEC_MARKETING_RATES[tier].townCryer;
+  }
+
+  function isTransportProductId(productId) {
+    return TRANSPORT_PRODUCT_IDS.indexOf(productId) >= 0;
   }
 
   /** 4h base; each additional hour adds extraPerHour (default $5,000 JMD). */
@@ -270,7 +283,7 @@
   }
 
   function promoLineNotes(productId, state, extra) {
-    if (productId === "mkt-promo-vehicle") return vehicleContextNotes(state, extra);
+    if (isTransportProductId(productId)) return vehicleContextNotes(state, extra);
     return optionalNote(extra);
   }
 
@@ -355,7 +368,7 @@
       var st = stateFromCartItem(i) || parseStateFromLineId(i);
       if (!st) return;
       st.date = d;
-      if (!map[d] || i.id === "mkt-promo-vehicle") map[d] = st;
+      if (!map[d] || isTransportProductId(i.id)) map[d] = st;
     });
     return map;
   }
@@ -404,6 +417,7 @@
   window.SEC_marketingCompute = {
     tierForParish: tierForParish,
     computeVehicle: computeVehicle,
+    computeTownCryer: computeTownCryer,
     computeSpeakers: computeSpeakers,
     computeCapture: computeCapture,
     computeHost: computeHost,
@@ -452,6 +466,7 @@
     var ready = Boolean(getPlannerState());
 
     updatePriceEl(document.querySelector('[data-promo-price="vehicle"]'), computeVehicle(tier));
+    updatePriceEl(document.querySelector('[data-promo-price="town-cryer"]'), computeTownCryer(tier));
     updatePriceEl(document.querySelector('[data-promo-price="speakers"]'), computeSpeakers(tier, h));
     updatePriceEl(document.querySelector('[data-promo-price="capture"]'), computeCapture(tier, h));
     updatePriceEl(document.querySelector('[data-promo-price="host"]'), computeHost(tier, h));
@@ -494,6 +509,7 @@
     panel.querySelectorAll(".pick-add[data-promo-line]").forEach(function (btn) {
       btn.disabled = !ready;
     });
+    syncTransportExclusivityUI(panel, ready, ctx.date);
 
     if (msg) {
       if (!ready) {
@@ -523,12 +539,95 @@
 
   var BILLABLE_PROMO_PRODUCT_IDS = [
     "mkt-promo-vehicle",
+    "mkt-promo-town-cryer",
     "mkt-promo-speakers",
     "mkt-promo-capture",
     "mkt-promo-host",
     "mkt-promo-edit-video",
     "mkt-promo-models",
   ];
+
+  function cartItemEventDate(item) {
+    return (
+      (item && item.eventDate) ||
+      (window.SECCart && window.SECCart.itemEventDate && window.SECCart.itemEventDate(item)) ||
+      ""
+    );
+  }
+
+  function cartHasProductForDate(productId, date) {
+    if (!window.SECCart || typeof window.SECCart.load !== "function" || !date) return false;
+    return window.SECCart.load().some(function (i) {
+      if (i.id !== productId) return false;
+      return cartItemEventDate(i) === date;
+    });
+  }
+
+  function removeOtherTransportForDate(date, keepProductId) {
+    if (!window.SECCart || typeof window.SECCart.load !== "function" || !date) return;
+    window.SECCart.load().slice().forEach(function (i) {
+      if (!isTransportProductId(i.id)) return;
+      if (i.id === keepProductId) return;
+      if (cartItemEventDate(i) === date) {
+        window.SECCart.remove(i.lineId);
+      }
+    });
+  }
+
+  function syncTransportExclusivityUI(panel, ready, date) {
+    if (!panel) return;
+    var vehicleBtn = panel.querySelector('.pick-add[data-promo-line="vehicle"]');
+    var townCryerBtn = panel.querySelector('.pick-add[data-promo-line="town-cryer"]');
+    var vehicleRow = panel.querySelector('[data-promo-row="vehicle"]');
+    var townCryerRow = panel.querySelector('[data-promo-row="town-cryer"]');
+    var hasVehicle = cartHasProductForDate("mkt-promo-vehicle", date);
+    var hasTownCryer = cartHasProductForDate("mkt-promo-town-cryer", date);
+
+    function setExclusiveHint(row, blocked, message) {
+      if (!row) return;
+      var main = row.querySelector(".pick-row__main");
+      if (!main) return;
+      var hint = main.querySelector("[data-transport-exclusive-hint]");
+      if (!blocked) {
+        if (hint) hint.remove();
+        return;
+      }
+      if (!hint) {
+        hint = document.createElement("span");
+        hint.className = "pick-row__meta";
+        hint.setAttribute("data-transport-exclusive-hint", "1");
+        main.appendChild(hint);
+      }
+      hint.textContent = message;
+    }
+
+    if (vehicleBtn) {
+      if (ready && hasTownCryer) {
+        vehicleBtn.disabled = true;
+        vehicleBtn.title = "Remove Town Cryer Service for this date to add promotional vehicle.";
+      } else if (vehicleBtn.title) {
+        vehicleBtn.removeAttribute("title");
+      }
+      setExclusiveHint(
+        vehicleRow,
+        ready && hasTownCryer,
+        "Unavailable while Town Cryer Service is on this promotion date."
+      );
+    }
+    if (townCryerBtn) {
+      if (ready && hasVehicle) {
+        townCryerBtn.disabled = true;
+        townCryerBtn.title = "Remove promotional vehicle for this date to add Town Cryer Service.";
+      } else if (townCryerBtn.title) {
+        townCryerBtn.removeAttribute("title");
+      }
+      setExclusiveHint(
+        townCryerRow,
+        ready && hasVehicle,
+        "Unavailable while promotional vehicle is on this promotion date."
+      );
+    }
+  }
 
   function cartHasLineForState(state, productId, suffix) {
     var key = productId + metaKey(state, productId, suffix);
@@ -567,21 +666,18 @@
     });
   }
 
-  /** Waived per promotion date when vehicle and capture are both on that date. */
+  /** Waived per promotion date when transport (vehicle or town cryer) and capture are both on that date. */
   function coordinationIsWaivedForDate(date) {
     if (!window.SECCart || typeof window.SECCart.load !== "function" || !date) return false;
-    var hasVehicle = false;
+    var hasTransport = false;
     var hasCapture = false;
     window.SECCart.load().forEach(function (i) {
-      var d =
-        i.eventDate ||
-        (window.SECCart.itemEventDate && window.SECCart.itemEventDate(i)) ||
-        "";
+      var d = cartItemEventDate(i);
       if (d !== date) return;
-      if (i.id === "mkt-promo-vehicle") hasVehicle = true;
+      if (isTransportProductId(i.id)) hasTransport = true;
       if (i.id === "mkt-promo-capture") hasCapture = true;
     });
-    return hasVehicle && hasCapture;
+    return hasTransport && hasCapture;
   }
 
   function coordinationIsWaived() {
@@ -674,7 +770,7 @@
     });
     var extra =
       price === 0
-        ? "Waived — promotional vehicle and capturing content on this promotion date."
+        ? "Waived — promotional transport and capturing content on this promotion date."
         : "";
     if (existing && existing.price === price && existing.notes === extra && existing.eventDate === state.date) {
       return;
@@ -778,6 +874,9 @@
     if (!validatePromoDateInput()) return;
     var p = window.SEC_findProduct(productId);
     if (!p) return;
+    if (isTransportProductId(productId)) {
+      removeOtherTransportForDate(state.date, productId);
+    }
     var q = qty != null ? qty : 1;
     window.SECCart.add(
       Object.assign(
@@ -864,6 +963,9 @@
         switch (line) {
           case "vehicle":
             price = computeVehicle(tier);
+            break;
+          case "town-cryer":
+            price = computeTownCryer(tier);
             break;
           case "speakers":
             price = computeSpeakers(tier, h);
