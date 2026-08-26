@@ -26,6 +26,9 @@
   var COOLER_RENTAL_JMD = 3000;
   var ICE_BAG_JMD = 1000;
   var COORD_SURCHARGE_PER_UNIT_JMD = 1000;
+  var ICE_BULK_SET_SIZE = 5;
+  var ICE_BULK_PCT_PER_SET = 5;
+  var ICE_BULK_PCT_CAP = 30;
 
   window.SEC_MARKETING_RATES = {
     kingston: {
@@ -178,6 +181,42 @@
 
   function computeMisc(tier) {
     return window.SEC_MARKETING_RATES[tier].miscBlock;
+  }
+
+  function iceBulkDiscountPct(qty) {
+    var q = parseInt(qty, 10);
+    if (!Number.isFinite(q) || q < 1) return 0;
+    var sets = Math.floor(q / ICE_BULK_SET_SIZE);
+    return Math.min(sets * ICE_BULK_PCT_PER_SET, ICE_BULK_PCT_CAP);
+  }
+
+  function iceUnitPrice(qty) {
+    var pct = iceBulkDiscountPct(qty);
+    return Math.round(ICE_BAG_JMD * (1 - pct / 100));
+  }
+
+  function iceBulkNote(qty) {
+    var pct = iceBulkDiscountPct(qty);
+    if (pct <= 0) return "";
+    var sets = Math.floor(parseInt(qty, 10) / ICE_BULK_SET_SIZE);
+    return (
+      "Bulk ice: " +
+      pct +
+      "% off (" +
+      sets +
+      " set" +
+      (sets === 1 ? "" : "s") +
+      " of " +
+      ICE_BULK_SET_SIZE +
+      ")"
+    );
+  }
+
+  function getIcePlannerQty() {
+    var el = document.getElementById("promo-ice-qty");
+    if (!el) return 1;
+    var n = parseInt(el.value, 10);
+    return Number.isFinite(n) && n > 0 ? n : 1;
   }
 
   function getPhotoEstQty() {
@@ -475,7 +514,21 @@
     updatePriceEl(document.querySelector('[data-promo-price="host"]'), computeHost(tier, h));
     updatePriceEl(document.querySelector('[data-promo-price="cooler-rect"]'), COOLER_RENTAL_JMD);
     updatePriceEl(document.querySelector('[data-promo-price="cooler-round"]'), COOLER_RENTAL_JMD);
-    updatePriceEl(document.querySelector('[data-promo-price="ice"]'), ICE_BAG_JMD);
+    var icePreviewQty = getIcePlannerQty();
+    var icePrice = iceUnitPrice(icePreviewQty);
+    updatePriceEl(document.querySelector('[data-promo-price="ice"]'), icePrice);
+    var iceMeta = document.getElementById("promo-ice-meta");
+    if (iceMeta) {
+      var icePct = iceBulkDiscountPct(icePreviewQty);
+      iceMeta.textContent =
+        icePct > 0
+          ? "Per bag at " +
+            formatPrice(icePrice) +
+            " (" +
+            icePct +
+            "% bulk off). Bulk: 5% off per 5 bags, max 30%."
+          : "Per bag. Bulk: 5% off per 5 bags, max 30%.";
+    }
     updatePriceEl(document.querySelector('[data-promo-price="misc"]'), computeMisc(tier));
     var coordEl = document.querySelector('[data-promo-price="coordination"]');
     if (coordEl) {
@@ -484,26 +537,11 @@
       var coordStatus = document.getElementById("promo-coordination-status");
       var waivedBase = dateForCoord && coordinationIsWaivedForDate(dateForCoord);
       var surchargeAmt = coordinationSurchargeForDate(dateForCoord);
-      var surchargeUnits = coordinationSurchargeUnitsForDate(dateForCoord);
       if (coordStatus) {
         if (waivedBase && surchargeAmt === 0) {
           coordStatus.textContent = "Waived for this promotion date.";
         } else if (waivedBase && surchargeAmt > 0) {
-          coordStatus.textContent =
-            "Base waived; includes " +
-            formatPrice(surchargeAmt) +
-            " non-regular extras (" +
-            surchargeUnits +
-            ").";
-        } else if (surchargeAmt > 0) {
-          coordStatus.textContent =
-            "Includes " +
-            formatPrice(surchargeAmt) +
-            " non-regular extras (" +
-            surchargeUnits +
-            " × " +
-            formatPrice(COORD_SURCHARGE_PER_UNIT_JMD) +
-            ").";
+          coordStatus.textContent = "Base fee waived; extra coordination still applies for this date.";
         } else if (cartHasBillablePromoLinesForDate(dateForCoord)) {
           coordStatus.textContent = "Included once per promotion date.";
         } else if (cartHasBillablePromoLines()) {
@@ -570,7 +608,6 @@
     "mkt-promo-speakers",
     "mkt-promo-capture",
     "mkt-promo-host",
-    "mkt-promo-edit-video",
     "mkt-promo-models",
     "mkt-promo-cooler-rect",
     "mkt-promo-cooler-round",
@@ -739,7 +776,25 @@
 
   function coordinationSurchargeForDate(date) {
     if (!date || isRegularPromotionForDate(date)) return 0;
-    return coordinationSurchargeUnitsForDate(date) * COORD_SURCHARGE_PER_UNIT_JMD;
+    if (!window.SECCart || typeof window.SECCart.load !== "function") return 0;
+    var total = 0;
+    var iceQty = 0;
+    window.SECCart.load().forEach(function (i) {
+      if (SURCHARGE_PRODUCT_IDS.indexOf(i.id) < 0) return;
+      if (cartItemEventDate(i) !== date) return;
+      var q = parseInt(i.qty, 10);
+      q = Number.isFinite(q) && q > 0 ? q : 1;
+      if (i.id === "mkt-promo-ice") {
+        iceQty += q;
+      } else {
+        total += q * COORD_SURCHARGE_PER_UNIT_JMD;
+      }
+    });
+    if (iceQty > 0) {
+      var pct = iceBulkDiscountPct(iceQty);
+      total += Math.round(iceQty * COORD_SURCHARGE_PER_UNIT_JMD * (1 - pct / 100));
+    }
+    return total;
   }
 
   /** Base waived when transport + capture; non-regular per-unit surcharge still applies. */
@@ -751,27 +806,13 @@
   function coordinationNotesForState(state, price) {
     if (!state || !state.date) return "";
     var waived = coordinationIsWaivedForDate(state.date);
-    var surcharge = coordinationSurchargeForDate(state.date);
-    var units = coordinationSurchargeUnitsForDate(state.date);
     if (price === 0 && waived) {
       return "Waived — promotional transport and capturing content on this promotion date.";
     }
-    var parts = [];
-    if (waived && surcharge > 0) {
-      parts.push("Base fee waived — promotional transport and capturing content");
+    if (waived && price > 0) {
+      return "Base fee waived — promotional transport and capturing content";
     }
-    if (surcharge > 0) {
-      parts.push(
-        "Includes " +
-          formatPrice(surcharge) +
-          " non-regular extras (" +
-          units +
-          " × " +
-          formatPrice(COORD_SURCHARGE_PER_UNIT_JMD) +
-          ")"
-      );
-    }
-    return parts.join("; ");
+    return "";
   }
 
   function coordinationPriceForState(state) {
@@ -816,11 +857,20 @@
       return;
     }
     var price = computeMisc(state.tier);
-    var existing = window.SECCart.load().find(function (i) {
+    var items = window.SECCart.load();
+    var existing = items.find(function (i) {
       return i.id === productId && i.lineId === lineKey;
     });
-    if (existing && existing.price === price && existing.eventDate === state.date) return;
-    if (existing) window.SECCart.remove(lineKey);
+    if (existing) {
+      if (existing.price === price && existing.eventDate === state.date && (existing.qty || 1) === 1) return;
+      existing.price = price;
+      existing.qty = 1;
+      existing.notes = "";
+      existing.eventDate = state.date;
+      existing.promoState = promoStateSnapshot(state);
+      window.SECCart.save(items);
+      return;
+    }
     var p = window.SEC_findProduct(productId);
     if (!p) return;
     window.SECCart.add(
@@ -833,7 +883,7 @@
           inquire: false,
           notes: "",
           metaKey: onceKey,
-          noMerge: false,
+          noMerge: true,
         },
         promoCartExtras(state)
       )
@@ -853,14 +903,28 @@
       return;
     }
     var price = coordinationPriceForState(state);
-    var existing = window.SECCart.load().find(function (i) {
+    var extra = coordinationNotesForState(state, price);
+    var items = window.SECCart.load();
+    var existing = items.find(function (i) {
       return i.id === productId && i.lineId === lineKey;
     });
-    var extra = coordinationNotesForState(state, price);
-    if (existing && existing.price === price && existing.notes === extra && existing.eventDate === state.date) {
+    if (existing) {
+      if (
+        existing.price === price &&
+        existing.notes === extra &&
+        existing.eventDate === state.date &&
+        (existing.qty || 1) === 1
+      ) {
+        return;
+      }
+      existing.price = price;
+      existing.qty = 1;
+      existing.notes = extra;
+      existing.eventDate = state.date;
+      existing.promoState = promoStateSnapshot(state);
+      window.SECCart.save(items);
       return;
     }
-    if (existing) window.SECCart.remove(lineKey);
     var p = window.SEC_findProduct(productId);
     if (!p) return;
     window.SECCart.add(
@@ -873,7 +937,7 @@
           inquire: false,
           notes: extra,
           metaKey: onceKey,
-          noMerge: false,
+          noMerge: true,
         },
         promoCartExtras(state)
       )
@@ -1025,6 +1089,11 @@
 
     var photoEstEl = document.getElementById("promo-edit-photo-est-qty");
     if (photoEstEl) photoEstEl.addEventListener("input", onFieldChange);
+    var iceQtyEl = document.getElementById("promo-ice-qty");
+    if (iceQtyEl) {
+      iceQtyEl.addEventListener("input", onFieldChange);
+      iceQtyEl.addEventListener("change", onFieldChange);
+    }
 
     document.querySelectorAll(".pick-add[data-promo-line]").forEach(function (btn) {
       btn.addEventListener("click", function (e) {
@@ -1083,9 +1152,24 @@
             qty = 1;
             removeCartLinesForState(state, productId);
             break;
-          case "ice":
-            price = ICE_BAG_JMD;
-            break;
+          case "ice": {
+            var existingIceQty = 0;
+            window.SECCart.load().forEach(function (i) {
+              if (i.id !== "mkt-promo-ice") return;
+              if (cartItemEventDate(i) !== state.date) return;
+              var eq = parseInt(i.qty, 10);
+              existingIceQty += Number.isFinite(eq) && eq > 0 ? eq : 1;
+            });
+            qty = existingIceQty + qty;
+            removeCartLinesForState(state, productId);
+            price = iceUnitPrice(qty);
+            addPromoLine(productId, price, qty, iceBulkNote(qty));
+            btn.classList.add("added-flash");
+            setTimeout(function () {
+              btn.classList.remove("added-flash");
+            }, 600);
+            return;
+          }
           default:
             return;
         }

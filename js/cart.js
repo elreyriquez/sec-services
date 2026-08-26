@@ -10,7 +10,6 @@
     "mkt-promo-speakers",
     "mkt-promo-capture",
     "mkt-promo-host",
-    "mkt-promo-edit-video",
     "mkt-promo-models",
     "mkt-promo-cooler-rect",
     "mkt-promo-cooler-round",

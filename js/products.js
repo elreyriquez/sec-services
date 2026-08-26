@@ -216,7 +216,7 @@ window.SEC_CATALOG = {
       id: "mkt-promo-ice",
       name: "Bag of ice",
       price: 0,
-      note: "Per bag.",
+      note: "Per bag. Bulk: 5% off per 5 bags, max 30%.",
     },
     {
       id: "mkt-promo-misc",
