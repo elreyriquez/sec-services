@@ -29,6 +29,7 @@
   var ICE_BULK_SET_SIZE = 5;
   var ICE_BULK_PCT_PER_SET = 5;
   var ICE_BULK_PCT_CAP = 30;
+  var MISC_WAIVE_WHEN_COORD_EXCEEDS_JMD = 15000;
 
   window.SEC_MARKETING_RATES = {
     kingston: {
@@ -181,6 +182,26 @@
 
   function computeMisc(tier) {
     return window.SEC_MARKETING_RATES[tier].miscBlock;
+  }
+
+  /** Waived when coordination for that date exceeds the threshold. */
+  function miscPriceForState(state) {
+    if (!state || !state.date) return computeMisc(state && state.tier ? state.tier : "kingston");
+    var coord = coordinationPriceForState(state);
+    if (coord > MISC_WAIVE_WHEN_COORD_EXCEEDS_JMD) return 0;
+    return computeMisc(state.tier);
+  }
+
+  function miscNotesForState(state, price) {
+    if (price === 0 && state && state.date) {
+      var coord = coordinationPriceForState(state);
+      if (coord > MISC_WAIVE_WHEN_COORD_EXCEEDS_JMD) {
+        return (
+          "Waived — coordination fee exceeds " + formatPrice(MISC_WAIVE_WHEN_COORD_EXCEEDS_JMD)
+        );
+      }
+    }
+    return "";
   }
 
   function iceBulkDiscountPct(qty) {
@@ -529,11 +550,27 @@
             "% bulk off). Bulk: 5% off per 5 bags, max 30%."
           : "Per bag. Bulk: 5% off per 5 bags, max 30%.";
     }
-    updatePriceEl(document.querySelector('[data-promo-price="misc"]'), computeMisc(tier));
+    var dateForCoord = ctx.date || "";
+    var coordPricePreview = coordinationPriceForDate(tier, dateForCoord);
+    var miscPrice =
+      dateForCoord && coordPricePreview > MISC_WAIVE_WHEN_COORD_EXCEEDS_JMD
+        ? 0
+        : computeMisc(tier);
+    updatePriceEl(document.querySelector('[data-promo-price="misc"]'), miscPrice);
+    var miscEl = document.querySelector('[data-promo-price="misc"]');
+    var miscStatus = document.getElementById("promo-misc-status");
+    if (miscStatus) {
+      if (miscPrice === 0 && dateForCoord && coordPricePreview > MISC_WAIVE_WHEN_COORD_EXCEEDS_JMD) {
+        miscStatus.textContent =
+          "Waived when coordination exceeds " + formatPrice(MISC_WAIVE_WHEN_COORD_EXCEEDS_JMD) + ".";
+      } else {
+        miscStatus.textContent = "Included on every promotion quote when you add services above.";
+      }
+    }
+    if (miscEl && miscPrice === 0) miscEl.textContent = "Free";
     var coordEl = document.querySelector('[data-promo-price="coordination"]');
     if (coordEl) {
-      var dateForCoord = ctx.date || "";
-      var coordPrice = coordinationPriceForDate(tier, dateForCoord);
+      var coordPrice = coordPricePreview;
       var coordStatus = document.getElementById("promo-coordination-status");
       var waivedBase = dateForCoord && coordinationIsWaivedForDate(dateForCoord);
       var surchargeAmt = coordinationSurchargeForDate(dateForCoord);
@@ -856,16 +893,24 @@
       if (staleMisc) window.SECCart.remove(lineKey);
       return;
     }
-    var price = computeMisc(state.tier);
+    var price = miscPriceForState(state);
+    var extra = miscNotesForState(state, price);
     var items = window.SECCart.load();
     var existing = items.find(function (i) {
       return i.id === productId && i.lineId === lineKey;
     });
     if (existing) {
-      if (existing.price === price && existing.eventDate === state.date && (existing.qty || 1) === 1) return;
+      if (
+        existing.price === price &&
+        existing.notes === extra &&
+        existing.eventDate === state.date &&
+        (existing.qty || 1) === 1
+      ) {
+        return;
+      }
       existing.price = price;
       existing.qty = 1;
-      existing.notes = "";
+      existing.notes = extra;
       existing.eventDate = state.date;
       existing.promoState = promoStateSnapshot(state);
       window.SECCart.save(items);
@@ -881,7 +926,7 @@
           price: price,
           qty: 1,
           inquire: false,
-          notes: "",
+          notes: extra,
           metaKey: onceKey,
           noMerge: true,
         },
@@ -954,8 +999,8 @@
     prunePromoOnceLines();
     var byDate = promoStatesByDateFromCart();
     Object.keys(byDate).forEach(function (d) {
-      ensureMiscInCart(byDate[d]);
       ensureCoordinationInCart(byDate[d]);
+      ensureMiscInCart(byDate[d]);
     });
   }
 
@@ -1042,8 +1087,8 @@
         promoCartExtras(state)
       )
     );
-    ensureMiscInCart(state);
     ensureCoordinationInCart(state);
+    ensureMiscInCart(state);
     ensurePhotoEditInCart(state);
     prunePromoOnceLines();
     var msg = document.getElementById("promo-planner-msg");
