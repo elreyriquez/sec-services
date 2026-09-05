@@ -67,8 +67,17 @@
       var id = addBtn.getAttribute("data-add-product");
       var p = window.SEC_findProduct(id);
       if (!p || p.inquire) return;
-      var suffix = priceEl.getAttribute("data-price-suffix") || "";
-      priceEl.textContent = formatFromJmd(p.price) + suffix;
+      var suffix =
+        priceEl.getAttribute("data-price-suffix") || p.priceSuffix || "";
+      var prefix = p.fromPrice ? "From " : "";
+      var period = priceEl.querySelector(".pick-row__period");
+      var periodHtml = period ? period.outerHTML : "";
+      if (priceEl.classList.contains("pick-row__price--suffix") && periodHtml) {
+        priceEl.innerHTML =
+          prefix + formatFromJmd(p.price) + suffix + periodHtml;
+      } else {
+        priceEl.textContent = prefix + formatFromJmd(p.price) + suffix;
+      }
     });
   }
 
