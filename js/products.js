@@ -120,40 +120,40 @@ window.SEC_CATALOG = {
   retainerWeb: [
     {
       id: "care-ess",
-      name: "Website care retainer — Essential (4 web edit units + 1 scoped update / month)",
-      price: 28000,
-      note: "Monthly in advance. Ticket units: Light 1, Standard 2, Heavy 3. One Scoped update per month — see scoped updates list on Web Care and Management page. Builder overage $7,000/extra unit; Custom SEC $8,000/extra unit (JMD).",
+      name: "Website care retainer: Essential (4 web edit points + 1 developmental update / month)",
+      price: SEC_usdToJmd(180),
+      note: "Monthly in advance. Edit points: Light = 1, Standard = 2. One developmental update per month (see Website care on Web Services). Overage $50 per extra edit point.",
     },
     {
       id: "care-grow",
-      name: "Website care retainer — Growth (8 web edit units + 2 scoped updates / month)",
-      price: 52000,
-      note: "Monthly in advance. Same unit weights. Includes 2 scoped updates/mo. Overage same as Essential.",
+      name: "Website care retainer: Growth (8 web edit points + 2 developmental updates / month)",
+      price: SEC_usdToJmd(350),
+      note: "Monthly in advance. Same edit-point weights. Includes 2 developmental updates/mo. Overage same as Essential ($50 per extra edit point).",
     },
   ],
   retainerCreative: [
     {
       id: "ret-gfx-ess",
-      name: "Graphic / motion / video retainer — Essential (2 static graphics, 1 motion graphic 15s, 1 social edit / mo)",
+      name: "Graphic / motion / video retainer: Essential (2 static graphics, 1 motion graphic 15s, 1 social edit / mo)",
       price: 32000,
-      note: "No web care units. Monthly counts: static graphics, 15s motion, social video edits; not shoot blocks. Monthly in advance; scope on agreement.",
+      note: "No web care points. Monthly counts: static graphics, 15s motion, social video edits; not shoot blocks. Monthly in advance; scope on agreement.",
     },
     {
       id: "ret-gfx-grow",
-      name: "Graphic / motion / video retainer — Growth (4 static graphics, 2 motion graphics 15s, 2 social edits / mo)",
+      name: "Graphic / motion / video retainer: Growth (4 static graphics, 2 motion graphics 15s, 2 social edits / mo)",
       price: 60000,
     },
   ],
   retainerSocialContent: [
     {
       id: "ret-soc-ess",
-      name: "Social content creation retainer — Essential (2 × 1.5 hr shoots, 2 × 0:30 social edits, 1 static graphic / mo)",
+      name: "Social content creation retainer: Essential (2 × 1.5 hr shoots, 2 × 0:30 social edits, 1 static graphic / mo)",
       price: 50000,
       note: "Monthly in advance. On-location videography: two sessions × 1.5 hrs each (max 4 hrs/session per menu). Two finished social edits (0:30). One static graphic. +15% on shoot fees only outside Kingston & St Andrew, Portmore, Spanish Town.",
     },
     {
       id: "ret-soc-grow",
-      name: "Social content creation retainer — Growth (2 × 2 hr shoots, 3 × 0:30 social edits, 1 static graphic, 1 motion 15s / mo)",
+      name: "Social content creation retainer: Growth (2 × 2 hr shoots, 3 × 0:30 social edits, 1 static graphic, 1 motion 15s / mo)",
       price: 72000,
       note: "Monthly in advance. Two shoot sessions × 2 hrs each. Three social edits (0:30). One static graphic, one motion graphic (15s). Same out-of-area shoot surcharge as à la carte videography.",
     },
@@ -161,15 +161,15 @@ window.SEC_CATALOG = {
   retainerFullDigital: [
     {
       id: "ret-full-ess",
-      name: "Full Digital retainer — Essential (4 web edit units + 1 scoped web update per month + creative bundle)",
-      price: 48000,
-      note: "Monthly in advance. Web: 4 ticket units per month (Light 1, Standard 2, Heavy 3) + 1 scoped web update per month. Creative: 2 static graphics, 1 motion 15s, 1 social video edit per month — not pooled with web. Same scoped list as Website care Essential.",
+      name: "Full Digital retainer: Essential (4 web edit points + 1 developmental web update per month + creative bundle)",
+      price: SEC_usdToJmd(310),
+      note: "Monthly in advance. Web: 4 edit points per month (Light = 1, Standard = 2) + 1 developmental web update per month. Creative: 2 static graphics, 1 motion 15s, 1 social video edit per month; not pooled with web. Same developmental list as Website care Essential.",
     },
     {
       id: "ret-full-grow",
-      name: "Full Digital retainer — Growth (8 web edit units + 2 scoped web updates per month + creative bundle)",
-      price: 82000,
-      note: "Monthly in advance. Web: 8 ticket units + 2 scoped web updates per month. Creative: 4 static graphics, 2 motion 15s, 2 social video edits per month.",
+      name: "Full Digital retainer: Growth (8 web edit points + 2 developmental web updates per month + creative bundle)",
+      price: SEC_usdToJmd(590),
+      note: "Monthly in advance. Web: 8 edit points + 2 developmental web updates per month. Creative: 4 static graphics, 2 motion 15s, 2 social video edits per month.",
     },
   ],
   webCareTickets: {

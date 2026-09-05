@@ -639,6 +639,39 @@ details.section-block--collapsible[open] > .section-block__h2::after {
   color: var(--text);
   line-height: 1.2;
 }
+
+.retainer-points-card {
+  background: var(--text);
+  color: #f5f2ec;
+  border-radius: var(--radius-panel);
+  padding: 1rem 1.1rem 1.15rem;
+  margin: 0 0 1rem;
+  max-width: 46rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.retainer-points-card__title {
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.65rem;
+  color: var(--accent);
+  line-height: 1.25;
+}
+.retainer-points-card__body {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #f5f2ec;
+  max-width: none;
+}
+.retainer-points-card__body:last-child {
+  margin-bottom: 0;
+}
+.retainer-points-card__body strong {
+  color: #fff;
+}
+
 .section-block > h3 {
   font-family: var(--font-head);
   font-weight: 400;
