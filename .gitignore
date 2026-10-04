@@ -4,9 +4,12 @@
 !.env.example
 .venv/
 
-# Discount secrets and private reference (never push to GitHub)
-js/discount-codes.secret.js
+# Private PDF reference (never push to GitHub)
 docs/discount-codes-reference.pdf
+
+# Cart codes must be on GitHub Pages (static host). They are visible in the
+# browser once deployed; keeping this file tracked is required for the live cart.
+# js/discount-codes.secret.js
 
 # Node (Railway PDF webhook)
 quote-pdf-service/node_modules/

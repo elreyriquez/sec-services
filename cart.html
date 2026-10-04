@@ -815,7 +815,7 @@
             var inp = document.getElementById("discount-code");
             var raw = inp ? inp.value : "";
             if (msg) msg.textContent = "";
-            if (!window.SEC_validateDiscountCode) {
+            if (!window.SEC_validateDiscountCode || (window.SEC_discountCodesLoaded && !SEC_discountCodesLoaded())) {
               if (msg) msg.textContent = "Discount codes are unavailable.";
               return;
             }

@@ -25,8 +25,14 @@
     return String(code || "")
       .trim()
       .toUpperCase()
-      .replace(/\s+/g, "");
+      .replace(/[\u2010-\u2015\u2212]/g, "-")
+      .replace(/\s+/g, "")
+      .replace(/O/g, "0");
   }
+
+  window.SEC_discountCodesLoaded = function () {
+    return Object.keys(MAP).length > 0;
+  };
 
   window.SEC_validateDiscountCode = function validateDiscountCode(code) {
     var c = normalize(code);

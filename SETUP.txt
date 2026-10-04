@@ -77,8 +77,8 @@ Discount codes (cart) — do not commit real codes or the PDF to GitHub
 - Validation (no secrets in repo): js/discount-codes.js
 - Your real codes (gitignored): copy js/discount-codes.secret.example.js to
   js/discount-codes.secret.js and edit Object.assign(...) entries.
-- Deploy: upload discount-codes.secret.js with your site (Netlify “manual” file,
-  CI secret file, etc.); clones from GitHub alone will not have codes until you add it.
+- GitHub Pages serves the git tree. js/discount-codes.secret.js must be
+  committed or the live cart has no codes (every code looks invalid).
 - Private PDF (gitignored): docs/discount-codes-reference.pdf — generate locally:
 
   cd /path/to/sec-services
