@@ -657,7 +657,7 @@
           if (disc && sub > 0 && off > 0) {
             if (qLabSub)  qLabSub.textContent = subtotalLabel;
             if (qRowDisc) { qRowDisc.hidden = false; }
-            if (qDiscLab) qDiscLab.textContent = "DISCOUNT (" + disc.code + " \xB7 " + disc.percent + "%)";
+            if (qDiscLab) qDiscLab.textContent = "DISCOUNT (" + disc.percent + "%)";
             if (qDiscVal) qDiscVal.textContent = "-" + fmt(off);
             if (qRowGrand) qRowGrand.hidden = false;
             if (qGrand) qGrand.textContent = fmt(grand);
