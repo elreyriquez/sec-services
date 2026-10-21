@@ -195,7 +195,9 @@
               <button type="button" class="btn btn-primary" id="btn-submit">Submit job request</button>
               <button type="button" class="btn btn-ghost" id="btn-pdf">Download PDF</button>
               <button type="button" class="btn btn-ghost" id="btn-print">Print</button>
+              <button type="button" class="btn btn-ghost" id="btn-plan-promo" hidden disabled>Plan the promotion</button>
             </div>
+            <p class="meta cart-plan-hint no-print" id="plan-promo-hint" hidden>Download the quotation first to plan the promotion day.</p>
           </section>
         </aside>
       </div>
@@ -521,6 +523,56 @@
 
         var suppressEmptyCart = false;
         var CONTACT_STORAGE_KEY = "sec_cart_contact_v1";
+        var PROMO_READY_KEY = "sec_promo_quote_ready_v1";
+        var PROMO_SOURCE_KEY = "sec_promo_plan_source_v1";
+        var PLANNABLE_PROMO_IDS = [
+          "mkt-promo-vehicle",
+          "mkt-promo-town-cryer",
+          "mkt-promo-speakers",
+          "mkt-promo-capture",
+          "mkt-promo-host",
+          "mkt-promo-models",
+          "mkt-promo-cooler-rect",
+          "mkt-promo-cooler-round",
+          "mkt-promo-ice",
+        ];
+
+        function promoSignature(items) {
+          return items
+            .filter(function (i) { return PLANNABLE_PROMO_IDS.indexOf(i.id) !== -1; })
+            .map(function (i) { return i.lineId + ":" + (i.qty || 1); })
+            .sort()
+            .join("|");
+        }
+
+        function markPromoQuoteReady() {
+          var sig = promoSignature(SECCart.load());
+          if (!sig) return;
+          try { localStorage.setItem(PROMO_READY_KEY, sig); } catch (e) { /* storage unavailable */ }
+          savePromoSource();
+          syncPlanButton();
+        }
+
+        function savePromoSource() {
+          try {
+            localStorage.setItem(
+              PROMO_SOURCE_KEY,
+              JSON.stringify({ items: SECCart.load(), contact: customer(), savedAt: Date.now() })
+            );
+          } catch (e) { /* planner falls back to the live cart */ }
+        }
+
+        function syncPlanButton() {
+          var btn = document.getElementById("btn-plan-promo");
+          var hint = document.getElementById("plan-promo-hint");
+          if (!btn) return;
+          var sig = promoSignature(SECCart.load());
+          var ready = false;
+          try { ready = Boolean(sig) && localStorage.getItem(PROMO_READY_KEY) === sig; } catch (e) { ready = false; }
+          btn.hidden = !sig;
+          btn.disabled = !ready;
+          if (hint) hint.hidden = !sig || ready;
+        }
 
         form.addEventListener("submit", function (e) { e.preventDefault(); });
 
@@ -749,6 +801,7 @@
             if (filledEl) filledEl.hidden = true;
             /* still update totals so spans read $0 */
             updateTotals();
+            syncPlanButton();
             return;
           }
 
@@ -783,6 +836,7 @@
           /* update money display AFTER table is visible */
           updateTotals();
           updatePreview();
+          syncPlanButton();
         }
 
         /* expose so currency.js can re-trigger on currency switch */
@@ -846,6 +900,17 @@
             if (!ensureContact()) return;
             updatePreview();
             window.print();
+            markPromoQuoteReady();
+          });
+        }
+
+        /* plan the promotion */
+        var btnPlan = document.getElementById("btn-plan-promo");
+        if (btnPlan) {
+          btnPlan.addEventListener("click", function () {
+            if (btnPlan.disabled) return;
+            savePromoSource();
+            window.location.href = "promotion-plan.html";
           });
         }
 
@@ -873,6 +938,7 @@
               a.click();
               document.body.removeChild(a);
               URL.revokeObjectURL(url);
+              markPromoQuoteReady();
             } catch (e) {
               statusEl.textContent = "Could not build PDF. Use Print \u2192 Save as PDF.";
             } finally {
@@ -930,6 +996,14 @@
               if (webhookUrl && webhookSecret && !pdfDelivered) {
                 statusEl.textContent +=
                   " We could not deliver the PDF copy to our office automatically; your request was still received.";
+              }
+              if (btnPlan && !btnPlan.hidden && !btnPlan.disabled) {
+                savePromoSource();
+                var planLink = document.createElement("a");
+                planLink.href = "promotion-plan.html";
+                planLink.textContent = "Plan the promotion";
+                statusEl.appendChild(document.createTextNode(" "));
+                statusEl.appendChild(planLink);
               }
               suppressEmptyCart = true;
               SECCart.clear();
