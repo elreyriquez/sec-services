@@ -22,7 +22,7 @@
 
   var BASE_PROMO_HOURS = 4;
   var EXTRA_HOUR_FLAT_JMD = 5000;
-  var SPEAKERS_EXTRA_HOUR_JMD = 1500;
+  var SPEAKERS_EXTRA_HOUR_JMD = 5000;
   var COOLER_RENTAL_JMD = 3000;
   var ICE_BAG_JMD = 1000;
   var COORD_SURCHARGE_PER_UNIT_JMD = 1000;
@@ -145,8 +145,9 @@
     return window.SEC_MARKETING_RATES[tier].vehicle;
   }
 
-  function computeTownCryer(tier) {
-    return window.SEC_MARKETING_RATES[tier].townCryer;
+  /** Town Cryer includes speakers, so it carries the speakers' duration add-on. */
+  function computeTownCryer(tier, hours) {
+    return window.SEC_MARKETING_RATES[tier].townCryer + computeSpeakers(tier, hours);
   }
 
   function isTransportProductId(productId) {
@@ -529,7 +530,7 @@
     var ready = Boolean(getPlannerState());
 
     updatePriceEl(document.querySelector('[data-promo-price="vehicle"]'), computeVehicle(tier));
-    updatePriceEl(document.querySelector('[data-promo-price="town-cryer"]'), computeTownCryer(tier));
+    updatePriceEl(document.querySelector('[data-promo-price="town-cryer"]'), computeTownCryer(tier, h));
     updatePriceEl(document.querySelector('[data-promo-price="speakers"]'), computeSpeakers(tier, h));
     updatePriceEl(document.querySelector('[data-promo-price="capture"]'), computeCapture(tier, h));
     updatePriceEl(document.querySelector('[data-promo-price="host"]'), computeHost(tier, h));
@@ -688,12 +689,23 @@
     });
   }
 
+  function removeCartLinesForDate(date, productId) {
+    if (!window.SECCart || typeof window.SECCart.load !== "function" || !date) return;
+    window.SECCart.load().slice().forEach(function (i) {
+      if (i.id === productId && cartItemEventDate(i) === date) {
+        window.SECCart.remove(i.lineId);
+      }
+    });
+  }
+
   function syncTransportExclusivityUI(panel, ready, date) {
     if (!panel) return;
     var vehicleBtn = panel.querySelector('.pick-add[data-promo-line="vehicle"]');
     var townCryerBtn = panel.querySelector('.pick-add[data-promo-line="town-cryer"]');
+    var speakersBtn = panel.querySelector('.pick-add[data-promo-line="speakers"]');
     var vehicleRow = panel.querySelector('[data-promo-row="vehicle"]');
     var townCryerRow = panel.querySelector('[data-promo-row="town-cryer"]');
+    var speakersRow = panel.querySelector('[data-promo-row="speakers"]');
     var hasVehicle = cartHasProductForDate("mkt-promo-vehicle", date);
     var hasTownCryer = cartHasProductForDate("mkt-promo-town-cryer", date);
 
@@ -739,6 +751,19 @@
         townCryerRow,
         ready && hasVehicle,
         "Unavailable while promotional vehicle is on this promotion date."
+      );
+    }
+    if (speakersBtn) {
+      if (ready && hasTownCryer) {
+        speakersBtn.disabled = true;
+        speakersBtn.title = "Speakers are already included in Town Cryer Service for this date.";
+      } else if (speakersBtn.title) {
+        speakersBtn.removeAttribute("title");
+      }
+      setExclusiveHint(
+        speakersRow,
+        ready && hasTownCryer,
+        "Included in Town Cryer Service on this promotion date."
       );
     }
   }
@@ -1164,7 +1189,8 @@
             price = computeVehicle(tier);
             break;
           case "town-cryer":
-            price = computeTownCryer(tier);
+            price = computeTownCryer(tier, h);
+            removeCartLinesForDate(state.date, "mkt-promo-speakers");
             break;
           case "speakers":
             price = computeSpeakers(tier, h);
