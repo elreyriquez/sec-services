@@ -1184,6 +1184,16 @@
         var price = 0;
         var productId = btn.getAttribute("data-add-product");
 
+        if (line === "speakers" && cartHasProductForDate("mkt-promo-town-cryer", state.date)) {
+          var blockedMsg = document.getElementById("promo-planner-msg");
+          if (blockedMsg) {
+            blockedMsg.textContent = "Speakers are already included in Town Cryer Service for this date.";
+            blockedMsg.hidden = false;
+          }
+          refreshPrices();
+          return;
+        }
+
         switch (line) {
           case "vehicle":
             price = computeVehicle(tier);
